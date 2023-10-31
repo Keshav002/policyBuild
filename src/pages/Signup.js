@@ -127,8 +127,6 @@ const SignUp = () => {
       });
   };
 
-  const handleGoogleLogin = async (credentialResponse) => {
-    try {
       const handleGoogleLogin = async (credentialResponse) => {
     try {
       let roleNumber;
@@ -171,33 +169,7 @@ const SignUp = () => {
     console.log("Login Failed");
   };
 
-      const response = await fetch(`${API_URL}/users/users/google-signin/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      if (response.ok) {
-        const responseData = await response.json();
-        if (responseData.access_token) {
-          localStorage.setItem("jwtToken", responseData.token);
-
-          navigate("/consultant");
-        } else {
-          console.log("Authentication failed");
-        }
-      } else {
-        console.error("Error:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  const handleGoogleLoginError = () => {
-    console.log("Login Failed");
-  };
+      
 
   return (
     <>
