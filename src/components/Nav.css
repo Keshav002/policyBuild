@@ -1,0 +1,206 @@
+/* Nav.css */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ecebeb;
+    padding: 0px 20px;
+    box-shadow: 0 2px 4px rgba(13, 14, 21, 0.2);
+  }
+  
+  .navbar_logo {
+    max-width: 100px;
+    height: auto;
+    background-color: #0073e6; 
+    background-color: #000000; 
+    padding: 6px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+  }  
+  .navbar_logo a{
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+  }
+  
+  .navbar_nav-links {
+    list-style: none;
+    display: flex;
+    gap: 80px;
+    margin: 0;
+    padding: 0;
+    margin-left: 500px;
+    justify-content: flex-end;
+     
+  }
+  
+  .navbar_nav-links li {
+    margin: 0;
+  }
+  
+  .navbar_nav-links a {
+    text-decoration: none;
+    color: #0073e6;
+    color: #00060c;
+    transition: 0.3s ease-in-out;
+    font-weight: 500;
+    font-size: 17px;
+    border-radius: 10px;
+    padding: 5px;
+  }
+  
+  .navbar_nav-links a:hover {
+    background-color: #ffffff;
+  }
+  
+  .navbar_user-photo img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff; 
+    transition: border 0.3s;
+    cursor: pointer;
+  }
+  .navbar_user-photo{
+    display: flex;
+    padding: 0;
+    margin-right: 10px;
+  }
+  
+  .navbar_user-photo img:hover {
+    border-color: #0073e6; 
+  }
+
+  /* User Popup */
+
+
+
+  .user-popup {
+    position: absolute;
+    margin-top: 4%;
+    right: 2%;
+    background-color: #ecebeb;
+    border: 3px solid #ffffff;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    z-index: 1;
+    min-width: 270px;
+    border-radius: 7%;
+  }
+  .user-profile{
+    padding: 10px;
+  }
+  .user-info{
+    margin-top: 0px;
+    margin-bottom: 10px;
+  }
+  .user-description{
+    margin-top: 10px;
+    color: rgb(60, 87, 242);
+    color: #0073e6;
+}
+
+
+.user-profile-image {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    float: left; 
+    margin-right: 10px;
+    margin-top: 10px;
+    object-fit: cover;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    
+  }
+  
+  
+  .user-name {
+    margin-top: 10px;
+    font-weight: bold;
+    float: left; 
+  }
+  
+  
+  .user-info:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  
+  
+  .user-options {
+    padding: 10px;
+    border-top: 1px solid #ccc;
+  }
+  
+  
+  .user-option {
+    cursor: pointer;
+    padding: 10px 10px;
+    
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 10px;
+  }
+  
+  .user-option:hover {
+    background: #ffffff;
+  }
+  
+  
+  .user-option .option-icon {
+    margin-right: 10px;
+  }
+  
+  
+  .user-popup a {
+    color: #000000;
+    text-decoration: none;
+  }
+  
+  
+  .option-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+  }
+  .profile-navlink{
+    margin: 0px !important;
+  }
+  
+  .nav-user-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+
+  
+  /* Media Query for Responsive Design */
+  @media (max-width: 768px) {
+    .navbar {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .navbar_logo {
+      margin-bottom: 10px;
+    }
+  
+    .navbar_nav-links {
+      flex-direction: column;
+    }
+  
+    .navbar_user-photo {
+      margin-top: 10px;
+    }
+  }
+  
