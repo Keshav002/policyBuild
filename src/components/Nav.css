@@ -1,5 +1,6 @@
 /* Nav.css */
 .navbar {
+  position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -7,9 +8,31 @@
     padding: 0px 20px;
     box-shadow: 0 2px 4px rgba(13, 14, 21, 0.2);
   }
+
+  .navbar-header {
+    display: flex;
+    align-items: center;
+  }
   
-  .navbar_logo {
-    max-width: 100px;
+  .navbar-hamburger {
+    display: none;
+    cursor: pointer;
+    flex-direction: column;
+  }
+  
+  .navbar-hamburger.open div {
+    background-color: black;
+  }
+  
+  .navbar-hamburger div {
+    width: 25px;
+    height: 3px;
+    background-color: #000000;
+    margin: 3px 0;
+  }
+
+  .navbar-logo {
+    width: 100px;
     height: auto;
     background-color: #0073e6; 
     background-color: #000000; 
@@ -18,28 +41,27 @@
     border-radius: 10px;
     cursor: pointer;
   }  
-  .navbar_logo a{
+  .navbar-logo a{
     text-decoration: none;
     color: rgb(255, 255, 255);
     font-weight: bold;
   }
   
-  .navbar_nav-links {
+  .navbar-nav-links {
     list-style: none;
     display: flex;
     gap: 80px;
+    width: 70%;
     margin: 0;
     padding: 0;
-    margin-left: 500px;
-    justify-content: flex-end;
-     
+    justify-content: flex-end;   
   }
   
-  .navbar_nav-links li {
+  .navbar-nav-links li {
     margin: 0;
   }
   
-  .navbar_nav-links a {
+  .navbar-nav-links a {
     text-decoration: none;
     color: #0073e6;
     color: #00060c;
@@ -50,11 +72,13 @@
     padding: 5px;
   }
   
-  .navbar_nav-links a:hover {
+  .navbar-nav-links a:hover {
     background-color: #ffffff;
   }
+
+
   
-  .navbar_user-photo img {
+  .navbar-user-photo img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -63,13 +87,13 @@
     transition: border 0.3s;
     cursor: pointer;
   }
-  .navbar_user-photo{
+  .navbar-user-photo{
     display: flex;
     padding: 0;
     margin-right: 10px;
   }
   
-  .navbar_user-photo img:hover {
+  .navbar-user-photo img:hover {
     border-color: #0073e6; 
   }
 
@@ -79,7 +103,7 @@
 
   .user-popup {
     position: absolute;
-    margin-top: 4%;
+    margin-top: 50px;
     right: 2%;
     background-color: #ecebeb;
     border: 3px solid #ffffff;
@@ -183,24 +207,61 @@
   }
   
 
-  
-  /* Media Query for Responsive Design */
   @media (max-width: 768px) {
-    .navbar {
+    .navbar-logo {
+      display: none;
+    }
+  
+    .navbar-hamburger {
+      display: flex;
+    }
+  
+    .navbar-nav-links {
+      display: none;
+      flex-direction: column;
+    }
+    .navbar-nav-links.active {
+      display: flex;
+      width: 100%;
       flex-direction: column;
       align-items: flex-start;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: #ecebeb;
+      z-index: 1;
+      transition: right 0.3s;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); /* Add box shadow for depth */
+      border-radius: 5px; /* Add rounded corners for a modern look */
+      padding: 10px; /* Add padding for spacing */
+      gap: 20px; /* Adjust gap between items */
     }
-  
-    .navbar_logo {
-      margin-bottom: 10px;
+    
+    .navbar-nav-links.active a {
+      text-decoration: none;
+      color: #000; /* Change text color */
+      font-size: 18px; /* Increase font size for readability */
+      padding: 10px 10px; /* Add padding for better touch targets */
+      transition: 0.3s ease-in-out;
+      margin-left: 15px;
+      margin-left: 15px;
     }
-  
-    .navbar_nav-links {
-      flex-direction: column;
+    
+    .navbar-nav-links.active li:hover {
+      background-color: #f0f0f0; /* Add a subtle background color on hover */
+      border-radius: 5px; /* Match the rounded corners of the container */
     }
+    
+    
   
-    .navbar_user-photo {
-      margin-top: 10px;
+    .navbar-user-photo {
+      display: flex;
     }
   }
+ 
+  
+  
+  
+  
+  
   

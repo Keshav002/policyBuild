@@ -34,7 +34,7 @@ const SignUp = () => {
       .then((response) => response.json())
       .then((data) => {
         if (data.token) {
-          localStorage.setItem('jwtToken', data.token); 
+          localStorage.setItem('jwtToken', data.token.access); 
             navigate('/consultant');
         } else {
           Swal.fire({

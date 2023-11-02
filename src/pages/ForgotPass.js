@@ -5,31 +5,48 @@ import mail_icon from "../assets/email.png";
 import { Link } from "react-router-dom";
 import { API_URL } from '../ConfigApi';
 
-
 function ForgotPass() {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
-  const location = useLocation();
   const handlesendmail = () => {
-    fetch(`${API_URL}/users/users/password_reset/`, {
-      method: 'POST',
+    // First, fetch the CSRF token
+    fetch(`${API_URL}/users/users/get_csrf_token/`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email }),
     })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.emailSent) {
-        navigate('/reset-password');
-      } else {
-        alert("Failed to send reset email. Please check your email address.");
-      }
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-      alert("An error occurred. Please try again.");
-    });
+      .then((response) => response.json())
+      .then((data) => {
+        const csrfToken = data.csrf_token;
+
+        // Now that you have the CSRF token, send the password reset request
+        fetch(`${API_URL}/users/users/password_reset/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken, // Include the CSRF token in the headers
+          },
+
+          body: JSON.stringify({ email }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.emailSent) {
+              navigate('/reset-password');
+            } else {
+              alert("Failed to send reset email. Please check your email address.");
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            alert("An error occurred. Please try again.");
+          });
+      })
+      .catch((error) => {
+        console.error('Error fetching CSRF token:', error);
+        alert("An error occurred. Please try again.");
+      });
   };
   return (
     <div className="forgot-password-page">

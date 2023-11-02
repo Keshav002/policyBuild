@@ -36,6 +36,7 @@ const SignUp = () => {
       email: userDetails.email,
       otp,
     };
+
     fetch(`${API_URL}/users/users/verify/`, {
       method: "POST",
       headers: {
@@ -43,15 +44,14 @@ const SignUp = () => {
       },
       body: JSON.stringify(verificationData),
     })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === 200) {
+      .then((response) => {
+        if (response.status === 200) {
           navigate("/login");
         } else {
           Swal.fire({
             icon: "error",
             title: "Error",
-            text: data.message,
+            text: response.data,
           });
         }
       })
