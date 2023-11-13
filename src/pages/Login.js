@@ -9,7 +9,10 @@ import { Link } from "react-router-dom";
 import { API_URL } from '../ConfigApi';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import {handleSignIn} from '../store/userSlice';
+import {useDispatch} from 'react-redux';
 const SignUp = () => {
+  const dispatch = useDispatch();
   const [userDetails, setUserDetails] = useState({
     username: "",
     password: "",
@@ -20,38 +23,40 @@ const SignUp = () => {
     setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
   };
 
-  const handleSignIn = () => {
-    fetch(`${API_URL}/users/users/login/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: userDetails.username, // Provide the user's email
-        password: userDetails.password, // Provide the user's password
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.token) {
-          localStorage.setItem('jwtToken', data.token.access); 
-            navigate('/consultant');
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'User not found. Please check your credentials and try again.',
-          });
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'An error occurred. Please try again.',
-        });
-      });
+  const handlelogin = () => {
+    // fetch(`${API_URL}/users/users/login/`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     username: userDetails.username, // Provide the user's email
+    //     password: userDetails.password, // Provide the user's password
+    //   }),
+    // })
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     console.log(data);
+    //     if (data.token) {
+    //       localStorage.setItem('jwtToken', data.token.access); 
+    //         navigate('/consultant');
+    //     } else {
+    //       Swal.fire({
+    //         icon: 'error',
+    //         title: 'Error',
+    //         text: 'User not found. Please check your credentials and try again.',
+    //       });
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.error('Error:', error);
+    //     Swal.fire({
+    //       icon: 'error',
+    //       title: 'Error',
+    //       text: 'An error occurred. Please try again.',
+    //     });
+    //   });
+    dispatch(handleSignIn(userDetails))
   };
 
   return (
@@ -112,7 +117,7 @@ const SignUp = () => {
             </div>
           </div>
           <div className="signup-submit-container">
-            <div className="signup-submit" onClick={handleSignIn}>
+            <div className="signup-submit" onClick={handlelogin}>
               Sign In
             </div>
           </div>

@@ -3,7 +3,11 @@ import "./Nav.css";
 import { NavLink } from "react-router-dom";
 import { API_URL } from "../ConfigApi";
 import { useNavigate, useLocation } from "react-router-dom";
+import {logoutUser} from '../store/userSlice';
+import {useDispatch} from 'react-redux';
+
 function Nav() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isUserPopupVisible, setUserPopupVisible] = useState(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -13,24 +17,25 @@ function Nav() {
   const toggleUserPopup = () => {
     setUserPopupVisible(!isUserPopupVisible);
   };
-  const logoutUser = () => {
-    fetch(`${API_URL}/users/users/logout/`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-      },
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          localStorage.removeItem("jwtToken");
-          navigate("/login");
-        } else {
-          console.error("Logout failed");
-        }
-      })
-      .catch((error) => {
-        console.error("An error occurred during logout", error);
-      });
+  const handleLogout = () => {
+    // fetch(`${API_URL}/users/users/logout/`, {
+    //   method: "POST",
+    //   headers: {
+    //     Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+    //   },
+    // })
+    //   .then((response) => {
+    //     if (response.status === 200) {
+    //       localStorage.removeItem("jwtToken");
+    //       navigate("/login");
+    //     } else {
+    //       console.error("Logout failed");
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.error("An error occurred during logout", error);
+    //   });
+    dispatch(logoutUser);
   };
 
   return (
@@ -104,7 +109,7 @@ function Nav() {
                 </div>
               </a>
               <hr />
-              <div className="user-option" onClick={logoutUser}>
+              <div className="user-option" onClick={handleLogout}>
                 <img
                   src="https://cdn-icons-png.flaticon.com/128/9068/9068818.png"
                   alt="logout"
