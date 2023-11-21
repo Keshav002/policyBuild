@@ -7,6 +7,7 @@ import {logoutUser} from '../store/userSlice';
 import {useDispatch} from 'react-redux';
 
 function Nav() {
+    const currentLocation = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isUserPopupVisible, setUserPopupVisible] = useState(false);
@@ -18,31 +19,15 @@ function Nav() {
     setUserPopupVisible(!isUserPopupVisible);
   };
   const handleLogout = () => {
-    // fetch(`${API_URL}/users/users/logout/`, {
-    //   method: "POST",
-    //   headers: {
-    //     Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-    //   },
-    // })
-    //   .then((response) => {
-    //     if (response.status === 200) {
-    //       localStorage.removeItem("jwtToken");
-    //       navigate("/login");
-    //     } else {
-    //       console.error("Logout failed");
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.error("An error occurred during logout", error);
-    //   });
-    dispatch(logoutUser);
+  dispatch(logoutUser(navigate));
+  
   };
 
   return (
     <div className="navbar">
      <div className="navbar-header">
         <div className="navbar-logo">
-          <a href="/">Policy Check</a>
+          <a href="/consultant">Policy Check</a>
         </div>
         <div
           className={`navbar-hamburger ${isMobileMenuOpen ? "open" : ""}`}
@@ -55,13 +40,19 @@ function Nav() {
       </div>
       <ul className={`navbar-nav-links ${isMobileMenuOpen ? "active" : ""}`}>
         <li>
-          <a href="#">Companies</a>
+        <NavLink to="/company-list" className={currentLocation.pathname === '/company-list' ? 'active-link' : ''}>
+            Companies
+          </NavLink>
         </li>
         <li>
-          <a href="#">Notifications</a>
+        <NavLink to="/notifications" className={currentLocation.pathname === '/notifications' ? 'active-link' : ''}>
+            Notifications
+          </NavLink>
         </li>
         <li>
-          <a href="#">Repository</a>
+        <NavLink to="/repository" className={currentLocation.pathname === '/repositories' ? 'active-link' : ''}>
+            Repository
+          </NavLink>
         </li>
       </ul>
       <div className={`navbar-user-photo ${isMobileMenuOpen ? "active" : ""}`} onClick={toggleUserPopup}>

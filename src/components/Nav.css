@@ -1,6 +1,8 @@
 /* Nav.css */
 .navbar {
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -97,6 +99,10 @@
     border-color: #0073e6; 
   }
 
+  .active-link{
+    background-color: #ffffff;
+  }
+
   /* User Popup */
 
 
@@ -108,7 +114,7 @@
     background-color: #ecebeb;
     border: 3px solid #ffffff;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    z-index: 1;
+    z-index: 1000;
     min-width: 270px;
     border-radius: 7%;
   }

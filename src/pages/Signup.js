@@ -9,8 +9,12 @@ import { Link } from "react-router-dom";
 import { API_URL } from "../ConfigApi";
 import { useNavigate, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
+import { googleLogin } from "../store/userSlice";
+import {useDispatch} from 'react-redux';
 
 const SignUp = () => {
+  const dispatch = useDispatch();
+
   const [showOTPVerification, setShowOTPVerification] = useState(false);
   const [otp, setOTP] = useState("");
   const [selectedRole, setSelectedRole] = useState("consultant");
@@ -127,7 +131,7 @@ const SignUp = () => {
       });
   };
 
-      const handleGoogleLogin = async (credentialResponse) => {
+  const handleGoogleLogin = async (credentialResponse) => {
     try {
       let roleNumber;
       if (selectedRole === "consultant") {
@@ -135,36 +139,17 @@ const SignUp = () => {
       } else if (selectedRole === "company") {
         roleNumber = 2; // Replace with the appropriate role number for a company
       }
-  
+
       const requestData = {
         role: roleNumber,
         idToken: credentialResponse.credential,
       };
-
-      const response = await fetch(`${API_URL}/users/users/google-signin/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      if (response.ok) {
-        const responseData = await response.json();
-        if (responseData.access_token) {
-          localStorage.setItem("jwtToken", responseData.token);
-
-          navigate("/consultant");
-        } else {
-          console.log("Authentication failed");
-        }
-      } else {
-        console.error("Error:", response.statusText);
-      }
+      dispatch(googleLogin(requestData, navigate));
     } catch (error) {
       console.error("Error:", error);
     }
   };
+
   const handleGoogleLoginError = () => {
     console.log("Login Failed");
   };

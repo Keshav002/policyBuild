@@ -56,7 +56,7 @@ const SignUp = () => {
     //       text: 'An error occurred. Please try again.',
     //     });
     //   });
-    dispatch(handleSignIn(userDetails))
+    dispatch(handleSignIn(userDetails, navigate))
   };
 
   return (

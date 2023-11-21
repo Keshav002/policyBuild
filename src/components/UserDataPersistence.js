@@ -22,9 +22,6 @@ function UserDataPersistence() {
         dispatch(removeUser());
         navigate('/login'); 
       }
-    } else {
-      
-      navigate('/login');
     }
   }, []);
 

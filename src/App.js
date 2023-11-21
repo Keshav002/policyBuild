@@ -10,6 +10,7 @@ import {
 //import Consultant from "./pages/Consultant"; // Import your Home component
 import SignUp from "./pages/Signup";
 import Consultant from "./pages/Consultant";
+import CompanyList from "./pages/CompanyList";
 import ForgotPass from "./pages/ForgotPass";
 import ResetPassword from "./pages/ResetPassword";
 import Login from "./pages/Login";
@@ -25,6 +26,7 @@ function App() {
           <Routes>
             <Route path="/signup" element={<SignUp />} />
             <Route path="/consultant" element={<Consultant />} />
+            <Route path="/company-list" element={<CompanyList />} />
             <Route path="/forgot-password" element={<ForgotPass />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/login" element={<Login />} />

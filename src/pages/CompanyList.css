@@ -1,0 +1,380 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+
+.company-list-page{
+    background-color: #ddd;
+    min-height: 100vh;
+    
+}
+
+.company_lists {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin: 20px;
+    position: relative;
+    flex: 1;
+  }
+  .company_lists.with-sidebar {
+    margin-left: 300px; /* Adjust this margin based on the sidebar width */
+  }
+
+  .cp_company_top_bar {
+    position: sticky;
+    top: 43px;
+    z-index: 999;
+    /* margin: 5px; */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #ecebeb;
+    border-bottom: 1px solid #ddd;
+    box-shadow: inset 0 0 35px 5px rgba(0,0,0,0.25), inset 0 2px 1px 1px rgba(255,255,255,0.9), inset 0 -2px 1px rgba(0,0,0,0.25);
+  }
+  
+  .cp_search_container {
+    position: fixed;
+    left: 100px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.cp_search_container input {
+    padding: 8px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .cp_tag_container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .cp_tag {
+    background-color: #d6d6d6;
+    color: #000;
+    padding: 2px 3px;
+    margin: 5px;
+    border-radius: 5px;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+}
+  
+  .cp_tag button {
+    background: none;
+    border: none;
+    color: #0b0b0b;
+    cursor: pointer;
+  }
+  
+  .cp_filters_container {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .cp_select {
+    padding: 8px;
+    margin-left: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .cp_view_toggler {
+    display: flex;
+  }
+  
+  .cp_radio_label {
+    margin-right: 15px;
+  }
+  .cp_age_filter {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .cp_label {
+    font-weight: bold;
+  }
+  
+  .cp_date_input_container {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .cp_input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .cp_date_separator {
+    margin: 5px 8px;
+    font-weight: bold;
+  }
+
+  
+  .cp_label {
+    margin-right: 10px;
+  }
+ 
+  .cp_icon_label {
+    cursor: pointer;
+    margin-right: 15px;
+  }
+  
+  .cp_icon {
+    font-size: 24px;
+    color: rgb(133, 130, 130);
+}
+
+.cp_card_icon,
+.cp_grid_icon {
+    transition: color 0.3s ease-in-out;
+}
+
+.cp_selected_icon {
+    color: rgb(0, 0, 0);
+    font-size: 26px;
+  }
+
+  .cp_filter_icon {
+    cursor: pointer;
+    border-radius: 10%;
+    padding: 5px;
+    
+  }
+   .cp_filter_icon:hover {
+    /* background-color: white; */
+    color: #000;
+}
+
+.cp_filter_icon.active {
+    background-color: white;
+  }
+  
+
+  .company-content-container {
+    display: flex; /* Use flexbox */
+    /* position: relative; */
+  }
+  
+  .cp_sidebar_filter {
+    position: fixed;
+    top: 100px;
+    width: 300px;
+    height: calc(100% - 100px);
+    background-color: #f6f5f5;
+    box-shadow: -2px 0px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    overflow-y: auto;
+  }
+  
+  .cp_sidebar_filter::-webkit-scrollbar {
+    width: 8px; /* Set the width of the scrollbar */
+  }
+  
+  .cp_sidebar_filter::-webkit-scrollbar-thumb {
+    background-color: #ccc; /* Set the color of the scrollbar thumb */
+  }
+  
+  .cp_sidebar_filter::-webkit-scrollbar-track {
+    background-color: #f1f1f1; /* Set the color of the scrollbar track */
+  }
+
+  .cp_sidebar_open {
+    transform: translateX(0);
+  }
+
+  .cp_filter_section {
+    padding: 16px;
+    padding-top: 0px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .cp_filter_title {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  
+  .cp_filter_input {
+    display: flex;
+    align-items: center;
+  }
+  
+  .cp_filter_input input {
+    width: 100px;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .cp_filter_separator {
+    margin: 0 8px;
+    font-weight: bold;
+  }
+  
+
+  .cp_filter_logic {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .cp_filter_logic label {
+    margin-right: 15px;
+  }
+  
+  .cp_filter_logic label:last-child {
+    margin-right: 0; /* Remove margin from the last label */
+  }
+  
+  .cp_filter_logic::before {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: #ccc; /* Adjust the color as needed */
+    margin: 0 10px; /* Adjust the margin as needed */
+  }
+  .cp_filter_logic::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: #ccc; /* Adjust the color as needed */
+    margin: 0 10px; /* Adjust the margin as needed */
+  }
+
+  .dropdown-icon {
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 5px;
+    padding: 10px;
+  }
+
+  .dropdown-options {
+    margin-top: 5px;
+}
+
+.dropdown-options label {
+    display: block;
+    margin-bottom: 10px;
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .dropdown-options input{
+    margin-right: 10px;
+  }
+
+  
+  .save-report-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Adjust the alpha value for transparency */
+    z-index: 999; /* Make sure the overlay is behind the popup but above the rest of the content */
+  }
+  
+    .save-report-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fdfdfd;
+      padding: 20px;
+      padding-top: 0px;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      max-width: 300px;
+      width: 100%;
+      text-align: center;
+      z-index: 1000;
+    }
+    .save-report-popup label {
+      display: block;
+      margin-bottom: 10px;
+    } 
+    .save-report-popup label p{
+      display: block;
+      margin-bottom: 10px;
+      padding: 10px;
+    }
+    
+    .save-report-popup input {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+    
+    .save-report-popup .popup-buttons {
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .save-report-popup button {
+      padding: 10px 20px;
+      background-color: #a0a0a0;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .save-report-popup button:hover {
+      background-color: #6f6f6f;
+    }
+  /* Styles for the Save and View Reports section */
+  .save-view-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background-color: #8d8c8c;
+  }
+  
+  .save-view-section button {
+    display: flex;
+    align-items: center;
+    background-color: #3498db00;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .save-view-section button:hover {
+    color: #000;
+  }
+  
+  .save-view-section button svg {
+    margin-right: 5px;
+  }
+
+
+
+/* Responsive styles */
+
+@media screen and (max-width: 768px) {
+  
+    .cp_search_container {
+      margin-bottom: 16px;
+    }
+  
+    .cp_filters_container {
+      flex-direction: column;
+      /* align-items: stretch; */
+    }
+  }
