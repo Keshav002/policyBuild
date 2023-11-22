@@ -13,19 +13,19 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
-    margin: 20px;
+    
     position: relative;
     flex: 1;
   }
   .company_lists.with-sidebar {
-    margin-left: 300px; /* Adjust this margin based on the sidebar width */
+    margin-left: 300px; 
   }
 
   .cp_company_top_bar {
     position: sticky;
     top: 43px;
     z-index: 999;
-    /* margin: 5px; */
+    
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -42,7 +42,9 @@
     display: flex;
     align-items: center;
     margin-bottom: 5px;
-}
+  }
+  
+  
 
 .cp_search_container input {
     padding: 8px;
@@ -151,7 +153,7 @@
     
   }
    .cp_filter_icon:hover {
-    /* background-color: white; */
+    
     color: #000;
 }
 
@@ -161,8 +163,8 @@
   
 
   .company-content-container {
-    display: flex; /* Use flexbox */
-    /* position: relative; */
+    display: flex; 
+    
   }
   
   .cp_sidebar_filter {
@@ -177,15 +179,15 @@
   }
   
   .cp_sidebar_filter::-webkit-scrollbar {
-    width: 8px; /* Set the width of the scrollbar */
+    width: 8px; 
   }
   
   .cp_sidebar_filter::-webkit-scrollbar-thumb {
-    background-color: #ccc; /* Set the color of the scrollbar thumb */
+    background-color: #ccc; 
   }
   
   .cp_sidebar_filter::-webkit-scrollbar-track {
-    background-color: #f1f1f1; /* Set the color of the scrollbar track */
+    background-color: #f1f1f1; 
   }
 
   .cp_sidebar_open {
@@ -232,22 +234,22 @@
   }
   
   .cp_filter_logic label:last-child {
-    margin-right: 0; /* Remove margin from the last label */
+    margin-right: 0; 
   }
   
   .cp_filter_logic::before {
     content: '';
     flex: 1;
     height: 1px;
-    background-color: #ccc; /* Adjust the color as needed */
-    margin: 0 10px; /* Adjust the margin as needed */
+    background-color: #ccc; 
+    margin: 0 10px; 
   }
   .cp_filter_logic::after {
     content: '';
     flex: 1;
     height: 1px;
-    background-color: #ccc; /* Adjust the color as needed */
-    margin: 0 10px; /* Adjust the margin as needed */
+    background-color: #ccc; 
+    margin: 0 10px; 
   }
 
   .dropdown-icon {
@@ -279,8 +281,8 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Adjust the alpha value for transparency */
-    z-index: 999; /* Make sure the overlay is behind the popup but above the rest of the content */
+    background: rgba(0, 0, 0, 0.5); 
+    z-index: 999; 
   }
   
     .save-report-popup {
@@ -336,12 +338,13 @@
     .save-report-popup button:hover {
       background-color: #6f6f6f;
     }
-  /* Styles for the Save and View Reports section */
+  
   .save-view-section {
     display: flex;
     align-items: center;
     justify-content: space-around;
     background-color: #8d8c8c;
+    margin-bottom: 5px;
   }
   
   .save-view-section button {
@@ -365,7 +368,69 @@
 
 
 
-/* Responsive styles */
+
+.top-pannel {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  
+  overflow: hidden;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  transition: height 0.3s ease;
+  box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+}
+
+
+
+.top-pannel-content {
+  display: flex;
+  padding: 0 20px;
+}
+
+.reports-section {
+  flex: 1;
+  
+}
+
+.vertical-line {
+  min-height: 60px;
+  width: 1px;
+  background-color: #ccc;
+  margin: 0 20px;
+}
+.reports-section h3 {
+  font-weight: 400;
+  display: block;
+  font-size: 18px; 
+  margin-bottom: 10px;
+  padding: 5px;
+  color: #333;
+}
+
+.reports-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.reports-section li {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 8px;
+  font-size: 16px; 
+  color: #555;
+  cursor: pointer;
+}
+
+
+
+
+
 
 @media screen and (max-width: 768px) {
   
@@ -375,6 +440,6 @@
   
     .cp_filters_container {
       flex-direction: column;
-      /* align-items: stretch; */
+      
     }
   }

@@ -7,7 +7,7 @@ import { CiBoxList } from "react-icons/ci";
 import { AiOutlineFilter } from "react-icons/ai";
 import { FaCaretUp, FaCaretDown } from "react-icons/fa";
 import { FaSave, FaEye } from "react-icons/fa";
-
+import { PiClipboardTextDuotone } from "react-icons/pi";
 function CompanyList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [tags, setTags] = useState([]);
@@ -15,6 +15,7 @@ function CompanyList() {
   const [viewType, setViewType] = useState("card"); // 'card' or 'table'
   // const [department, setDepartment] = useState("");
   const [reportName, setReportName] = useState("");
+  const [currentReportName, setCurrentReportName] = useState("All Companies");
   const [isSaveReportPopup, setIsSaveReportPopup] = useState(false);
   const [ratingsFrom, setRatingsFrom] = useState("");
   const [ratingsTo, setRatingsTo] = useState("");
@@ -22,8 +23,8 @@ function CompanyList() {
   const [foundedDateTo, setFoundedDateTo] = useState("");
   const [numEmployeesFrom, setNumEmployeesFrom] = useState("");
   const [numEmployeesTo, setNumEmployeesTo] = useState("");
-  const [idfrom, setIdFrom] = useState('');
-  const [idto, setIdTo] = useState('');
+  const [idfrom, setIdFrom] = useState("");
+  const [idto, setIdTo] = useState("");
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchTerm) {
@@ -35,6 +36,11 @@ function CompanyList() {
   const handleTagRemove = (tag) => {
     const updatedTags = tags.filter((t) => t !== tag);
     setTags(updatedTags);
+  };
+  const [isReportsPanelOpen, setIsReportsPanelOpen] = useState(false);
+
+  const toggleReportsPanel = () => {
+    setIsReportsPanelOpen(!isReportsPanelOpen);
   };
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -77,6 +83,44 @@ function CompanyList() {
     setSelectedLogic(e.target.value);
   };
 
+  const applyFilter = (report) => {
+    // Extract filter values from the 'report' object and apply them
+    const {
+      tags,
+      selectedLogic,
+      selectedCompanyTypes,
+      selectedDepartments,
+      idfrom,
+      idto,
+      ratingsFrom,
+      ratingsTo,
+      foundedDateFrom,
+      foundedDateTo,
+      numEmployeesFrom,
+      numEmployeesTo,
+    } = report;
+
+    // Apply tags filter
+    setTags(tags);
+
+    // Apply company type filter
+    setSelectedCompanyTypes(selectedCompanyTypes);
+
+    // Apply department filter
+    setSelectedDepartments(selectedDepartments);
+
+    // Apply other filters
+    setIdFrom(idfrom || "");
+    setIdTo(idto || "");
+    setRatingsFrom(ratingsFrom || "");
+    setRatingsTo(ratingsTo || "");
+    setFoundedDateFrom(foundedDateFrom || "");
+    setFoundedDateTo(foundedDateTo || "");
+    setNumEmployeesFrom(numEmployeesFrom || "");
+    setNumEmployeesTo(numEmployeesTo || "");
+    setSelectedLogic(selectedLogic || "");
+  };
+
   const saveReport = () => {
     const existingFilters =
       JSON.parse(localStorage.getItem("personalFilters")) || {};
@@ -93,6 +137,8 @@ function CompanyList() {
       ratingsTo,
       foundedDateFrom,
       foundedDateTo,
+      numEmployeesFrom,
+      numEmployeesTo,
     };
 
     existingFilters[reportName] = reportData;
@@ -102,6 +148,14 @@ function CompanyList() {
     setIsSaveReportPopup(false);
     setReportName("");
   };
+
+  const commonReports = [
+    { name: "Highly Rated", filter1: "some value", filter2: "another value" },
+    { name: "Green Companies", filter1: "different value", filter3: "yet another value" },
+  ];
+
+  const personalReports =
+    JSON.parse(localStorage.getItem("personalFilters")) || {};
 
   const saveReportPopup = (
     <>
@@ -137,7 +191,7 @@ function CompanyList() {
           >
             <AiOutlineFilter className="cp_icon" />
           </div>
-
+          {/* <div className="cp_current_report_name">{currentReportName}</div> */}
           <div className="cp_search_container">
             <input
               type="text"
@@ -187,7 +241,7 @@ function CompanyList() {
                 <button onClick={() => setIsSaveReportPopup(true)}>
                   <FaSave /> Save Report
                 </button>
-                <button>
+                <button onClick={toggleReportsPanel}>
                   <FaEye /> View Reports
                 </button>
               </div>
@@ -405,6 +459,44 @@ function CompanyList() {
           <div
             className={`company_lists ${isSidebarOpen ? "with-sidebar" : ""}`}
           >
+            {isReportsPanelOpen && (
+              <div className="top-pannel">
+                <div className="top-pannel-content">
+                  <div className="reports-section">
+                    <h3>Common Reports</h3>
+                    <ul>
+                      {commonReports.map((report) => (
+                        <li
+                          key={report.name}
+                          onClick={() => applyFilter(report)}
+                        >
+                          <PiClipboardTextDuotone style={{ padding: "10px" }} />
+                          {report.name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="vertical-line"></div>
+                  <div className="reports-section">
+                    <h3>Personal Reports</h3>
+                    <ul>
+                      {Object.keys(personalReports).map((reportName) => (
+                        <li
+                          key={reportName}
+                          onClick={() =>{
+                            setCurrentReportName(reportName);
+                            applyFilter(personalReports[reportName])
+                          }}
+                        >
+                          <PiClipboardTextDuotone style={{ padding: "10px" }} />
+                          {reportName}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
             <CompanyCard />
             <CompanyCard />
             <CompanyCard />
