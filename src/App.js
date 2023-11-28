@@ -11,8 +11,10 @@ import {
 import SignUp from "./pages/Signup";
 import Consultant from "./pages/Consultant";
 import CompanyList from "./pages/CompanyList";
+import CompanyProfile from "./pages/CompanyProfile";
 import ForgotPass from "./pages/ForgotPass";
 import ResetPassword from "./pages/ResetPassword";
+import ConsultantProjects from "./pages/ConsultantProjects";
 import Login from "./pages/Login";
 import {Provider} from "react-redux";
 import store from "./store/store";
@@ -27,8 +29,10 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/consultant" element={<Consultant />} />
             <Route path="/company-list" element={<CompanyList />} />
+            <Route path="/company-profile" element={<CompanyProfile />} />
             <Route path="/forgot-password" element={<ForgotPass />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/consultant-projects" element={<ConsultantProjects />} />
             <Route path="/login" element={<Login />} />
           </Routes>
         </Router>

@@ -40,6 +40,11 @@ function Nav() {
       </div>
       <ul className={`navbar-nav-links ${isMobileMenuOpen ? "active" : ""}`}>
         <li>
+        <NavLink to="/consultant-projects" className={currentLocation.pathname === '/consultant-projects' ? 'active-link' : ''}>
+            Projects
+          </NavLink>
+        </li> 
+        <li>
         <NavLink to="/company-list" className={currentLocation.pathname === '/company-list' ? 'active-link' : ''}>
             Companies
           </NavLink>

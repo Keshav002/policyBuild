@@ -1,0 +1,341 @@
+
+
+.company-profile-page{
+  background-color: #ddd;
+  min-height: 100vh;
+}
+
+.company-profile-banner {
+  width: 92%;
+  margin: auto;
+  margin-top: 10px;
+  position: relative;
+  display: flex;
+  padding: 20px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: #ececec;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 0 rgba(0,0,0,0.45) inset;
+  background-color: rgb(255, 255, 255);
+
+}
+
+.company-profile-logo {
+  margin-left: 20px; 
+  width: 15%;
+}
+
+.company-profile-logo-img {
+  width: 140px; 
+  height: 140px; 
+  border-radius: 10px;
+  border: 2px solid white;
+}
+
+.company-profile-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  flex: 1;
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+
+.company-profile-name {
+  font-size: 24px;
+  color: #212222; 
+  font-weight: bold;
+  margin-bottom: 8px; 
+}
+
+.company-profile-description {
+  font-size: 16px;
+  color: #555; 
+}
+
+.company-profile-tags {
+  display: flex;
+  margin-top: 20px;
+}
+
+.company-profile-tag {
+  color: #454444;
+  padding: 6px;
+  margin-right: 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  border: 1px solid rgb(108, 107, 107);
+}
+
+
+.company-profile-buttons {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 1rem;
+  display: flex;
+  flex-direction: row; 
+  align-items: center;
+}
+
+.company-profile-button {
+  display: flex;
+  flex-direction: row; 
+  align-items: center;
+  justify-content: space-around;
+  padding: 0.5rem 1rem;
+  min-width: 100px;
+  font-size: 14px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  color: rgb(210, 207, 207);
+  background-color: #636262;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(255, 255, 255, 0.3) 0px 1px 3px -1px;
+}
+
+.company-profile-button:hover {
+  background-color: #4d4d4d;
+  color: white;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 4px 6px -1px, rgba(255, 255, 255, 0.3) 0px 3px 5px -1px;
+}
+
+.company-profile-apply-button {
+  margin-left: 0.5rem;
+}
+
+
+
+.company-profile-remaining-info {
+  width: 92%;
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #dedede;
+  border-radius: 8px; 
+
+  
+}
+
+
+
+.company-profile-info-item {
+  width: 100%;
+  max-width: 400px; 
+  display: flex;
+  align-items: center;
+  margin-bottom: 50px; 
+  padding: 20px;
+  background-color: #f1f1f1; 
+  background-color: #fff;
+  border-radius: 8px; 
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+  transition: background-color 0.3s ease; 
+  cursor: pointer;
+  color: #686868;
+}
+
+.info-icon {
+  margin-right: 15px; 
+  font-size: 20px;
+  padding: 10px;
+}
+
+.info-details {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.info-label {
+  font-weight: bold;
+  margin-bottom: 4px;
+
+}
+
+.info-value {
+  
+  font-size: 1.1rem;
+}
+
+
+.company-profile-info-item:not(:last-child) {
+  border-bottom: 1px solid #eee; 
+}
+
+
+.company-profile-info-item:hover {
+  background-color: #f5f5f5; 
+}
+
+.company-details-heading {
+  font-size: 1.5rem;
+  color: #838383;
+  margin-bottom: 20px;
+  text-align: center;
+  position: relative;
+}
+.company-details-heading-div{
+  display: flex;
+  align-items: center;
+}
+
+.company-details-heading-div::before,
+.company-details-heading-div::after {
+  content: '';
+  flex: 1 1;
+  height: 1.5px;
+  background-color: #838282;
+  margin: 0 20px;
+}
+
+
+
+.company-profile-rating-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); 
+  z-index: 999; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.company-profile-rating-popup {
+  position: relative;
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 300px;
+  border-radius: 10px;
+}
+
+.company-profile-rating-popup__stars {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.company-profile-rating-popup__star {
+  font-size: 28px;
+  cursor: pointer;
+  color: #ccc;
+
+  &--filled {
+    color: #fdd835; 
+  }
+}
+
+.company-profile-rating-popup__star.filled { 
+    color: #fdd835; 
+}
+
+.company-profile-rating-popup__textarea {
+  height: 150px;
+  margin-bottom: 10px;
+  padding: 10px;
+  width: 100%;
+  
+  display: block; 
+  box-sizing: border-box; 
+  margin: 0 auto; 
+}
+
+.company-profile-rating-popup__buttons {
+  display: flex;
+  justify-content: space-around; 
+  margin-top: 20px;
+}
+
+.company-profile-rating-popup__buttons button {
+  color: rgb(210, 207, 207);
+  background-color: #636262;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background-color 0.3s;
+  border-radius: 10px;
+}
+.company-profile-rating-popup__buttons button:hover {
+  background-color: #4d4d4d;
+  color: white;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 4px 6px -1px, rgba(255, 255, 255, 0.3) 0px 3px 5px -1px;
+}
+
+.cpr_reviews {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  width: 92%;
+  margin: auto;
+  padding: 10px;
+}
+
+.cpr_review {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin: 10px;
+  width: 300px;
+  height: 250px;
+  transition: transform 0.3s ease-in-out;
+  cursor: pointer;
+  margin-bottom: 30px;
+  position: relative;
+  
+}
+
+.cpr_review:hover {
+  transform: scale(1.05);
+}
+
+.cpr_review-stars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  padding: 5px;
+}
+
+.cpr_review_star{
+  font-size: 26px;
+  margin-right: 5px;
+  color: #ccc;
+  padding: 10px;
+}
+
+.cpr_review_star.filled{
+  font-size: 24px;
+  color: #ffcc00;
+  margin-right: 5px;
+}
+
+.cpr_review-card-text {
+  padding: 15px;
+  text-align: center;
+}
+
+.cpr_reviews-card-name {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  text-align: right;
+  font-style: italic;
+  color: #666;
+  padding: 0 15px 15px;
+}
