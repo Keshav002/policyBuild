@@ -1,30 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CompanyCard from ".././components/CompanyCard";
 import Nav from ".././components/Nav";
 import "./CompanyList.css";
-import { BsCardText, BsGrid } from "react-icons/bs";
+import { BsGrid } from "react-icons/bs";
 import { CiBoxList } from "react-icons/ci";
 import { AiOutlineFilter } from "react-icons/ai";
 import { FaCaretUp, FaCaretDown } from "react-icons/fa";
 import { FaSave, FaEye } from "react-icons/fa";
 import { PiClipboardTextDuotone } from "react-icons/pi";
+import { MdDelete } from "react-icons/md";
+import { DataTable } from "../components/DataTable";
+
 function CompanyList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [tags, setTags] = useState([]);
-  // const [companyType, setCompanyType] = useState("");
-  const [viewType, setViewType] = useState("card"); // 'card' or 'table'
-  // const [department, setDepartment] = useState("");
+
   const [reportName, setReportName] = useState("");
   const [currentReportName, setCurrentReportName] = useState("All Companies");
   const [isSaveReportPopup, setIsSaveReportPopup] = useState(false);
-  const [ratingsFrom, setRatingsFrom] = useState("");
-  const [ratingsTo, setRatingsTo] = useState("");
-  const [foundedDateFrom, setFoundedDateFrom] = useState("");
-  const [foundedDateTo, setFoundedDateTo] = useState("");
-  const [numEmployeesFrom, setNumEmployeesFrom] = useState("");
-  const [numEmployeesTo, setNumEmployeesTo] = useState("");
-  const [idfrom, setIdFrom] = useState("");
-  const [idto, setIdTo] = useState("");
+
+  const [viewType, setViewType] = useState(() => {
+    const storedViewType = localStorage.getItem("viewType");
+    return storedViewType || "card";
+  });
+
+  const [idfrom, setIdFrom] = useState(
+    () => localStorage.getItem("idFrom") || ""
+  );
+  const [idto, setIdTo] = useState(() => localStorage.getItem("idTo") || "");
+  const [foundedDateFrom, setFoundedDateFrom] = useState(
+    () => localStorage.getItem("foundedDateFrom") || ""
+  );
+  const [foundedDateTo, setFoundedDateTo] = useState(
+    () => localStorage.getItem("foundedDateTo") || ""
+  );
+  const [ratingsFrom, setRatingsFrom] = useState(
+    () => localStorage.getItem("ratingsFrom") || ""
+  );
+  const [ratingsTo, setRatingsTo] = useState(
+    () => localStorage.getItem("ratingsTo") || ""
+  );
+  const [numEmployeesFrom, setNumEmployeesFrom] = useState(
+    () => localStorage.getItem("numEmployeesFrom") || ""
+  );
+  const [numEmployeesTo, setNumEmployeesTo] = useState(
+    () => localStorage.getItem("numEmployeesTo") || ""
+  );
+  const [isCompanyTypeDropdownOpen, setIsCompanyTypeDropdownOpen] =
+    useState(false);
+  const [isDepartmentDropdownOpen, setIsDepartmentDropdownOpen] =
+    useState(false);
+
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchTerm) {
@@ -32,25 +58,169 @@ function CompanyList() {
       setSearchTerm("");
     }
   };
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  //const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedCompanyTypes, setSelectedCompanyTypes] = useState(() => {
+    const storedCompanyTypes = localStorage.getItem("selectedCompanyTypes");
+    return storedCompanyTypes ? JSON.parse(storedCompanyTypes) : [];
+  });
+
+  const [selectedDepartments, setSelectedDepartments] = useState(() => {
+    const storedDepartments = localStorage.getItem("selectedDepartments");
+    return storedDepartments ? JSON.parse(storedDepartments) : [];
+  });
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    const storedSidebarState = localStorage.getItem("isSidebarOpen");
+    return storedSidebarState ? JSON.parse(storedSidebarState) : false;
+  });
+
+  const toggleDropdown = () => {
+    const newDropdownState = !isCompanyTypeDropdownOpen;
+    setIsCompanyTypeDropdownOpen(newDropdownState);
+    localStorage.setItem(
+      "isCompanyTypeDropdownOpen",
+      JSON.stringify(newDropdownState)
+    );
+  };
+
+  const toggleDepartmentDropdown = () => {
+    const newDropdownState = !isDepartmentDropdownOpen;
+    setIsDepartmentDropdownOpen(newDropdownState);
+    localStorage.setItem(
+      "isDepartmentDropdownOpen",
+      JSON.stringify(newDropdownState)
+    );
+  };
+
+  const [isReportsPanelOpen, setIsReportsPanelOpen] = useState(() => {
+    const storedReportsPanelState = localStorage.getItem("isReportsPanelOpen");
+    return storedReportsPanelState
+      ? JSON.parse(storedReportsPanelState)
+      : false;
+  });
+
+  const toggleReportsPanel = () => {
+    setIsReportsPanelOpen(!isReportsPanelOpen);
+    localStorage.setItem(
+      "isReportsPanelOpen",
+      JSON.stringify(!isReportsPanelOpen)
+    );
+  };
+
+  useEffect(() => {
+    handleFilterChange();
+  }, [
+    idfrom,
+    idto,
+    foundedDateFrom,
+    foundedDateTo,
+    ratingsFrom,
+    ratingsTo,
+    numEmployeesFrom,
+    numEmployeesTo,
+    selectedCompanyTypes,
+    selectedDepartments,
+    isSidebarOpen,
+    viewType,
+  ]);
+
+  useEffect(() => {
+    localStorage.setItem("viewType", viewType);
+  }, [viewType]);
+
+  const handleFilterChange = () => {
+    localStorage.setItem("idFrom", idfrom);
+    localStorage.setItem("idTo", idto);
+    localStorage.setItem("foundedDateFrom", foundedDateFrom);
+    localStorage.setItem("foundedDateTo", foundedDateTo);
+    localStorage.setItem("ratingsFrom", ratingsFrom);
+    localStorage.setItem("ratingsTo", ratingsTo);
+    localStorage.setItem("numEmployeesFrom", numEmployeesFrom);
+    localStorage.setItem("numEmployeesTo", numEmployeesTo);
+    localStorage.setItem(
+      "selectedCompanyTypes",
+      JSON.stringify(selectedCompanyTypes)
+    );
+    localStorage.setItem(
+      "selectedDepartments",
+      JSON.stringify(selectedDepartments)
+    );
+    localStorage.setItem("isSidebarOpen", JSON.stringify(isSidebarOpen));
+  };
+
+  useEffect(() => {
+    const storedCompanyTypeDropdownState = localStorage.getItem(
+      "isCompanyTypeDropdownOpen"
+    );
+    setIsCompanyTypeDropdownOpen(
+      storedCompanyTypeDropdownState
+        ? JSON.parse(storedCompanyTypeDropdownState)
+        : false
+    );
+
+    const storedDepartmentDropdownState = localStorage.getItem(
+      "isDepartmentDropdownOpen"
+    );
+    setIsDepartmentDropdownOpen(
+      storedDepartmentDropdownState
+        ? JSON.parse(storedDepartmentDropdownState)
+        : false
+    );
+  }, []);
+
+  const toggleSidebar = () => {
+    if (isReportsPanelOpen) {
+      setIsReportsPanelOpen(false);
+      localStorage.setItem("isReportsPanelOpen", JSON.stringify(false));
+    }
+
+    // Toggle the sidebar
+    setIsSidebarOpen(!isSidebarOpen);
+    localStorage.setItem("isSidebarOpen", JSON.stringify(!isSidebarOpen));
+
+    // Update the viewType in localStorage
+    localStorage.setItem("viewType", isSidebarOpen ? "card" : "table");
+  };
+
+  const clearFilters = () => {
+    setIdFrom("");
+    setIdTo("");
+    setFoundedDateFrom("");
+    setFoundedDateTo("");
+    setRatingsFrom("");
+    setRatingsTo("");
+    setNumEmployeesFrom("");
+    setNumEmployeesTo("");
+    setSelectedCompanyTypes([]);
+    setSelectedDepartments([]);
+    setSearchTerm("");
+    setTags([]);
+    setSelectedLogic("and");
+    setIsCompanyTypeDropdownOpen(false);
+    setIsDepartmentDropdownOpen(false);
+    handleFilterChange();
+  };
+
   const handleTagRemove = (tag) => {
     const updatedTags = tags.filter((t) => t !== tag);
     setTags(updatedTags);
   };
-  const [isReportsPanelOpen, setIsReportsPanelOpen] = useState(false);
 
-  const toggleReportsPanel = () => {
-    setIsReportsPanelOpen(!isReportsPanelOpen);
-  };
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedCompanyTypes, setSelectedCompanyTypes] = useState([]);
+  // const toggleSidebar = () => {
+  //   if (isReportsPanelOpen) {
+  //     setIsReportsPanelOpen(false);
+  //     localStorage.setItem("isReportsPanelOpen", JSON.stringify(false));
+  //   }
 
-  const toggleDropdown = () => {
+  //   // Toggle the sidebar
+  //   setIsSidebarOpen(!isSidebarOpen);
+  //   localStorage.setItem("isSidebarOpen", JSON.stringify(!isSidebarOpen));
+  // };
+
+  /* const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
-  };
+  };*/
 
   const handleCompanyTypeChange = (value) => {
     const updatedSelectedCompanyTypes = selectedCompanyTypes.includes(value)
@@ -60,13 +230,9 @@ function CompanyList() {
     setSelectedCompanyTypes(updatedSelectedCompanyTypes);
   };
 
-  const [isDepartmentDropdownOpen, setIsDepartmentDropdownOpen] =
-    useState(false);
-  const [selectedDepartments, setSelectedDepartments] = useState([]);
-
-  const toggleDepartmentDropdown = () => {
+  /* const toggleDepartmentDropdown = () => {
     setIsDepartmentDropdownOpen(!isDepartmentDropdownOpen);
-  };
+  };*/
 
   const handleDepartmentCheckboxChange = (value) => {
     if (selectedDepartments.includes(value)) {
@@ -151,7 +317,11 @@ function CompanyList() {
 
   const commonReports = [
     { name: "Highly Rated", filter1: "some value", filter2: "another value" },
-    { name: "Green Companies", filter1: "different value", filter3: "yet another value" },
+    {
+      name: "Green Companies",
+      filter1: "different value",
+      filter3: "yet another value",
+    },
   ];
 
   const personalReports =
@@ -191,6 +361,7 @@ function CompanyList() {
           >
             <AiOutlineFilter className="cp_icon" />
           </div>
+
           {/* <div className="cp_current_report_name">{currentReportName}</div> */}
           <div className="cp_search_container">
             <input
@@ -213,21 +384,21 @@ function CompanyList() {
           <div className="cp_view_toggler">
             <label
               className="cp_icon_label"
-              onClick={() => setViewType("card")}
+              onClick={() => setViewType("table")}
             >
               <CiBoxList
                 className={`cp_icon cp_card_icon ${
-                  viewType === "card" ? "cp_selected_icon" : ""
+                  viewType === "table" ? "cp_selected_icon" : ""
                 }`}
               />
             </label>
             <label
               className="cp_icon_label"
-              onClick={() => setViewType("table")}
+              onClick={() => setViewType("card")}
             >
               <BsGrid
                 className={`cp_icon cp_grid_icon ${
-                  viewType === "table" ? "cp_selected_icon" : ""
+                  viewType === "card" ? "cp_selected_icon" : ""
                 }`}
               />
             </label>
@@ -244,9 +415,12 @@ function CompanyList() {
                 <button onClick={toggleReportsPanel}>
                   <FaEye /> View Reports
                 </button>
+                <button onClick={clearFilters}>
+                  <MdDelete /> Clear Filters
+                </button>
               </div>
               <p style={{ paddingLeft: "12px" }}>
-                For multiple filters responce will be :{" "}
+                For multiple filters response will be :{" "}
               </p>
               <div className="cp_filter_logic">
                 <label>
@@ -270,6 +444,7 @@ function CompanyList() {
                   Intersection
                 </label>
               </div>
+
               <div className="cp_filter_section">
                 <h3 className="cp_filter_title">ID Range</h3>
                 <div className="cp_filter_input">
@@ -348,13 +523,19 @@ function CompanyList() {
                 <h3 className="cp_filter_title">
                   Company Type{" "}
                   <span
-                    className={`dropdown-icon ${isDropdownOpen ? "open" : ""}`}
+                    className={`dropdown-icon ${
+                      isCompanyTypeDropdownOpen ? "open" : ""
+                    }`}
                     onClick={toggleDropdown}
                   >
-                    {isDropdownOpen ? <FaCaretUp /> : <FaCaretDown />}
+                    {isCompanyTypeDropdownOpen ? (
+                      <FaCaretUp />
+                    ) : (
+                      <FaCaretDown />
+                    )}
                   </span>
                 </h3>
-                {isDropdownOpen && (
+                {isCompanyTypeDropdownOpen && (
                   <div className="dropdown-options">
                     <label>
                       <input
@@ -400,7 +581,9 @@ function CompanyList() {
                 <h3 className="cp_filter_title">
                   Department
                   <span
-                    className="dropdown-icon"
+                    className={`dropdown-icon ${
+                      isDepartmentDropdownOpen ? "open" : ""
+                    }`}
                     onClick={toggleDepartmentDropdown}
                   >
                     {isDepartmentDropdownOpen ? <FaCaretUp /> : <FaCaretDown />}
@@ -450,7 +633,6 @@ function CompanyList() {
                       />
                       Retail
                     </label>
-                    {/* Add more options as needed */}
                   </div>
                 )}
               </div>
@@ -483,9 +665,9 @@ function CompanyList() {
                       {Object.keys(personalReports).map((reportName) => (
                         <li
                           key={reportName}
-                          onClick={() =>{
+                          onClick={() => {
                             setCurrentReportName(reportName);
-                            applyFilter(personalReports[reportName])
+                            applyFilter(personalReports[reportName]);
                           }}
                         >
                           <PiClipboardTextDuotone style={{ padding: "10px" }} />
@@ -497,37 +679,50 @@ function CompanyList() {
                 </div>
               </div>
             )}
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
-            <CompanyCard />
+
+            <div className="company-list-container">
+              {viewType === "table" && (
+                <div className="table-container">
+                  <DataTable />
+                </div>
+              )}
+              {viewType !== "table" && (
+                <div className="company_lists">
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                  <CompanyCard />
+                </div>
+              )}
+            </div>
+
             {/* <CompanyCard/>   */}
           </div>
         </div>

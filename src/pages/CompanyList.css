@@ -136,6 +136,18 @@
     color: rgb(133, 130, 130);
 }
 
+.cp_sidebar_filter {
+  z-index: 2; /* Adjust the value as needed */
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+}
+
+.company-list-container {
+  position: relative;
+}
+
 .cp_card_icon,
 .cp_grid_icon {
     transition: color 0.3s ease-in-out;
@@ -342,9 +354,10 @@
   .save-view-section {
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
     background-color: #8d8c8c;
     margin-bottom: 5px;
+    padding: 0 10px; 
   }
   
   .save-view-section button {
@@ -353,6 +366,7 @@
     background-color: #3498db00;
     color: #fff;
     padding: 10px;
+    margin: 0 5px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -363,7 +377,7 @@
   }
   
   .save-view-section button svg {
-    margin-right: 5px;
+    margin-right: 1px;
   }
 
 
@@ -425,6 +439,18 @@
   font-size: 16px; 
   color: #555;
   cursor: pointer;
+}
+
+
+/* .table-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+} */
+
+ .table-container {
+  width: 100%;
 }
 
 

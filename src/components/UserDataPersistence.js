@@ -20,7 +20,7 @@ function UserDataPersistence() {
         dispatch(setUser(decodedToken));
       } else {
         dispatch(removeUser());
-        navigate('/login'); 
+        navigate('/company-list'); 
       }
     }
   }, []);

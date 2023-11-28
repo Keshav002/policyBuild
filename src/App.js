@@ -18,6 +18,7 @@ import ConsultantProjects from "./pages/ConsultantProjects";
 import Login from "./pages/Login";
 import {Provider} from "react-redux";
 import store from "./store/store";
+import { DataTable } from "./components/DataTable";
 import UserDataPersistence from './components/UserDataPersistence';
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Router>
         <UserDataPersistence />
           <Routes>
+          <Route path="/" element={<CompanyList />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/consultant" element={<Consultant />} />
             <Route path="/company-list" element={<CompanyList />} />
@@ -34,6 +36,7 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/consultant-projects" element={<ConsultantProjects />} />
             <Route path="/login" element={<Login />} />
+            <Route path= "/datatable" element={<DataTable />} />
           </Routes>
         </Router>
       </Provider>
