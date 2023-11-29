@@ -19,15 +19,15 @@ import Login from "./pages/Login";
 import {Provider} from "react-redux";
 import store from "./store/store";
 import { DataTable } from "./components/DataTable";
-import UserDataPersistence from './components/UserDataPersistence';
+
 function App() {
   return (
     <>
+    
       <Provider store={store}>
         <Router>
-        <UserDataPersistence />
+          <UserPersistance />
           <Routes>
-          <Route path="/" element={<CompanyList />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/consultant" element={<Consultant />} />
             <Route path="/company-list" element={<CompanyList />} />
