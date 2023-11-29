@@ -1,0 +1,12 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.policy-card-div{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around; 
+    position: relative;
+    flex: 1;
+}

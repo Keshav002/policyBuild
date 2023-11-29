@@ -1,0 +1,105 @@
+/* PolicyCard.css */
+
+/* PolicyCard.css */
+
+.pc_policy-card {
+    width: 350px;
+    height: 140px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    margin: 10px;
+    background-color: #f5f5f5; /* Light grey background color */
+    color: #333; /* Text color */
+    cursor: pointer;
+  }
+  
+  .pc_header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #ccc; /* Add a bottom border for separation */
+  }
+  
+  .pc_icon {
+    font-size: 20px;
+    margin-right: 10px;
+    color: #4f4f50; /* Choose a professional color for the icon */
+  }
+  
+  .pc_policy-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #565656;
+  }
+  
+ /* PolicyCard.css */
+
+/* PolicyCard.css */
+
+.pc_info {
+    margin-top: 10px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    flex-wrap: wrap; /* Allow flex items to wrap to the next line */
+  }
+  
+  .pc_detail {
+    width: 50%; /* Set the width to 48% for two columns with some space in between */
+    box-sizing: border-box; /* Include padding and border in the element's total width */
+    margin-bottom: 10px; /* Add margin between details for spacing */
+    text-align: end;
+  }
+  .pc_detail:nth-child(1) {
+    text-align: left;
+  }
+  
+  /* Align the second column to the right */
+  .pc_detail:nth-child(2) {
+    text-align: right;
+  }
+
+  .pc_detail:nth-child(3) {
+    text-align: left;
+  }
+  
+  /* Align the second column to the right */
+  .pc_detail:nth-child(4) {
+    text-align: right;
+  }
+  
+  
+  
+/* PolicyCard.css */
+
+.pc_timestamps {
+    font-style: italic;
+    font-size: 12px;
+    color: #565656;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+  }
+  
+  .pc_created-at,
+  .pc_updated-at {
+    width: 48%; /* Set the width to 48% for two columns with some space in between */
+    box-sizing: border-box; /* Include padding and border in the element's total width */
+    margin-bottom: 10px; /* Add margin between timestamps for spacing */
+  }
+  
+  /* Align the first timestamp to the left */
+  .pc_created-at {
+    text-align: left;
+  }
+  
+  /* Align the second timestamp to the right */
+  .pc_updated-at {
+    text-align: right;
+  }
+  
+  
