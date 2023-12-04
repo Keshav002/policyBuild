@@ -136,6 +136,8 @@
     color: rgb(133, 130, 130);
 }
 
+
+
 .cp_sidebar_filter {
   z-index: 2; /* Adjust the value as needed */
   position: absolute;
@@ -442,16 +444,26 @@
 }
 
 
-/* .table-container {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  overflow: hidden;
-} */
-
- .table-container {
-  width: 100%;
+.company_lists {
+  flex: 1;
+  overflow: auto;
+  padding-right: 20px; 
+  box-sizing: border-box; 
 }
+
+.company-list-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.table-container,
+.company_lists {
+  flex: 1;
+  overflow: auto;
+}
+
+
 
 
 

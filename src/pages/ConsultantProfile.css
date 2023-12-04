@@ -1,0 +1,64 @@
+/* ConsultantProfile.css */
+
+.consultant_profile_page{
+  background-color: #ddd;
+    min-height: 100vh;
+}
+
+.consultant_profile_banner {
+    width: 90%;
+    border-radius: 30px;
+    margin: auto;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background-color: #ffffff; /* Set your desired background color */
+  }
+  
+  .consultant_profile_picture img {
+    width: 150px; /* Set your desired width for the profile picture */
+    height: 150px; /* Set your desired height for the profile picture */
+    border-radius: 20px; /* To make the picture circular */
+    object-fit: cover; /* Ensure the picture covers the entire space */
+    margin-right: 20px; /* Adjust margin as needed */
+  }
+  
+  .consultant_profile_details {
+    flex: 1;
+  }
+  
+  .locationOneTheme {
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .experienceOneTheme {
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .calenderOneTheme {
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .phoneOneTheme {
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .verifiedOneTheme {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .verifiedOneTheme svg {
+    margin-right: 8px;
+    color: #28a745; /* Set your desired color for the checkmark icon */
+  }
+  
+  /* Add more styles as needed */
+  

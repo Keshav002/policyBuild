@@ -12,6 +12,7 @@ import SignUp from "./pages/Signup";
 import Consultant from "./pages/Consultant";
 import CompanyList from "./pages/CompanyList";
 import CompanyProfile from "./pages/CompanyProfile";
+import ConsultantProfile from "./pages/ConsultantProfile";
 import ForgotPass from "./pages/ForgotPass";
 import ResetPassword from "./pages/ResetPassword";
 import ConsultantProjects from "./pages/ConsultantProjects";
@@ -32,6 +33,7 @@ function App() {
             <Route path="/consultant" element={<Consultant />} />
             <Route path="/company-list" element={<CompanyList />} />
             <Route path="/company-profile" element={<CompanyProfile />} />
+            <Route path="/consultant-profile" element={<ConsultantProfile />} />
             <Route path="/forgot-password" element={<ForgotPass />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/consultant-projects" element={<ConsultantProjects />} />

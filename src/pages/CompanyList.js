@@ -250,7 +250,6 @@ function CompanyList() {
   };
 
   const applyFilter = (report) => {
-    // Extract filter values from the 'report' object and apply them
     const {
       tags,
       selectedLogic,
@@ -266,16 +265,11 @@ function CompanyList() {
       numEmployeesTo,
     } = report;
 
-    // Apply tags filter
     setTags(tags);
-
-    // Apply company type filter
     setSelectedCompanyTypes(selectedCompanyTypes);
 
-    // Apply department filter
     setSelectedDepartments(selectedDepartments);
 
-    // Apply other filters
     setIdFrom(idfrom || "");
     setIdTo(idto || "");
     setRatingsFrom(ratingsFrom || "");
@@ -350,6 +344,72 @@ function CompanyList() {
     </>
   );
 
+  const fetchCompaniesWithFilters = async () => {
+    const filters = {
+      idfrom,
+      idto,
+      foundedDateFrom,
+      foundedDateTo,
+      ratingsFrom,
+      ratingsTo,
+      numEmployeesFrom,
+      numEmployeesTo,
+      selectedCompanyTypes,
+      selectedDepartments,
+      tags,
+    };
+
+    const params = new URLSearchParams();
+
+    for (const [key, value] of Object.entries(filters)) {
+      if (value !== "" && (Array.isArray(value) ? value.length > 0 : true)) {
+        params.append(key, Array.isArray(value) ? value.join(',') : value);
+      }
+    }
+
+    const queryString = params.toString();
+    const url = `/search/companies/?${queryString}`;
+
+    console.log('Constructed URL:', url);
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          Authorization: 'Bearer YOUR_TOKEN', 
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('Fetched data:', data);
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    
+    }
+  };
+
+  useEffect(() => {
+    fetchCompaniesWithFilters();
+  }, [
+    idfrom,
+    idto,
+    foundedDateFrom,
+    foundedDateTo,
+    ratingsFrom,
+    ratingsTo,
+    numEmployeesFrom,
+    numEmployeesTo,
+    selectedCompanyTypes,
+    selectedDepartments,
+    tags,
+  ]);
+
+
+
+ 
   return (
     <>
       <div className="company-list-page">
@@ -452,14 +512,20 @@ function CompanyList() {
                     type="number"
                     placeholder="From"
                     value={idfrom}
-                    onChange={(e) => setIdFrom(e.target.value)}
+                    onChange={(e) => {
+                      setIdFrom(e.target.value);
+                
+                    }}
                   />
                   <span className="cp_filter_separator">to</span>
                   <input
                     type="number"
                     placeholder="To"
                     value={idto}
-                    onChange={(e) => setIdTo(e.target.value)}
+                    onChange={(e) => {
+                      setIdTo(e.target.value);
+                  
+                    }}
                   />
                 </div>
               </div>
@@ -470,13 +536,19 @@ function CompanyList() {
                   <input
                     type="date"
                     value={foundedDateFrom}
-                    onChange={(e) => setFoundedDateFrom(e.target.value)}
+                    onChange={(e) => {
+                      setFoundedDateFrom(e.target.value);
+                    
+                    }}
                   />
                   <span className="cp_filter_separator">to</span>
                   <input
                     type="date"
                     value={foundedDateTo}
-                    onChange={(e) => setFoundedDateTo(e.target.value)}
+                    onChange={(e) => {
+                      setFoundedDateTo(e.target.value);
+                    
+                    }}
                   />
                 </div>
               </div>
@@ -488,14 +560,20 @@ function CompanyList() {
                     type="number"
                     placeholder="From"
                     value={ratingsFrom}
-                    onChange={(e) => setRatingsFrom(e.target.value)}
+                    onChange={(e) => {
+                      setRatingsFrom(e.target.value);
+                  
+                    }}
                   />
                   <span className="cp_filter_separator">to</span>
                   <input
                     type="number"
                     placeholder="To"
                     value={ratingsTo}
-                    onChange={(e) => setRatingsTo(e.target.value)}
+                    onChange={(e) => {
+                      setRatingsTo(e.target.value);
+                  
+                    }}
                   />
                 </div>
               </div>
