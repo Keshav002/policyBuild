@@ -3,6 +3,7 @@
 .consultant_profile_page{
   background-color: #ddd;
     min-height: 100vh;
+    padding-bottom: 20px;
 }
 
 .consultant_profile_banner {
@@ -13,12 +14,15 @@
     display: flex;
     align-items: center;
     padding: 20px;
+    padding-bottom: 30px;
     background-color: #ffffff; /* Set your desired background color */
+    position: relative;
+    /* height: 270px; */
   }
   
   .consultant_profile_picture img {
-    width: 150px; /* Set your desired width for the profile picture */
-    height: 150px; /* Set your desired height for the profile picture */
+    width: 170px; /* Set your desired width for the profile picture */
+    height: 180px; /* Set your desired height for the profile picture */
     border-radius: 20px; /* To make the picture circular */
     object-fit: cover; /* Ensure the picture covers the entire space */
     margin-right: 20px; /* Adjust margin as needed */
@@ -26,39 +30,157 @@
   
   .consultant_profile_details {
     flex: 1;
+    margin-left: 10px;
+  }
+  .consultant_profile_banner_data {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch; /* Equal height for both columns */
+    margin: 10px;
   }
   
-  .locationOneTheme {
-    margin-bottom: 8px;
-    font-weight: bold;
+  .consultant_profile_banner_data_c1,
+  .consultant_profile_banner_data_c2 {
+    flex: 1;
+    padding: 0 5px; /* Add padding as needed */
+    border-right: 1px solid #a4a3a3; /* Vertical line between columns */
+    box-sizing: border-box; /* Include padding and border in the total width */
   }
   
-  .experienceOneTheme {
-    margin-bottom: 8px;
-    font-weight: bold;
+  /* Remove the border-right from the last column */
+  .consultant_profile_banner_data_c2 {
+    border-right: none;
   }
-  
-  .calenderOneTheme {
-    margin-bottom: 8px;
-    font-weight: bold;
+
+  .constultant_profile_banner_personal_detail_icon{
+    margin-right: 10px;
+    color: rgb(121, 122, 122);
   }
-  
-  .phoneOneTheme {
-    margin-bottom: 8px;
-    font-weight: bold;
-  }
-  
-  .verifiedOneTheme {
+
+  .constultant_profile_banner_personal_detail{
     display: flex;
     align-items: center;
-    margin-bottom: 8px;
-    font-weight: bold;
-  }
-  
-  .verifiedOneTheme svg {
-    margin-right: 8px;
-    color: #28a745; /* Set your desired color for the checkmark icon */
-  }
-  
-  /* Add more styles as needed */
-  
+    padding: 10px;
+}
+
+.consultant_profile_professional_summary {
+  width: 90%;
+  border-radius: 30px;
+  margin: auto;
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+
+}
+
+.consultant_profile_professional_summary h3 {
+  font-size: 18px;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.consultant_profile_professional_summary p {
+  font-size: 18px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.consultant_profile_resume_section {
+  width: 90%;
+  border-radius: 30px;
+  margin: auto;
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px dashed #ddd;
+}
+
+.consultant_profile_resume_section h3 {
+  font-size: 18px;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.resume_box {
+  margin-top: 10px;
+  border: 2px solid rgb(183, 180, 180);
+  border-radius: 10px;
+  border-style: dashed;
+  padding: 20px;
+  margin: 10px;
+  text-align: center;
+}
+
+.resume_box p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.resume_buttons {
+  margin-top: 15px;
+}
+
+.download_button,
+.update_button {
+  color: rgb(210, 207, 207);
+  background-color: #636262;
+  padding: 10px 13px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  margin-right: 10px;
+}
+
+.download_button:hover,
+.update_button:hover {
+  background-color: #4d4d4d;
+  color: white;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 4px 6px -1px, rgba(255, 255, 255, 0.3) 0px 3px 5px -1px;
+}
+
+
+/* Add these styles to ConsultantProfile.css */
+
+.consultant_profile_key_skills_section {
+  width: 90%;
+  border-radius: 30px;
+  margin: auto;
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px dashed #ddd;
+  margin-bottom: 20px;
+}
+
+.consultant_profile_key_skills_section h3 {
+  font-size: 18px;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 25px;
+}
+
+.consultant_profile_key_skills_tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+}
+
+.consultant_profile_key_skill_tag {
+  background-color: #636262;
+  color: rgb(248, 248, 248);
+  padding: 10px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.consultant_profile_key_skill_tag:hover {
+  background-color: #4d4d4d;
+  color: white;
+}

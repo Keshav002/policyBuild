@@ -9,13 +9,14 @@
     
 }
 
-.company_lists {
+.company_lists_cards {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
-    
     position: relative;
     flex: 1;
+    margin-bottom: 20px;
+
   }
   .company_lists.with-sidebar {
     margin-left: 300px; 
@@ -146,9 +147,6 @@
   height: 100%;
 }
 
-.company-list-container {
-  position: relative;
-}
 
 .cp_card_icon,
 .cp_grid_icon {
@@ -447,27 +445,34 @@
 .company_lists {
   flex: 1;
   overflow: auto;
-  padding-right: 20px; 
   box-sizing: border-box; 
+
 }
 
 .company-list-container {
   display: flex;
-  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
   overflow: hidden;
+  position: relative;
 }
 
 .table-container,
 .company_lists {
   flex: 1;
   overflow: auto;
+  /* padding-bottom: 20px; */
 }
 
-
-
-
-
-
+.company_list_pagination_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  background-color: #ddd;
+  padding: 20px;
+  box-sizing: border-box;
+}
 
 
 @media screen and (max-width: 768px) {

@@ -10,7 +10,10 @@ import { FaSave, FaEye } from "react-icons/fa";
 import { PiClipboardTextDuotone } from "react-icons/pi";
 import { MdDelete } from "react-icons/md";
 import { DataTable } from "../components/DataTable";
-
+import { Pagination } from "antd";
+import { DatePickerProps } from "antd";
+import { DatePicker, Space } from "antd";
+import dayjs from "dayjs";
 function CompanyList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [tags, setTags] = useState([]);
@@ -201,6 +204,19 @@ function CompanyList() {
     setIsDepartmentDropdownOpen(false);
     handleFilterChange();
   };
+  const [isDatePicker1Open, setDatePicker1Open] = useState(false);
+  const [isDatePicker2Open, setDatePicker2Open] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setDatePicker1Open(false);
+      setDatePicker2Open(false);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   const handleTagRemove = (tag) => {
     const updatedTags = tags.filter((t) => t !== tag);
@@ -363,19 +379,19 @@ function CompanyList() {
 
     for (const [key, value] of Object.entries(filters)) {
       if (value !== "" && (Array.isArray(value) ? value.length > 0 : true)) {
-        params.append(key, Array.isArray(value) ? value.join(',') : value);
+        params.append(key, Array.isArray(value) ? value.join(",") : value);
       }
     }
 
     const queryString = params.toString();
     const url = `/search/companies/?${queryString}`;
 
-    console.log('Constructed URL:', url);
+    console.log("Constructed URL:", url);
 
     try {
       const response = await fetch(url, {
         headers: {
-          Authorization: 'Bearer YOUR_TOKEN', 
+          Authorization: "Bearer YOUR_TOKEN",
         },
       });
 
@@ -383,11 +399,9 @@ function CompanyList() {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
-      console.log('Fetched data:', data);
-
+      console.log("Fetched data:", data);
     } catch (error) {
-      console.error('Error fetching data:', error);
-    
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -407,9 +421,16 @@ function CompanyList() {
     tags,
   ]);
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const formattedDate = date.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
+    });
+    return formattedDate;
+  };
 
-
- 
   return (
     <>
       <div className="company-list-page">
@@ -514,7 +535,6 @@ function CompanyList() {
                     value={idfrom}
                     onChange={(e) => {
                       setIdFrom(e.target.value);
-                
                     }}
                   />
                   <span className="cp_filter_separator">to</span>
@@ -524,7 +544,6 @@ function CompanyList() {
                     value={idto}
                     onChange={(e) => {
                       setIdTo(e.target.value);
-                  
                     }}
                   />
                 </div>
@@ -533,22 +552,25 @@ function CompanyList() {
               <div className="cp_filter_section">
                 <h3 className="cp_filter_title">Founded Date Range</h3>
                 <div className="cp_filter_input">
-                  <input
-                    type="date"
-                    value={foundedDateFrom}
-                    onChange={(e) => {
-                      setFoundedDateFrom(e.target.value);
-                    
+                  <DatePicker
+                    onChange={(date) => {
+                      setFoundedDateFrom(date ? dayjs(date).format("DD/MM/YYYY") : "");
                     }}
+                    open={isDatePicker1Open}
+                    onOpenChange={(visible) => setDatePicker1Open(visible)}
+                    value={foundedDateFrom ? dayjs(foundedDateFrom, "DD/MM/YYYY") : null}
+                    format="DD/MM/YYYY"
                   />
+
                   <span className="cp_filter_separator">to</span>
-                  <input
-                    type="date"
-                    value={foundedDateTo}
-                    onChange={(e) => {
-                      setFoundedDateTo(e.target.value);
-                    
+                  <DatePicker
+                    onChange={(date) => {
+                      setFoundedDateTo(date ? dayjs(date).format("DD/MM/YYYY") : "");
                     }}
+                    open={isDatePicker2Open}
+                    onOpenChange={(visible) => setDatePicker2Open(visible)}
+                    value={foundedDateTo ? dayjs(foundedDateTo, "DD/MM/YYYY") : null}
+                    format="DD/MM/YYYY"
                   />
                 </div>
               </div>
@@ -562,7 +584,6 @@ function CompanyList() {
                     value={ratingsFrom}
                     onChange={(e) => {
                       setRatingsFrom(e.target.value);
-                  
                     }}
                   />
                   <span className="cp_filter_separator">to</span>
@@ -572,7 +593,6 @@ function CompanyList() {
                     value={ratingsTo}
                     onChange={(e) => {
                       setRatingsTo(e.target.value);
-                  
                     }}
                   />
                 </div>
@@ -765,7 +785,7 @@ function CompanyList() {
                 </div>
               )}
               {viewType !== "table" && (
-                <div className="company_lists">
+                <div className="company_lists_cards">
                   <CompanyCard />
                   <CompanyCard />
                   <CompanyCard />
@@ -799,6 +819,19 @@ function CompanyList() {
                   <CompanyCard />
                 </div>
               )}
+              <hr />
+              <div className="company_list_pagination_container">
+                <>
+                  <Pagination
+                    total={1000}
+                    showTotal={(total, range) =>
+                      `${range[0]}-${range[1]} of ${total} items`
+                    }
+                    defaultPageSize={20}
+                    defaultCurrent={1}
+                  />
+                </>
+              </div>
             </div>
 
             {/* <CompanyCard/>   */}

@@ -127,7 +127,6 @@ function CompanyProfile() {
             <span className="company-profile-tag">Oil and Gas</span>
             <span className="company-profile-tag">Energy</span>
             <span className="company-profile-tag">Analytics</span>
-            {/* Add more tags as needed */}
           </div>
         </div>
 

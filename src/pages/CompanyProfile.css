@@ -339,3 +339,10 @@
   color: #666;
   padding: 0 15px 15px;
 }
+
+.ant-pagination-item-active a {
+  color: #000000 !important; 
+}
+.ant-pagination-item-active {
+  border-color: #1e1e1e !important; 
+}
