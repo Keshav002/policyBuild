@@ -1,8 +1,7 @@
-
-
 .company-profile-page{
   background-color: #ddd;
   min-height: 100vh;
+ 
 }
 
 .company-profile-banner {
@@ -165,6 +164,196 @@
   
   font-size: 1.1rem;
 }
+
+.edit-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #333; 
+  padding: 0 12px;
+  transition: transform 0.3s ease-in-out;
+}
+
+/*edit icon*/
+.edit-button:hover {
+  transform: scale(1.1); 
+}
+
+
+
+
+
+
+.company-profile-edit-popup-container {
+  position: absolute;
+  top: 50%; 
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+.company-profile-edit-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.company-profile-edit-popup {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.company-profile-form-label {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.company-profile-form-control {
+  width: calc(100% - 16px); 
+  padding: 8px;
+  margin-bottom: 15px;
+  margin-right: 8px; 
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+  padding: 12px; 
+  margin-bottom: 20px;
+}
+
+textarea.company-profile-form-control {
+  width: calc(100% - 16px);
+  resize: vertical;
+  padding: 12px;
+  padding: 8px;
+  margin-bottom: 15px;
+  margin-right: 8px; 
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+}
+
+.selected-tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 5px;
+}
+
+.selected-tag {
+  display: flex;
+  align-items: center;
+  background-color: #636262;
+  color: #fff;
+  border-radius: 20px;
+  padding: 5px 10px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+.selected-tag span {
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+
+.company-details-edit-button {
+  cursor: pointer;
+  color: #636262;
+  font-size: 20px;
+  margin-left: auto; 
+  background: none; 
+  border: none;
+  padding: 0; 
+  margin-left: 10px;
+}
+
+.company-details-edit-button:hover {
+  color: #636262;
+ 
+    transform: scale(1.1); 
+  
+}
+
+
+.company-profile-edit-popup__buttons {
+  display: flex;
+  justify-content: space-around; 
+  margin-top: 20px;
+}
+
+.company-profile-edit-popup__buttons button {
+  color: rgb(210, 207, 207);
+  background-color: #636262;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background-color 0.3s;
+  border-radius: 10px;
+}
+.company-profile-edit-popup__buttons button:hover {
+  background-color: #4d4d4d;
+  color: white;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 4px 6px -1px, rgba(255, 255, 255, 0.3) 0px 3px 5px -1px;
+}  
+
+
+
+.company-profile-logo {
+  margin-left: 20px;
+  width: 15%;
+  position: relative;
+}
+
+.company-profile-logo-img {
+  width: 140px;
+  height: 140px;
+  border-radius: 10px;
+  border: 2px solid white;
+}
+
+.change-profile-button {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background-color: #636262;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  opacity: 0; 
+  transition: opacity 0.3s ease-in-out;
+}
+
+.company-profile-logo:hover .change-profile-button {
+  opacity: 1; 
+}
+
+.add-photo-icon {
+  margin-right: 5px;
+  background-color: #212222;
+}
+
+.add-photo-text {
+  font-size: 14px;
+}
+
+
 
 
 .company-profile-info-item:not(:last-child) {
@@ -340,9 +529,186 @@
   padding: 0 15px 15px;
 }
 
-.ant-pagination-item-active a {
-  color: #000000 !important; 
+.company-profile-page::after {
+  content: "";
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
 }
-.ant-pagination-item-active {
-  border-color: #1e1e1e !important; 
+
+.company-profile-page.with-overlay::after {
+  display: block;
+}
+
+.photo-upload-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transition: all 0.3s ease-in-out;
+  
+}
+
+
+
+
+.company-profile-photo-upload-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  border-radius: 10px;
+}
+
+.company-profile-photo-upload-dialog-content {
+  text-align: center;
+}
+
+
+
+.company-profile-photo-upload-dialog-content p {
+  color: grey; 
+}
+
+
+.company-profile-close-dialog {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+
+
+.company-profile-upload-button,
+.company-profile-clear-button,
+.company-profile-upload-input {
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.company-profile-upload-button,
+.company-profile-clear-button {
+  padding: 10px 20px;
+  background-color: #666;
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.company-profile-upload-button:hover,
+.company-profile-clear-button:hover {
+  background-color: #636262;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.company-profile-upload-input {
+  display: none;
+}
+
+.company-profile-select-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #666;
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.company-profile-select-button:hover {
+  background-color: #636262;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+
+.company-profile-preview-dialog-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* .company-profile-preview-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+ 
+  width: 150%;
+  height: 100%;
+  text-align: center;
+} */
+
+.company-profile-preview-dialog {
+  position: relative;
+  max-height: 80vh; 
+  overflow-y: auto; 
+  background-color: white;
+  padding: 20px;
+  text-align: center;
+}
+.preview-container {
+  max-height: 300px; 
+  overflow-y: auto; 
+}
+
+.preview-image {
+  width: 100%; 
+  height: auto; 
+}
+.save-button {
+  background-color: #666;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 0px;
+}
+
+.save-button:hover {
+  background-color: #666;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  cursor: pointer;
+  color: #555;
+}
+
+.close-button:hover {
+  color: #333;
 }

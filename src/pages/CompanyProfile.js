@@ -1,17 +1,18 @@
-// CompanyProfile.jsx
-
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import "./CompanyProfile.css";
 import Nav from ".././components/Nav";
 import { AiOutlineStar } from "react-icons/ai";
-import { FaPaperPlane } from "react-icons/fa";
 import { IoMdSend } from "react-icons/io";
+import { LuPen } from "react-icons/lu";
+import { MdEmail } from "react-icons/md";
+
 import {
   FaMapMarkerAlt,
   FaPhone,
   FaGlobe,
   FaUserFriends,
   FaRegCalendarAlt,
+  FaPlusCircle,
 } from "react-icons/fa";
 
 function CompanyProfile() {
@@ -21,6 +22,7 @@ function CompanyProfile() {
       label: "Headquaters",
       value: "2901 Via Fortuna, Building 6, Suite 200, Austin, TX 78746",
     },
+
     {
       icon: <FaPhone className="info-icon" />,
       label: "Contact No.",
@@ -42,7 +44,7 @@ function CompanyProfile() {
       value: "Oct 22, 1999",
     },
     {
-      icon: <FaRegCalendarAlt className="info-icon" />,
+      icon: <MdEmail className="info-icon" />,
       label: "Email",
       value: "support@enverus.com",
     },
@@ -105,17 +107,263 @@ function CompanyProfile() {
     setReview("");
   };
 
+  const [isHovered, setIsHovered] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  const handleMouseEnter = () => {
+    console.log("Mouse entered");
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    console.log("Mouse left");
+    setIsHovered(false);
+  };
+
+  const handleClick = () => {
+    console.log("Button clicked");
+    setIsEditMode(!isEditMode);
+  };
+
+  const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
+
+  const handleEditClick = () => {
+    setIsEditPopupOpen(!isEditPopupOpen);
+  };
+
+  const handleSubmitEditClick = () => {
+    console.log("Form submitted");
+    setIsEditPopupOpen(false);
+  };
+
+  const handleCancelEditClick = () => {
+    console.log("Edit cancelled");
+    setIsEditPopupOpen(false);
+  };
+
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+
+    console.log("Form submitted");
+  };
+
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [tagInput, setTagInput] = useState("");
+
+  const handleRemoveTag = (index) => {
+    const updatedTags = [...selectedTags];
+    updatedTags.splice(index, 1);
+    setSelectedTags(updatedTags);
+  };
+
+  const handleTagInputChange = (e) => {
+    setTagInput(e.target.value);
+  };
+
+  const handleAddTag = () => {
+    if (tagInput.trim() !== "") {
+      setSelectedTags([...selectedTags, tagInput.trim()]);
+      setTagInput("");
+    }
+  };
+
+  const [isDetailsEditPopupOpen, setIsDetailsEditPopupOpen] = useState(false);
+  const [editedDetails, setEditedDetails] = useState({
+    headquarters: "",
+    contactNumber: "",
+    website: "",
+    employees: "",
+    founded: "",
+    email: "",
+  });
+
+  const handleDetailsFormSubmit = (e) => {
+    e.preventDefault();
+
+    setIsDetailsEditPopupOpen(false);
+  };
+
+  const handlePhotoClick = () => {
+    setIsPhotoDialogOpen(true);
+  };
+  const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const closePhotoDialog = () => {
+    setIsPhotoDialogOpen(false);
+  };
+
+  const handlePhotoUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleUpload = () => {
+    alert("Image uploaded!");
+  };
+
   return (
-    <div className="company-profile-page">
+    <div
+      className={`company-profile-page ${
+        isPhotoDialogOpen ? "with-overlay" : ""
+      }`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {isPhotoDialogOpen && (
+        <div
+          className="company-profile-photo-upload-dialog"
+          style={{ fontFamily: "Santoshi" }}
+        >
+          <div className="company-profile-photo-upload-dialog-content">
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <span
+                className="company-profile-close-dialog"
+                onClick={closePhotoDialog}
+                style={{ fontSize: "24px" }}
+              >
+                &times;
+              </span>
+              <h2 style={{ marginLeft: "0px" }}>Add Photo </h2>
+            </div>
+            <hr
+              style={{
+                marginTop: "10px",
+                marginBottom: "15px",
+                width: "100%",
+                border: "0.1px solid #ddd",
+              }}
+            />
+            <h4 style={{ fontSize: "20px", marginTop: "14px" }}>
+              Elevate your presence with a polished profile picture.
+            </h4>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "15px",
+              }}
+            >
+              <img
+                src={
+                  selectedImage ||
+                  "https://static.licdn.com/aero-v1/sc/h/c5ybm82ti04zuasz2a0ubx7bu"
+                }
+                alt="Profile"
+                style={{
+                  width: "438px",
+                  height: "104px",
+                  borderRadius: "8px",
+                  marginTop: "15px",
+                  marginBottom: "15px",
+                }}
+              />
+            </div>
+
+            <hr
+              style={{
+                marginTop: "15px",
+                marginBottom: "15px",
+                width: "100%",
+                border: "0.1px solid #ddd",
+                marginLeft: "0px",
+              }}
+            />
+
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div>
+                <label
+                  htmlFor="uploadButton"
+                  className="company-profile-upload-button"
+                  style={{ marginLeft: "10px", marginTop: "2px" }}
+                >
+                  Select Photo
+                </label>
+
+                <input
+                  type="file"
+                  accept=".png, .jpg, .jpeg, .gif"
+                  onChange={handlePhotoUpload}
+                  className="company-profile-upload-input"
+                  id="uploadButton"
+                />
+              </div>
+
+              {selectedImage && (
+                <button
+                  className="company-profile-upload-button"
+                  onClick={handleUpload}
+                >
+                  Upload Photo
+                </button>
+              )}
+
+              <button
+                className="company-profile-clear-button"
+                onClick={() => setSelectedImage(null)}
+              >
+                Clear Selection
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Nav />
       <div className="company-profile-banner">
-        <div className="company-profile-logo">
+        <button className="edit-button" onClick={handleEditClick}>
+          <LuPen />
+        </button>
+
+        <div
+          className="company-profile-logo"
+          style={{ position: "relative", overflow: "hidden" }}
+        >
           <img
             src="https://mergerlinks-production.s3.eu-west-2.amazonaws.com/files/company/65710/logo/ENVERUS.jpg"
             alt="Company Logo"
             className="company-profile-logo-img"
           />
+          {isHovered && !isPhotoDialogOpen && (
+            <div
+              className="change-profile-button"
+              onClick={handlePhotoClick}
+              style={{
+                position: "absolute",
+                top: "4%",
+                left: "4%",
+                right: "34%",
+                bottom: "8%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "rgba(0, 0, 0, 0.5)",
+                borderRadius: "8px",
+                border: "2px solid white",
+              }}
+            >
+              <FaPlusCircle
+                className="add-photo-icon"
+                style={{ fontSize: "24px" }}
+              />
+              <span
+                className="add-photo-text"
+                style={{ color: "white", fontSize: "16px" }}
+              >
+                Add Photo
+              </span>
+            </div>
+          )}
         </div>
+
         <div className="company-profile-info">
           <h1 className="company-profile-name">Enverus</h1>
           <p className="company-profile-description">
@@ -143,6 +391,83 @@ function CompanyProfile() {
           </button>
         </div>
       </div>
+
+      {isEditPopupOpen && (
+        <div className="company-profile-edit-popup-overlay">
+          <div className="company-profile-edit-popup-container">
+            <div className="company-profile-edit-popup">
+              <form onSubmit={handleFormSubmit}>
+                <div className="form-group">
+                  <label
+                    htmlFor="companyName"
+                    className="company-profile-form-label"
+                  >
+                    Company Name
+                  </label>
+                  <input
+                    type="text"
+                    className="company-profile-form-control"
+                    id="companyName"
+                    placeholder="Enter company name..."
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label
+                    htmlFor="companyName"
+                    className="company-profile-form-label"
+                  >
+                    Company Description
+                  </label>
+                  <input
+                    type="text"
+                    className="company-profile-form-control"
+                    id="companyName"
+                    row="3"
+                    placeholder="Enter company description..."
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label
+                    htmlFor="companyTags"
+                    className="company-profile-form-label"
+                  ></label>
+                  <div className="selected-tags-container">
+                    {selectedTags.map((tag, index) => (
+                      <span key={index} className="selected-tag">
+                        {tag}{" "}
+                        <span onClick={() => handleRemoveTag(index)}>✕</span>
+                      </span>
+                    ))}
+                  </div>
+                  <div className="tag-input-container">
+                    <input
+                      type="text"
+                      className="company-profile-form-control"
+                      id="companyTags"
+                      placeholder="Add tags (e.g., oil&gas, energy, analytics...)"
+                      value={tagInput}
+                      onChange={handleTagInputChange}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleAddTag();
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              </form>
+
+              <div className="company-profile-edit-popup__buttons">
+                <button onClick={handleSubmitEditClick}>Submit</button>
+                <button onClick={handleCancelEditClick}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {isRatingOpen && (
         <div className="company-profile-rating-popup-overlay">
           <div className="company-profile-rating-popup">
@@ -174,8 +499,17 @@ function CompanyProfile() {
       )}
 
       <div className="company-details-heading-div">
-        <h2 className="company-details-heading">Company Details</h2>
+        <h2 className="company-details-heading">
+          Company Details
+          <button
+            className="company-details-edit-button"
+            onClick={() => setIsDetailsEditPopupOpen(true)}
+          >
+            <LuPen />
+          </button>
+        </h2>
       </div>
+
       <div className="company-profile-remaining-info">
         {infoItems.map((item, index) => (
           <div className="company-profile-info-item" key={index}>
@@ -188,6 +522,150 @@ function CompanyProfile() {
           </div>
         ))}
       </div>
+
+      {isDetailsEditPopupOpen && (
+        <div className="company-profile-edit-popup-overlay">
+          <div className="company-profile-edit-popup">
+            <form onSubmit={handleDetailsFormSubmit}>
+              <div className="mb-3">
+                <label
+                  htmlFor="headquarters"
+                  className="company-profile-form-label"
+                >
+                  <FaMapMarkerAlt />
+                  <span style={{ marginLeft: "5px" }}>Headquarters</span>
+                </label>
+                <input
+                  type="text"
+                  className="company-profile-form-control"
+                  id="headquarters"
+                  placeholder="Enter headquarters"
+                  value={editedDetails.headquarters}
+                  onChange={(e) =>
+                    setEditedDetails({
+                      ...editedDetails,
+                      headquarters: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="mb-3">
+                <label
+                  htmlFor="contactNumber"
+                  className="company-profile-form-label"
+                >
+                  <FaPhone />
+                  <span style={{ marginLeft: "5px" }}>Contact Number</span>
+                </label>
+                <input
+                  type="tel"
+                  className="company-profile-form-control"
+                  id="contactNumber"
+                  placeholder="Enter contact number"
+                  value={editedDetails.contactNumber}
+                  onChange={(e) =>
+                    setEditedDetails({
+                      ...editedDetails,
+                      contactNumber: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="website" className="company-profile-form-label">
+                  <FaGlobe />
+                  <span style={{ marginLeft: "5px" }}>Website</span>
+                </label>
+                <input
+                  type="url"
+                  className="company-profile-form-control"
+                  id="website"
+                  placeholder="www.example.com"
+                  value={editedDetails.website}
+                  onChange={(e) =>
+                    setEditedDetails({
+                      ...editedDetails,
+                      website: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="mb-3">
+                <label
+                  htmlFor="employees"
+                  className="company-profile-form-label"
+                >
+                  <FaUserFriends />
+                  <span style={{ marginLeft: "5px" }}>Employees</span>
+                </label>
+                <input
+                  type="text"
+                  className="company-profile-form-control"
+                  id="employees"
+                  placeholder="Enter number of employees"
+                  value={editedDetails.employees}
+                  onChange={(e) =>
+                    setEditedDetails({
+                      ...editedDetails,
+                      employees: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="founded" className="company-profile-form-label">
+                  <FaRegCalendarAlt />
+                  <span style={{ marginLeft: "5px" }}>Founded</span>
+                </label>
+                <input
+                  type="date"
+                  className="company-profile-form-control"
+                  id="founded"
+                  placeholder="Select founding date"
+                  value={editedDetails.founded}
+                  onChange={(e) =>
+                    setEditedDetails({
+                      ...editedDetails,
+                      founded: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="email" className="company-profile-form-label">
+                  <MdEmail />
+                  <span style={{ marginLeft: "5px" }}>Email</span>
+                </label>
+                <input
+                  type="email"
+                  className="company-profile-form-control"
+                  id="email"
+                  placeholder="support@example.com"
+                  value={editedDetails.email}
+                  onChange={(e) =>
+                    setEditedDetails({
+                      ...editedDetails,
+                      email: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="company-profile-edit-popup__buttons">
+                <button type="submit">Submit</button>
+                <button onClick={() => setIsDetailsEditPopupOpen(false)}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       <div className="company-details-heading-div">
         <h2 className="company-details-heading">Reviews</h2>
       </div>
