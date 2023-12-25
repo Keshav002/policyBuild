@@ -1,8 +1,8 @@
 import React from 'react'
 import Nav from '.././components/Nav'
 import PolicyCard from '.././components/PolicyCard'
-import "./ConsultantProjects.css"
-function ConsultantProjects() {
+import "./CompanyProjects.css"
+function CompanyProjects() {
   return (
     <>
     <Nav/>
@@ -22,4 +22,4 @@ function ConsultantProjects() {
   )
 }
 
-export default ConsultantProjects
+export default CompanyProjects

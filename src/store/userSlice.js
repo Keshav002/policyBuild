@@ -41,7 +41,12 @@ export const logoutUser = (navigate) => {
             Cookies.remove("accessToken");
             Cookies.remove("refreshToken");
             dispatch(removeUser());
-            navigate("/login");
+            navigate("/");
+          } else if(response.status == 401){
+            Cookies.remove("accessToken");
+            Cookies.remove("refreshToken");
+            dispatch(removeUser());
+            navigate("/");
           } else {
             console.error("Logout failed");
           }
@@ -124,7 +129,11 @@ export function handleSignIn(userDetails, navigate) {
             expires: expirationDateRefreshToken,
           });
           dispatch(setUser(data));
-          navigate("/consultant");
+          if(data.role == "Consultant"){
+            navigate("/consultant-projects");
+          }else if(data.role == "Company"){
+            navigate("/company-projects");
+          }
         } else {
           Swal.fire({
             icon: "error",

@@ -1,5 +1,5 @@
 .cc_container_wrapper {
-    width: 400px; /* Set your desired fixed width */
+    width: 410px; /* Set your desired fixed width */
     margin: 0 auto; /* Center the card horizontally */
     margin-top: 10px;
   }
@@ -48,7 +48,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    /* margin-top: 5px; */
+    flex-wrap: wrap;
   }
   
   .cc_rating {

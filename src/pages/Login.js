@@ -11,6 +11,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import {handleSignIn} from '../store/userSlice';
 import {useDispatch} from 'react-redux';
+import ClipLoader from "react-spinners/ClipLoader";
+
 const SignUp = () => {
   const dispatch = useDispatch();
   const [userDetails, setUserDetails] = useState({
@@ -22,6 +24,8 @@ const SignUp = () => {
   const handleInputChange = (e) => {
     setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
   };
+  const [loading, setLoading] = useState(false);
+
 
   const handlelogin = () => {
     // fetch(`${API_URL}/users/users/login/`, {
@@ -56,7 +60,9 @@ const SignUp = () => {
     //       text: 'An error occurred. Please try again.',
     //     });
     //   });
+    setLoading(true);
     dispatch(handleSignIn(userDetails, navigate))
+    setLoading(false);
   };
 
   return (

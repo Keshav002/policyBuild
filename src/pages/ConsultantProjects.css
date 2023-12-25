@@ -11,3 +11,16 @@
     flex: 1;
 }
 
+.consultant-projects-page{
+    min-height: 98vh;
+    background-color: #ddd;
+}
+
+.consultant-projects-page-cards{
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    justify-content: space-evenly;
+
+}
+

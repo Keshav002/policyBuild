@@ -84,10 +84,10 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #fff; 
+    object-fit: cover; 
     transition: border 0.3s;
     cursor: pointer;
+    margin: 2px;
   }
   .navbar-user-photo{
     display: flex;
@@ -127,8 +127,7 @@
   }
   .user-description{
     margin-top: 10px;
-    color: rgb(60, 87, 242);
-    color: #0073e6;
+    color: rgb(92, 92, 92);
 }
 
 
@@ -160,15 +159,14 @@
   
   
   .user-options {
-    padding: 10px;
     border-top: 1px solid #ccc;
   }
   
   
   .user-option {
     cursor: pointer;
-    padding: 10px 10px;
-    
+    padding: 8px 8px;
+    margin: 7px;
     transition: background-color 0.2s ease;
     display: flex;
     align-items: center;
@@ -183,6 +181,7 @@
   
   .user-option .option-icon {
     margin-right: 10px;
+    border-radius: 0px;
   }
   
   

@@ -11,10 +11,14 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import { googleLogin } from "../store/userSlice";
 import {useDispatch} from 'react-redux';
+import ClipLoader from "react-spinners/ClipLoader";
 
 const SignUp = () => {
+  const override = {
+    marginLeft : "10px",
+  };
   const dispatch = useDispatch();
-
+  const [loading, setLoading] = useState(false);
   const [showOTPVerification, setShowOTPVerification] = useState(false);
   const [otp, setOTP] = useState("");
   const [selectedRole, setSelectedRole] = useState("consultant");
@@ -69,6 +73,7 @@ const SignUp = () => {
   };
 
   const handleSignUp = () => {
+    setLoading(true);
     if (userDetails.password !== userDetails.confirmPassword) {
       Swal.fire({
         icon: "error",
@@ -99,6 +104,7 @@ const SignUp = () => {
     })
       .then((response) => response.json())
       .then((data) => {
+       setLoading(false);
         if (data.id) {
           setShowOTPVerification(true);
         } else if (data.email) {
@@ -153,6 +159,7 @@ const SignUp = () => {
   const handleGoogleLoginError = () => {
     console.log("Login Failed");
   };
+ 
 
       
 
@@ -295,13 +302,21 @@ const SignUp = () => {
 
           <div className="signup-login-link">
             Already registered?{" "}
-            <Link className="signup-login-option" to="/login">
+            <Link className="signup-login-option" to="/">
               Login here
             </Link>
           </div>
           <div className="signup-submit-container">
             <div className="signup-submit" onClick={handleSignUp}>
               Sign Up
+              <ClipLoader
+                  color='white'
+                  loading={loading}
+                  cssOverride={override}
+                  size={16}
+                  aria-label="Loading Spinner"
+                  data-testid="loader"
+                />
             </div>
           </div>
         </div>

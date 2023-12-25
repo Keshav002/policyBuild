@@ -16,6 +16,7 @@ import ConsultantProfile from "./pages/ConsultantProfile";
 import ForgotPass from "./pages/ForgotPass";
 import ResetPassword from "./pages/ResetPassword";
 import ConsultantProjects from "./pages/ConsultantProjects";
+import CompanyProjects from "./pages/CompanyProjects";
 import Login from "./pages/Login";
 import {Provider} from "react-redux";
 import store from "./store/store";
@@ -32,12 +33,13 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/consultant" element={<Consultant />} />
             <Route path="/company-list" element={<CompanyList />} />
-            <Route path="/company-profile" element={<CompanyProfile />} />
-            <Route path="/consultant-profile" element={<ConsultantProfile />} />
+            <Route path="/company-profile/:id" element={<CompanyProfile />} />
+            <Route path="/consultant-profile/:id" element={<ConsultantProfile />} />
             <Route path="/forgot-password" element={<ForgotPass />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/consultant-projects" element={<ConsultantProjects />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/company-projects" element={<CompanyProjects />} />
+            <Route path="/" element={<Login />} />
             <Route path= "/datatable" element={<DataTable />} />
           </Routes>
         </Router>

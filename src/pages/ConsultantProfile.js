@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "./ConsultantProfile.css"; // Import your CSS file for styling
 import Nav from ".././components/Nav";
+import { API_URL } from '../ConfigApi';
+import { useParams } from "react-router-dom";
 import {
   IoMdMail,
   IoMdCheckmarkCircleOutline,
@@ -25,6 +27,7 @@ const keySkills = [
   "Data Analysis",
 ];
 function ConsultantProfile() {
+  const { id } = useParams();
   const [isRatingOpen, setIsRatingOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
@@ -32,13 +35,16 @@ function ConsultantProfile() {
     setRating(starNumber);
   };
   const [isEditOpen, setIsEditOpen] = useState(false); // New state for the edit popup
-
-  const [editedName, setEditedName] = useState("");
   const [editedLocation, setEditedLocation] = useState("");
   const [editedPhone, setEditedPhone] = useState("");
-  const [tags, setTags] = useState([]);
   const [editedExperience, setEditedExperience] = useState("");
-  const [editedEmail, setEditedEmail] = useState("");
+  const [tags, setTags] = useState([]); 
+  const [location, setLocation] = useState("");
+  const [phone, setPhone] = useState("");
+  const [experience, setExperience] = useState("");
+  const [editedTags, setEditedTags] = useState([]);
+  const [professionalSummary, setProfessionalSummary] =
+  useState("");
   const [isEditSummaryOpen, setIsEditSummaryOpen] = useState(false);
   const [editedProfessionalSummary, setEditedProfessionalSummary] =
     useState("");
@@ -56,12 +62,36 @@ function ConsultantProfile() {
     setNewSkill("");
   };
 
-  const handleEditSkillsSubmitClick = () => {
-    // Handle the submission logic here
-    // Update the state or variable with the edited key skills
-    // e.g., updateKeySkills(editedKeySkills);
+  const handleEditSkillsSubmitClick = async () => {
+    try {
+      const response = await fetch(`${API_URL}/main/consultants/id/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Authorization': `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({
+          keySkills: editedKeySkills.join(', '), 
+        }),
+      });
+  
+      if (response.ok) {
+        console.log('Key skills updated successfully');
+      } else {
+        if (response.status === 401) {
+          console.error('Unauthorized - Please check your authentication token');
+        } else if (response.status === 400) {
+          console.error('Bad Request - Check your request payload');
+        } else {
+          console.error('Failed to update key skills. Status:', response.status);
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
     setIsEditSkillsOpen(false);
   };
+  
 
   const handleSkillRemove = (skill) => {
     const updatedSkills = editedKeySkills.filter((s) => s !== skill);
@@ -88,10 +118,29 @@ function ConsultantProfile() {
     setIsEditSummaryOpen(false);
     setEditedProfessionalSummary("");
   };
-
-  const handleEditSummarySubmitClick = () => {
+  const handleEditSummarySubmitClick = async () => {
+    try {
+      const response = await fetch(`${API_URL}/main/consulatans/id/`, {
+        method: 'PATCH', 
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Authorization': `Bearer ${authToken}`, 
+        },
+        body: JSON.stringify({
+          bio: editedProfessionalSummary,
+        }),
+      });
+      if (response.ok) {
+        console.log('Summary updated successfully');
+      } else {
+        console.error('Failed to update summary');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
     setIsEditSummaryOpen(false);
   };
+  
 
   const handleEditClick = () => {
     setIsEditOpen(true);
@@ -99,21 +148,43 @@ function ConsultantProfile() {
 
   const handleCancelEditClick = () => {
     setIsEditOpen(false);
-    // Reset all edited fields on cancel
-    setEditedName("");
     setEditedLocation("");
     setEditedPhone("");
     setTags([]);
     setEditedExperience("");
-    setEditedEmail("");
-    // Reset other fields as needed
   };
-
-  const handleEditSubmitClick = () => {
-    // Handle the submission logic here
-    // You can use the edited fields for further processing
+  const handleEditSubmitClick = async () => {
+    try {
+      const response = await fetch(`${API_URL}/main/consultants/id/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Authorization': `Bearer ${authToken}`,
+        },
+          body: JSON.stringify({
+          location: editedLocation,
+          phone: editedPhone,
+          tags: tags, // Assuming you want to send the array of tags as-is
+          experience: editedExperience,
+        }),
+      });
+      if (response.ok) {
+        console.log('Profile updated successfully');
+      } else {
+        if (response.status === 401) {
+          console.error('Unauthorized - Please check your authentication token');
+        } else if (response.status === 400) {
+          console.error('Bad Request - Check your request payload');
+        } else {
+          console.error('Failed to update profile. Status:', response.status);
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
     setIsEditOpen(false);
   };
+  
 
   const handleTagRemove = (tag) => {
     // Remove the tag
@@ -144,10 +215,6 @@ function ConsultantProfile() {
     setRating(0);
     setReview("");
   };
-
-  const handlePhotoClick = () => {
-    setIsPhotoDialogOpen(true);
-  };
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -166,9 +233,34 @@ function ConsultantProfile() {
     }
   };
 
-  const handleUpload = () => {
-    alert("Image uploaded!");
+  const handleUpload = async () => {
+    if (!selectedImage) {
+      alert("Please select an image before uploading.");
+      return;
+    }
+    const base64Image = selectedImage.split(",")[1];
+    try {
+      const response = await fetch(`${API_URL}/main/consultants/id/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image: base64Image,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('Upload response:', data);
+      alert("Image uploaded successfully!");
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert("Error uploading image. Please try again.");
+    }
   };
+  
   return (
     <div className="consultant_profile_page">
       <Nav />
@@ -379,30 +471,6 @@ function ConsultantProfile() {
         {isEditOpen && (
           <div className="company-profile-rating-popup-overlay">
             <div className="consultant_profile_edit_popup">
-              <label htmlFor="editedName">Name:</label>
-              <input
-                type="text"
-                id="editedName"
-                value={editedName}
-                onChange={(e) => setEditedName(e.target.value)}
-              />
-
-              <label htmlFor="editedEmail">Email:</label>
-              <input
-                type="email"
-                id="editedEmail"
-                value={editedEmail}
-                onChange={(e) => setEditedEmail(e.target.value)}
-              />
-
-              <label htmlFor="editedLocation">Location:</label>
-              <input
-                type="text"
-                id="editedLocation"
-                value={editedLocation}
-                onChange={(e) => setEditedLocation(e.target.value)}
-              />
-
               <label htmlFor="editedPhone">Phone Number:</label>
               <input
                 type="tel"
@@ -410,7 +478,13 @@ function ConsultantProfile() {
                 value={editedPhone}
                 onChange={(e) => setEditedPhone(e.target.value)}
               />
-
+              <label htmlFor="editedLocation">Location:</label>
+              <input
+                type="text"
+                id="editedLocation"
+                value={editedLocation}
+                onChange={(e) => setEditedLocation(e.target.value)}
+              />
               <label htmlFor="editedTags">Tags:</label>
               <div className="tags-container">
                 {tags.map((tag) => (

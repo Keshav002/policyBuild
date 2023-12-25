@@ -11,12 +11,29 @@ import { PiClipboardTextDuotone } from "react-icons/pi";
 import { MdDelete } from "react-icons/md";
 import { DataTable } from "../components/DataTable";
 import { Pagination } from "antd";
+import { HiTableCells } from "react-icons/hi2";
+import { FaTableList } from "react-icons/fa6";
+import { BsTable } from "react-icons/bs";
 import { DatePickerProps } from "antd";
 import { DatePicker, Space } from "antd";
 import dayjs from "dayjs";
+import Cookies from "js-cookie";
+import jwtDecode from "jwt-decode";
+import { API_URL } from "../ConfigApi";
+
 function CompanyList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [tags, setTags] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(2);
+
+  const handleChangePage = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleChangePageSize = (current, size) => {
+    setPageSize(size);
+  };
 
   const [reportName, setReportName] = useState("");
   const [currentReportName, setCurrentReportName] = useState("All Companies");
@@ -56,7 +73,7 @@ function CompanyList() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchTerm) {
+    if (searchTerm && !tags.includes(searchTerm)) {
       setTags([...tags, searchTerm]);
       setSearchTerm("");
     }
@@ -222,22 +239,6 @@ function CompanyList() {
     const updatedTags = tags.filter((t) => t !== tag);
     setTags(updatedTags);
   };
-
-  // const toggleSidebar = () => {
-  //   if (isReportsPanelOpen) {
-  //     setIsReportsPanelOpen(false);
-  //     localStorage.setItem("isReportsPanelOpen", JSON.stringify(false));
-  //   }
-
-  //   // Toggle the sidebar
-  //   setIsSidebarOpen(!isSidebarOpen);
-  //   localStorage.setItem("isSidebarOpen", JSON.stringify(!isSidebarOpen));
-  // };
-
-  /* const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };*/
-
   const handleCompanyTypeChange = (value) => {
     const updatedSelectedCompanyTypes = selectedCompanyTypes.includes(value)
       ? selectedCompanyTypes.filter((type) => type !== value)
@@ -245,11 +246,6 @@ function CompanyList() {
 
     setSelectedCompanyTypes(updatedSelectedCompanyTypes);
   };
-
-  /* const toggleDepartmentDropdown = () => {
-    setIsDepartmentDropdownOpen(!isDepartmentDropdownOpen);
-  };*/
-
   const handleDepartmentCheckboxChange = (value) => {
     if (selectedDepartments.includes(value)) {
       setSelectedDepartments(
@@ -316,7 +312,6 @@ function CompanyList() {
       numEmployeesFrom,
       numEmployeesTo,
     };
-
     existingFilters[reportName] = reportData;
 
     localStorage.setItem("personalFilters", JSON.stringify(existingFilters));
@@ -333,7 +328,7 @@ function CompanyList() {
       filter3: "yet another value",
     },
   ];
-
+  const [companies, setCompanies] = useState([]);
   const personalReports =
     JSON.parse(localStorage.getItem("personalFilters")) || {};
 
@@ -362,43 +357,46 @@ function CompanyList() {
 
   const fetchCompaniesWithFilters = async () => {
     const filters = {
-      idfrom,
-      idto,
-      foundedDateFrom,
-      foundedDateTo,
-      ratingsFrom,
-      ratingsTo,
-      numEmployeesFrom,
-      numEmployeesTo,
-      selectedCompanyTypes,
-      selectedDepartments,
-      tags,
+      id_from:idfrom,
+      id_to:idto,
+      founded_date_from:foundedDateFrom,
+      founded_date_to:foundedDateTo,
+      rating_from:ratingsFrom,
+      rating_to:ratingsTo,
+      num_employees_from:numEmployeesFrom,
+      num_employees_to:numEmployeesTo,
+      company_types:selectedCompanyTypes,
+      department_types:selectedDepartments,
+      q:tags,
+      page_size:pageSize,
+      page_number:currentPage,
     };
 
     const params = new URLSearchParams();
 
     for (const [key, value] of Object.entries(filters)) {
       if (value !== "" && (Array.isArray(value) ? value.length > 0 : true)) {
-        params.append(key, Array.isArray(value) ? value.join(",") : value);
+        if (Array.isArray(value)) {
+          value.forEach((v) => params.append(key, v));
+        } else {
+          params.append(key, value);
+        }
       }
     }
 
     const queryString = params.toString();
-    const url = `/search/companies/?${queryString}`;
+    const url = `${API_URL}/main/search/companies/?${queryString}`;
 
     console.log("Constructed URL:", url);
 
     try {
       const response = await fetch(url, {
         headers: {
-          Authorization: "Bearer YOUR_TOKEN",
+          Authorization: `Bearer ${Cookies.get("accessToken")}`,
         },
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
       const data = await response.json();
+      setCompanies(data);
       console.log("Fetched data:", data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -419,6 +417,8 @@ function CompanyList() {
     selectedCompanyTypes,
     selectedDepartments,
     tags,
+    pageSize,
+    currentPage,
   ]);
 
   const formatDate = (dateString) => {
@@ -467,7 +467,8 @@ function CompanyList() {
               className="cp_icon_label"
               onClick={() => setViewType("table")}
             >
-              <CiBoxList
+              <FaTableList
+                style={{ fontSize: "23px" }}
                 className={`cp_icon cp_card_icon ${
                   viewType === "table" ? "cp_selected_icon" : ""
                 }`}
@@ -491,13 +492,13 @@ function CompanyList() {
             <div className="cp_sidebar_filter">
               <div className="save-view-section">
                 <button onClick={() => setIsSaveReportPopup(true)}>
-                  <FaSave /> Save Report
+                  <FaSave className="save-view-section-icon" /> Save
                 </button>
                 <button onClick={toggleReportsPanel}>
-                  <FaEye /> View Reports
+                  <FaEye className="save-view-section-icon" /> View
                 </button>
                 <button onClick={clearFilters}>
-                  <MdDelete /> Clear Filters
+                  <MdDelete className="save-view-section-icon" /> Clear
                 </button>
               </div>
               <p style={{ paddingLeft: "12px" }}>
@@ -554,23 +555,33 @@ function CompanyList() {
                 <div className="cp_filter_input">
                   <DatePicker
                     onChange={(date) => {
-                      setFoundedDateFrom(date ? dayjs(date).format("DD/MM/YYYY") : "");
+                      setFoundedDateFrom(
+                        date ? dayjs(date).format("DD-MM-YYYY") : ""
+                      );
                     }}
                     open={isDatePicker1Open}
                     onOpenChange={(visible) => setDatePicker1Open(visible)}
-                    value={foundedDateFrom ? dayjs(foundedDateFrom, "DD/MM/YYYY") : null}
-                    format="DD/MM/YYYY"
+                    value={
+                      foundedDateFrom
+                        ? dayjs(foundedDateFrom, "DD-MM-YYYY")
+                        : null
+                    }
+                    format="DD-MM-YYYY"
                   />
 
                   <span className="cp_filter_separator">to</span>
                   <DatePicker
                     onChange={(date) => {
-                      setFoundedDateTo(date ? dayjs(date).format("DD/MM/YYYY") : "");
+                      setFoundedDateTo(
+                        date ? dayjs(date).format("DD-MM-YYYY") : ""
+                      );
                     }}
                     open={isDatePicker2Open}
                     onOpenChange={(visible) => setDatePicker2Open(visible)}
-                    value={foundedDateTo ? dayjs(foundedDateTo, "DD/MM/YYYY") : null}
-                    format="DD/MM/YYYY"
+                    value={
+                      foundedDateTo ? dayjs(foundedDateTo, "DD-MM-YYYY") : null
+                    }
+                    format="DD-MM-YYYY"
                   />
                 </div>
               </div>
@@ -639,8 +650,8 @@ function CompanyList() {
                       <input
                         type="checkbox"
                         value="Corporate"
-                        checked={selectedCompanyTypes.includes("Corporate")}
-                        onChange={() => handleCompanyTypeChange("Corporate")}
+                        checked={selectedCompanyTypes.includes("1")}
+                        onChange={() => handleCompanyTypeChange("1")}
                       />
                       Corporate
                     </label>
@@ -648,8 +659,8 @@ function CompanyList() {
                       <input
                         type="checkbox"
                         value="Startup"
-                        checked={selectedCompanyTypes.includes("Startup")}
-                        onChange={() => handleCompanyTypeChange("Startup")}
+                        checked={selectedCompanyTypes.includes("2")}
+                        onChange={() => handleCompanyTypeChange("2")}
                       />
                       Startup
                     </label>
@@ -657,8 +668,8 @@ function CompanyList() {
                       <input
                         type="checkbox"
                         value="MNC"
-                        checked={selectedCompanyTypes.includes("MNC")}
-                        onChange={() => handleCompanyTypeChange("MNC")}
+                        checked={selectedCompanyTypes.includes("3")}
+                        onChange={() => handleCompanyTypeChange("3")}
                       />
                       MNC
                     </label>
@@ -666,8 +677,8 @@ function CompanyList() {
                       <input
                         type="checkbox"
                         value="Other"
-                        checked={selectedCompanyTypes.includes("Other")}
-                        onChange={() => handleCompanyTypeChange("Other")}
+                        checked={selectedCompanyTypes.includes("4")}
+                        onChange={() => handleCompanyTypeChange("4")}
                       />
                       Other
                     </label>
@@ -694,9 +705,9 @@ function CompanyList() {
                         type="checkbox"
                         value="Healthcare"
                         onChange={() =>
-                          handleDepartmentCheckboxChange("Healthcare")
+                          handleDepartmentCheckboxChange("1")
                         }
-                        checked={selectedDepartments.includes("Healthcare")}
+                        checked={selectedDepartments.includes("1")}
                       />
                       Healthcare
                     </label>
@@ -705,9 +716,9 @@ function CompanyList() {
                         type="checkbox"
                         value="Education"
                         onChange={() =>
-                          handleDepartmentCheckboxChange("Education")
+                          handleDepartmentCheckboxChange("2")
                         }
-                        checked={selectedDepartments.includes("Education")}
+                        checked={selectedDepartments.includes("2")}
                       />
                       Education
                     </label>
@@ -715,8 +726,8 @@ function CompanyList() {
                       <input
                         type="checkbox"
                         value="IT"
-                        onChange={() => handleDepartmentCheckboxChange("IT")}
-                        checked={selectedDepartments.includes("IT")}
+                        onChange={() => handleDepartmentCheckboxChange("3")}
+                        checked={selectedDepartments.includes("3")}
                       />
                       IT
                     </label>
@@ -725,9 +736,9 @@ function CompanyList() {
                         type="checkbox"
                         value="Retail"
                         onChange={() =>
-                          handleDepartmentCheckboxChange("Retail")
+                          handleDepartmentCheckboxChange("4")
                         }
-                        checked={selectedDepartments.includes("Retail")}
+                        checked={selectedDepartments.includes("4")}
                       />
                       Retail
                     </label>
@@ -781,60 +792,35 @@ function CompanyList() {
             <div className="company-list-container">
               {viewType === "table" && (
                 <div className="table-container">
-                  <DataTable />
+                  <DataTable data={companies?.paginated_results || []} />
                 </div>
               )}
               {viewType !== "table" && (
                 <div className="company_lists_cards">
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
-                  <CompanyCard />
+                  {companies &&
+                    companies.paginated_results?.map((company, index) => (
+                      <CompanyCard key={index} company={company} />
+                    ))}
                 </div>
               )}
               <hr />
               <div className="company_list_pagination_container">
                 <>
                   <Pagination
-                    total={1000}
+                    total={companies.company_total_hits}
+                    current={currentPage}
+                    pageSize={pageSize}
+                    onChange={handleChangePage}
                     showTotal={(total, range) =>
                       `${range[0]}-${range[1]} of ${total} items`
                     }
-                    defaultPageSize={20}
-                    defaultCurrent={1}
+                    showSizeChanger
+                    onShowSizeChange={handleChangePageSize}
+                    pageSizeOptions={[2, 4, 6, 8]}
                   />
                 </>
               </div>
             </div>
-
-            {/* <CompanyCard/>   */}
           </div>
         </div>
       </div>

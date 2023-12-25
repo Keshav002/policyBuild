@@ -1,12 +1,39 @@
 import React, { useMemo } from "react";
 import { useTable } from "react-table";
 import MOCK_DATA from "../assets/MOCK_DATAA.json";
-import { COLUMNS } from "./Columns";
 import "./DataTable.css"; // Import the CSS file
 
-export const DataTable = () => {
-  const columns = useMemo(() => COLUMNS, []);
-  const data = useMemo(() => MOCK_DATA, []);
+export const DataTable = ({ data }) => {
+  const columns = useMemo(
+    () => [
+      {
+        Header: "ID",
+        accessor: "id",
+      },
+      {
+        Header: "Name",
+        accessor: "username",
+      }, 
+      {
+        Header: "No. of Employees",
+        accessor: "numofemploy",
+      }, 
+      {
+        Header: "Founded",
+        accessor: "companyregyear",
+      },
+      {
+        Header: "Ratings",
+        accessor: "average_rating",
+      },
+      {
+        Header: "Tags",
+        accessor: "tags",
+      },
+    ],
+    []
+  );
+  // const data = useMemo(() => MOCK_DATA, []);
 
   const {
     getTableProps,

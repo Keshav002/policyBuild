@@ -5,6 +5,7 @@ import { AiOutlineStar } from "react-icons/ai";
 import { IoMdSend } from "react-icons/io";
 import { LuPen } from "react-icons/lu";
 import { MdEmail } from "react-icons/md";
+import { API_URL } from '../ConfigApi';
 
 import {
   FaMapMarkerAlt,
@@ -141,11 +142,7 @@ function CompanyProfile() {
     setIsEditPopupOpen(false);
   };
 
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-
-    console.log("Form submitted");
-  };
+ 
 
   const [selectedTags, setSelectedTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
@@ -177,9 +174,24 @@ function CompanyProfile() {
     email: "",
   });
 
-  const handleDetailsFormSubmit = (e) => {
+  const handleDetailsFormSubmit = async (e) => {
     e.preventDefault();
-
+    try {
+      const response = await fetch(`${API_URL}/main/companies/id/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editedDetails),
+      });
+      if (response.ok) {
+        setIsDetailsEditPopupOpen(false);
+      } else {
+        console.error('Failed to update details:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
     setIsDetailsEditPopupOpen(false);
   };
 
@@ -204,9 +216,58 @@ function CompanyProfile() {
     }
   };
 
-  const handleUpload = () => {
-    alert("Image uploaded!");
+  const handleUpload = async () => {
+    try {
+      if (!selectedImage) {
+        console.error('No image selected');
+        return;
+      }
+      const response = await fetch(`${API_URL}/main/companies/id/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ photo: selectedImage }),
+      });
+      if (response.ok) {
+        setIsPhotoDialogOpen(false);
+      } else {
+        console.error('Failed to upload photo:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
   };
+
+  const [companyName, setCompanyName] = useState('');
+  const [companyDescription, setCompanyDescription] = useState('');
+
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('your_backend_endpoint', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          companyName,
+          companyDescription,
+          companyTags: selectedTags,
+        }),
+      });
+      if (response.ok) {
+        setIsEditPopupOpen(false);
+      } else {
+        console.error('Failed to update company details:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+  };
+
+
 
   return (
     <div
@@ -409,6 +470,8 @@ function CompanyProfile() {
                     className="company-profile-form-control"
                     id="companyName"
                     placeholder="Enter company name..."
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
                   />
                 </div>
 
@@ -425,6 +488,8 @@ function CompanyProfile() {
                     id="companyName"
                     row="3"
                     placeholder="Enter company description..."
+                    value={companyDescription}
+                    onChange={(e) => setCompanyDescription(e.target.value)}
                   />
                 </div>
 
