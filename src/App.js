@@ -22,6 +22,7 @@ import {Provider} from "react-redux";
 import store from "./store/store";
 import { DataTable } from "./components/DataTable";
 import UserDataPersistence from "./components/UserDataPersistence";
+import PdfViewer from "./components/PdfViewer";
 function App() {
   return (
     <>
@@ -41,6 +42,7 @@ function App() {
             <Route path="/company-projects" element={<CompanyProjects />} />
             <Route path="/" element={<Login />} />
             <Route path= "/datatable" element={<DataTable />} />
+            <Route path= "/pdf" element={<PdfViewer />} />
           </Routes>
         </Router>
       </Provider>

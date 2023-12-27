@@ -5,7 +5,6 @@ import { AiOutlineStar } from "react-icons/ai";
 import { IoMdSend } from "react-icons/io";
 import { LuPen } from "react-icons/lu";
 import { MdEmail } from "react-icons/md";
-import { API_URL } from '../ConfigApi';
 
 import {
   FaMapMarkerAlt,
@@ -109,7 +108,6 @@ function CompanyProfile() {
   };
 
   const [isHovered, setIsHovered] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
 
   const handleMouseEnter = () => {
     console.log("Mouse entered");
@@ -121,20 +119,10 @@ function CompanyProfile() {
     setIsHovered(false);
   };
 
-  const handleClick = () => {
-    console.log("Button clicked");
-    setIsEditMode(!isEditMode);
-  };
-
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
 
   const handleEditClick = () => {
     setIsEditPopupOpen(!isEditPopupOpen);
-  };
-
-  const handleSubmitEditClick = () => {
-    console.log("Form submitted");
-    setIsEditPopupOpen(false);
   };
 
   const handleCancelEditClick = () => {
@@ -142,26 +130,27 @@ function CompanyProfile() {
     setIsEditPopupOpen(false);
   };
 
- 
+  const [editedName, setEditedName] = useState("");
+  const [tags, setTags] = useState([]);
+  const [editedDescription, setEditedDescription] = useState("");
 
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [tagInput, setTagInput] = useState("");
-
-  const handleRemoveTag = (index) => {
-    const updatedTags = [...selectedTags];
-    updatedTags.splice(index, 1);
-    setSelectedTags(updatedTags);
+  const handleTagRemove = (tag) => {
+    // Remove the tag
+    const updatedTags = tags.filter((t) => t !== tag);
+    setTags(updatedTags);
   };
 
-  const handleTagInputChange = (e) => {
-    setTagInput(e.target.value);
-  };
-
-  const handleAddTag = () => {
-    if (tagInput.trim() !== "") {
-      setSelectedTags([...selectedTags, tagInput.trim()]);
-      setTagInput("");
+  const handleTagsInputChange = (e) => {
+    // Handle tag input change, add tag if Enter is pressed
+    if (e.key === "Enter" && e.target.value.trim() !== "") {
+      setTags([...tags, e.target.value.trim()]);
+      e.target.value = "";
     }
+  };
+  const handleEditSubmitClick = () => {
+    // Handle the submission logic here
+    // You can use the edited fields for further processing
+    setIsEditPopupOpen(false);
   };
 
   const [isDetailsEditPopupOpen, setIsDetailsEditPopupOpen] = useState(false);
@@ -174,31 +163,10 @@ function CompanyProfile() {
     email: "",
   });
 
-  const handleDetailsFormSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(`${API_URL}/main/companies/id/`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(editedDetails),
-      });
-      if (response.ok) {
-        setIsDetailsEditPopupOpen(false);
-      } else {
-        console.error('Failed to update details:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error:', error.message);
-    }
-    setIsDetailsEditPopupOpen(false);
-  };
-
   const handlePhotoClick = () => {
     setIsPhotoDialogOpen(true);
   };
-  const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(true);
+  const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
   const closePhotoDialog = () => {
@@ -216,59 +184,9 @@ function CompanyProfile() {
     }
   };
 
-  const handleUpload = async () => {
-    try {
-      if (!selectedImage) {
-        console.error('No image selected');
-        return;
-      }
-      const response = await fetch(`${API_URL}/main/companies/id/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ photo: selectedImage }),
-      });
-      if (response.ok) {
-        setIsPhotoDialogOpen(false);
-      } else {
-        console.error('Failed to upload photo:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error:', error.message);
-    }
+  const handleUpload = () => {
+    alert("Image uploaded!");
   };
-
-  const [companyName, setCompanyName] = useState('');
-  const [companyDescription, setCompanyDescription] = useState('');
-
-
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch('your_backend_endpoint', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          companyName,
-          companyDescription,
-          companyTags: selectedTags,
-        }),
-      });
-      if (response.ok) {
-        setIsEditPopupOpen(false);
-      } else {
-        console.error('Failed to update company details:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error:', error.message);
-    }
-  };
-
-
-
   return (
     <div
       className={`company-profile-page ${
@@ -338,16 +256,16 @@ function CompanyProfile() {
               }}
             />
 
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <div>
+            <div className="company-profile-rating-popup__buttons">
+              {/* <div> */}
+              <button>
                 <label
                   htmlFor="uploadButton"
-                  className="company-profile-upload-button"
-                  style={{ marginLeft: "10px", marginTop: "2px" }}
+                  // className="company-profile-upload-button"
+                  // style={{ marginLeft: "10px", marginTop: "2px" }}
                 >
                   Select Photo
                 </label>
-
                 <input
                   type="file"
                   accept=".png, .jpg, .jpeg, .gif"
@@ -355,11 +273,12 @@ function CompanyProfile() {
                   className="company-profile-upload-input"
                   id="uploadButton"
                 />
-              </div>
+              </button>
+              {/* </div> */}
 
               {selectedImage && (
                 <button
-                  className="company-profile-upload-button"
+                  // className="company-profile-upload-button"
                   onClick={handleUpload}
                 >
                   Upload Photo
@@ -367,8 +286,14 @@ function CompanyProfile() {
               )}
 
               <button
-                className="company-profile-clear-button"
-                onClick={() => setSelectedImage(null)}
+                // className="company-profile-clear-button"
+                onClick={() => {
+                  setSelectedImage(null);
+                  const inputElement = document.getElementById("uploadButton");
+                  if (inputElement) {
+                    inputElement.value = "";
+                  }
+                }}
               >
                 Clear Selection
               </button>
@@ -454,80 +379,43 @@ function CompanyProfile() {
       </div>
 
       {isEditPopupOpen && (
-        <div className="company-profile-edit-popup-overlay">
-          <div className="company-profile-edit-popup-container">
-            <div className="company-profile-edit-popup">
-              <form onSubmit={handleFormSubmit}>
-                <div className="form-group">
-                  <label
-                    htmlFor="companyName"
-                    className="company-profile-form-label"
-                  >
-                    Company Name
-                  </label>
-                  <input
-                    type="text"
-                    className="company-profile-form-control"
-                    id="companyName"
-                    placeholder="Enter company name..."
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
-                  />
-                </div>
+        <div className="company-profile-rating-popup-overlay">
+          <div className="consultant_profile_edit_popup">
+            <label htmlFor="editedName">Company Name</label>
+            <input
+              type="text"
+              id="editedName"
+              value={editedName}
+              onChange={(e) => setEditedName(e.target.value)}
+            />
 
-                <div className="form-group">
-                  <label
-                    htmlFor="companyName"
-                    className="company-profile-form-label"
-                  >
-                    Company Description
-                  </label>
-                  <input
-                    type="text"
-                    className="company-profile-form-control"
-                    id="companyName"
-                    row="3"
-                    placeholder="Enter company description..."
-                    value={companyDescription}
-                    onChange={(e) => setCompanyDescription(e.target.value)}
-                  />
-                </div>
+            <label htmlFor="editedDescription">Company Description</label>
+            <input
+              type="text"
+              id="editedDescription"
+              value={editedDescription}
+              onChange={(e) => setEditedDescription(e.target.value)}
+            />
 
-                <div className="form-group">
-                  <label
-                    htmlFor="companyTags"
-                    className="company-profile-form-label"
-                  ></label>
-                  <div className="selected-tags-container">
-                    {selectedTags.map((tag, index) => (
-                      <span key={index} className="selected-tag">
-                        {tag}{" "}
-                        <span onClick={() => handleRemoveTag(index)}>✕</span>
-                      </span>
-                    ))}
-                  </div>
-                  <div className="tag-input-container">
-                    <input
-                      type="text"
-                      className="company-profile-form-control"
-                      id="companyTags"
-                      placeholder="Add tags (e.g., oil&gas, energy, analytics...)"
-                      value={tagInput}
-                      onChange={handleTagInputChange}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          handleAddTag();
-                        }
-                      }}
-                    />
-                  </div>
+            <label htmlFor="editedTags">Tags</label>
+            <div className="tags-container">
+              {tags.map((tag) => (
+                <div key={tag} className="cp_tag">
+                  {tag}
+                  <button onClick={() => handleTagRemove(tag)}>&times;</button>
                 </div>
-              </form>
+              ))}
+            </div>
+            <input
+              type="text"
+              id="editedTags"
+              placeholder="Add a tag"
+              onKeyPress={handleTagsInputChange}
+            />
 
-              <div className="company-profile-edit-popup__buttons">
-                <button onClick={handleSubmitEditClick}>Submit</button>
-                <button onClick={handleCancelEditClick}>Cancel</button>
-              </div>
+            <div className="company-profile-rating-popup__buttons">
+              <button onClick={handleEditSubmitClick}>Submit</button>
+              <button onClick={handleCancelEditClick}>Cancel</button>
             </div>
           </div>
         </div>
@@ -589,144 +477,85 @@ function CompanyProfile() {
       </div>
 
       {isDetailsEditPopupOpen && (
-        <div className="company-profile-edit-popup-overlay">
-          <div className="company-profile-edit-popup">
-            <form onSubmit={handleDetailsFormSubmit}>
-              <div className="mb-3">
-                <label
-                  htmlFor="headquarters"
-                  className="company-profile-form-label"
-                >
-                  <FaMapMarkerAlt />
-                  <span style={{ marginLeft: "5px" }}>Headquarters</span>
-                </label>
-                <input
-                  type="text"
-                  className="company-profile-form-control"
-                  id="headquarters"
-                  placeholder="Enter headquarters"
-                  value={editedDetails.headquarters}
-                  onChange={(e) =>
-                    setEditedDetails({
-                      ...editedDetails,
-                      headquarters: e.target.value,
-                    })
-                  }
-                />
-              </div>
+        <div className="company-profile-rating-popup-overlay">
+          <div className="consultant_profile_edit_popup">
+            <label htmlFor="editedHeadquarters">Headquarters</label>
+            <input
+              type="text"
+              id="editedHeadquarters"
+              value={editedDetails.headquarters}
+              onChange={(e) =>
+                setEditedDetails({
+                  ...editedDetails,
+                  headquarters: e.target.value,
+                })
+              }
+            />
 
-              <div className="mb-3">
-                <label
-                  htmlFor="contactNumber"
-                  className="company-profile-form-label"
-                >
-                  <FaPhone />
-                  <span style={{ marginLeft: "5px" }}>Contact Number</span>
-                </label>
-                <input
-                  type="tel"
-                  className="company-profile-form-control"
-                  id="contactNumber"
-                  placeholder="Enter contact number"
-                  value={editedDetails.contactNumber}
-                  onChange={(e) =>
-                    setEditedDetails({
-                      ...editedDetails,
-                      contactNumber: e.target.value,
-                    })
-                  }
-                />
-              </div>
+            <label htmlFor="editedContactNumber">Contact Number</label>
+            <input
+              type="text"
+              id="editedContactNumber"
+              value={editedDetails.contactNumber}
+              onChange={(e) =>
+                setEditedDetails({
+                  ...editedDetails,
+                  contactNumber: e.target.value,
+                })
+              }
+            />
 
-              <div className="mb-3">
-                <label htmlFor="website" className="company-profile-form-label">
-                  <FaGlobe />
-                  <span style={{ marginLeft: "5px" }}>Website</span>
-                </label>
-                <input
-                  type="url"
-                  className="company-profile-form-control"
-                  id="website"
-                  placeholder="www.example.com"
-                  value={editedDetails.website}
-                  onChange={(e) =>
-                    setEditedDetails({
-                      ...editedDetails,
-                      website: e.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div className="mb-3">
-                <label
-                  htmlFor="employees"
-                  className="company-profile-form-label"
-                >
-                  <FaUserFriends />
-                  <span style={{ marginLeft: "5px" }}>Employees</span>
-                </label>
-                <input
-                  type="text"
-                  className="company-profile-form-control"
-                  id="employees"
-                  placeholder="Enter number of employees"
-                  value={editedDetails.employees}
-                  onChange={(e) =>
-                    setEditedDetails({
-                      ...editedDetails,
-                      employees: e.target.value,
-                    })
-                  }
-                />
-              </div>
+            <label htmlFor="editedWebsite">Website</label>
+            <input
+              type="text"
+              id="editedWebsite"
+              value={editedDetails.website}
+              onChange={(e) =>
+                setEditedDetails({ ...editedDetails, website: e.target.value })
+              }
+            />
+            <label htmlFor="editedEmployees">Number of Employees</label>
+            <input
+              type="text"
+              id="editedEmployees"
+              value={editedDetails.employees}
+              onChange={(e) =>
+                setEditedDetails({
+                  ...editedDetails,
+                  employees: e.target.value,
+                })
+              }
+            />
+            <label htmlFor="editedFounded">Founded</label>
+            <input
+              type="text"
+              id="editedFounded"
+              value={editedDetails.founded}
+              onChange={(e) =>
+                setEditedDetails({ ...editedDetails, founded: e.target.value })
+              }
+            />
+            <label htmlFor="editedEmail">Email</label>
+            <input
+              type="text"
+              id="editedEmail"
+              value={editedDetails.email}
+              onChange={(e) =>
+                setEditedDetails({ ...editedDetails, email: e.target.value })
+              }
+            />
 
-              <div className="mb-3">
-                <label htmlFor="founded" className="company-profile-form-label">
-                  <FaRegCalendarAlt />
-                  <span style={{ marginLeft: "5px" }}>Founded</span>
-                </label>
-                <input
-                  type="date"
-                  className="company-profile-form-control"
-                  id="founded"
-                  placeholder="Select founding date"
-                  value={editedDetails.founded}
-                  onChange={(e) =>
-                    setEditedDetails({
-                      ...editedDetails,
-                      founded: e.target.value,
-                    })
-                  }
-                />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="email" className="company-profile-form-label">
-                  <MdEmail />
-                  <span style={{ marginLeft: "5px" }}>Email</span>
-                </label>
-                <input
-                  type="email"
-                  className="company-profile-form-control"
-                  id="email"
-                  placeholder="support@example.com"
-                  value={editedDetails.email}
-                  onChange={(e) =>
-                    setEditedDetails({
-                      ...editedDetails,
-                      email: e.target.value,
-                    })
-                  }
-                />
-              </div>
-
-              <div className="company-profile-edit-popup__buttons">
-                <button type="submit">Submit</button>
-                <button onClick={() => setIsDetailsEditPopupOpen(false)}>
-                  Cancel
-                </button>
-              </div>
-            </form>
+            <div className="company-profile-rating-popup__buttons">
+              <button
+                type="submit"
+                onClick={() => setIsDetailsEditPopupOpen(false)}
+              >
+                Submit
+              </button>
+              <button onClick={() => setIsDetailsEditPopupOpen(false)}>
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
