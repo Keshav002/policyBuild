@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ConsultantProfile.css"; // Import your CSS file for styling
 import Nav from ".././components/Nav";
-import { API_URL } from '../ConfigApi';
+import { API_URL } from "../ConfigApi";
+import Cookies from "js-cookie";
+
 import { useParams } from "react-router-dom";
 import {
   IoMdMail,
@@ -19,32 +21,27 @@ import { AiOutlineStar } from "react-icons/ai";
 import { RxDownload } from "react-icons/rx";
 import { RxPencil1 } from "react-icons/rx";
 import { BiSolidPencil } from "react-icons/bi";
-const keySkills = [
-  "Communication",
-  "Problem Solving",
-  "Teamwork",
-  "JavaScript",
-  "Data Analysis",
-];
+import { useSelector } from "react-redux";
+
 function ConsultantProfile() {
   const { id } = useParams();
+  const loggedInUserId = useSelector((state) => state.user.userData.user_id);
+  const [isOwnProfile, setIsOwnProfile] = useState(false);
   const [isRatingOpen, setIsRatingOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
+  const [profilePicture, setProfilePicture] = useState(null);
   const handleStarClick = (starNumber) => {
     setRating(starNumber);
   };
-  const [isEditOpen, setIsEditOpen] = useState(false); // New state for the edit popup
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [editedLocation, setEditedLocation] = useState("");
+  const [consultantData, setConsultantData] = useState({});
   const [editedPhone, setEditedPhone] = useState("");
   const [editedExperience, setEditedExperience] = useState("");
-  const [tags, setTags] = useState([]); 
-  const [location, setLocation] = useState("");
-  const [phone, setPhone] = useState("");
-  const [experience, setExperience] = useState("");
+  const [tags, setTags] = useState([]);
+  const [keySkills, setKeySkills] = useState([]);
   const [editedTags, setEditedTags] = useState([]);
-  const [professionalSummary, setProfessionalSummary] =
-  useState("");
   const [isEditSummaryOpen, setIsEditSummaryOpen] = useState(false);
   const [editedProfessionalSummary, setEditedProfessionalSummary] =
     useState("");
@@ -53,45 +50,100 @@ function ConsultantProfile() {
   const [newSkill, setNewSkill] = useState("");
 
   const handleEditSkillsClick = () => {
+    setEditedKeySkills([...keySkills]);
     setIsEditSkillsOpen(true);
   };
-
+  
   const handleCancelEditSkillsClick = () => {
+    setEditedKeySkills([]);
     setIsEditSkillsOpen(false);
-    setEditedKeySkills([...keySkills]);
-    setNewSkill("");
+  };
+
+  // Function to fetch data from the backend
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`${API_URL}/main/consultants/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("accessToken")}`,
+        },
+      });
+      if (response) {
+        const data = await response.json();
+        console.log("data", data);
+        setIsOwnProfile(data.user.id === loggedInUserId);
+        convertAndSetProfilePic(data.profilepic);
+        const tagsArray = data.tags
+          ? data.tags.split(",").map((tag) => tag.trim())
+          : [];
+          const skillsArray = data.experties
+          ? data.experties.split(",").map((expertise) => expertise.trim())
+          : [];
+        setKeySkills(skillsArray);
+        setTags(tagsArray);
+        setConsultantData(data);
+      } else {
+        console.error("Failed to fetch data. Status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [id, loggedInUserId]);
+
+  const convertAndSetProfilePic = (base64String) => {
+    const blob = base64ToBlob(base64String);
+    const imageUrl = URL.createObjectURL(blob);
+    setProfilePicture(imageUrl);
+  };
+  const base64ToBlob = (base64String, contentType = 'image/png') => {
+    const byteCharacters = atob(base64String);
+    const byteArray = new Uint8Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteArray[i] = byteCharacters.charCodeAt(i);
+    }
+    return new Blob([byteArray], { type: contentType });
   };
 
   const handleEditSkillsSubmitClick = async () => {
     try {
-      const response = await fetch(`${API_URL}/main/consultants/id/`, {
-        method: 'PATCH',
+      const response = await fetch(`${API_URL}/main/consultants/${id}/`, {
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("accessToken")}`,
         },
         body: JSON.stringify({
-          keySkills: editedKeySkills.join(', '), 
+          experties: editedKeySkills.join(", "),
         }),
       });
-  
+
       if (response.ok) {
-        console.log('Key skills updated successfully');
+        console.log("Key skills updated successfully");
+        fetchData();
       } else {
         if (response.status === 401) {
-          console.error('Unauthorized - Please check your authentication token');
+          console.error(
+            "Unauthorized - Please check your authentication token"
+          );
         } else if (response.status === 400) {
-          console.error('Bad Request - Check your request payload');
+          console.error("Bad Request - Check your request payload");
         } else {
-          console.error('Failed to update key skills. Status:', response.status);
+          console.error(
+            "Failed to update key skills. Status:",
+            response.status
+          );
         }
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
     setIsEditSkillsOpen(false);
   };
-  
 
   const handleSkillRemove = (skill) => {
     const updatedSkills = editedKeySkills.filter((s) => s !== skill);
@@ -110,39 +162,42 @@ function ConsultantProfile() {
   };
 
   const handleSummaryEditClick = () => {
+    setEditedProfessionalSummary(consultantData.bio);
     setIsEditSummaryOpen(true);
-    setEditedProfessionalSummary("");
   };
 
   const handleCancelSummaryEditClick = () => {
-    setIsEditSummaryOpen(false);
     setEditedProfessionalSummary("");
+    setIsEditSummaryOpen(false);
   };
   const handleEditSummarySubmitClick = async () => {
     try {
-      const response = await fetch(`${API_URL}/main/consulatans/id/`, {
-        method: 'PATCH', 
+      const response = await fetch(`${API_URL}/main/consultants/${id}/`, {
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${authToken}`, 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("accessToken")}`,
         },
         body: JSON.stringify({
           bio: editedProfessionalSummary,
         }),
       });
       if (response.ok) {
-        console.log('Summary updated successfully');
+        fetchData()
       } else {
-        console.error('Failed to update summary');
+        console.error("Failed to update summary");
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
     setIsEditSummaryOpen(false);
   };
-  
 
   const handleEditClick = () => {
+    setEditedPhone(consultantData.phoneno);
+    setEditedLocation(consultantData.address);
+    setEditedExperience(consultantData.yearofexp);
+    setEditedTags(tags);
     setIsEditOpen(true);
   };
 
@@ -150,52 +205,53 @@ function ConsultantProfile() {
     setIsEditOpen(false);
     setEditedLocation("");
     setEditedPhone("");
-    setTags([]);
+    setEditedTags([]);
     setEditedExperience("");
   };
   const handleEditSubmitClick = async () => {
     try {
-      const response = await fetch(`${API_URL}/main/consultants/id/`, {
-        method: 'PATCH',
+      const response = await fetch(`${API_URL}/main/consultants/${id}/`, {
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("accessToken")}`,
         },
-          body: JSON.stringify({
-          location: editedLocation,
-          phone: editedPhone,
-          tags: tags, // Assuming you want to send the array of tags as-is
-          experience: editedExperience,
+        body: JSON.stringify({
+          address: editedLocation,
+          phoneno: editedPhone,
+          tags: editedTags.join(", "), 
+          yearofexp: editedExperience,
         }),
       });
       if (response.ok) {
-        console.log('Profile updated successfully');
+        fetchData();
+        console.log("Profile updated successfully");
       } else {
         if (response.status === 401) {
-          console.error('Unauthorized - Please check your authentication token');
+          console.error(
+            "Unauthorized - Please check your authentication token"
+          );
         } else if (response.status === 400) {
-          console.error('Bad Request - Check your request payload');
+          console.error("Bad Request - Check your request payload");
         } else {
-          console.error('Failed to update profile. Status:', response.status);
+          console.error("Failed to update profile. Status:", response.status);
         }
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
     setIsEditOpen(false);
   };
-  
 
   const handleTagRemove = (tag) => {
-    // Remove the tag
     const updatedTags = tags.filter((t) => t !== tag);
-    setTags(updatedTags);
+    setEditedTags(updatedTags);
   };
 
   const handleTagsInputChange = (e) => {
     // Handle tag input change, add tag if Enter is pressed
     if (e.key === "Enter" && e.target.value.trim() !== "") {
-      setTags([...tags, e.target.value.trim()]);
+      setEditedTags([...tags, e.target.value.trim()]);
       e.target.value = "";
     }
   };
@@ -240,98 +296,109 @@ function ConsultantProfile() {
     }
     const base64Image = selectedImage.split(",")[1];
     try {
-      const response = await fetch(`${API_URL}/main/consultants/id/`, {
-        method: 'PATCH',
+      const response = await fetch(`${API_URL}/main/consultants/${id}/`, {
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("accessToken")}`,
         },
         body: JSON.stringify({
-          image: base64Image,
+          profilepic: base64Image,
         }),
       });
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
-      console.log('Upload response:', data);
       alert("Image uploaded successfully!");
+      fetchData()
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.error("Error uploading image:", error);
       alert("Error uploading image. Please try again.");
     }
   };
-  
+
   return (
     <div className="consultant_profile_page">
       <Nav />
       <div className="consultant_profile_banner">
-        <div className="consultant_profile_edit_button">
-          <BiSolidPencil onClick={handleEditClick} />
-        </div>
+        {isOwnProfile && (
+          <div className="consultant_profile_edit_button">
+            <BiSolidPencil onClick={handleEditClick} />
+          </div>
+        )}
         <div class="consultant_profile_picture">
           <div class="image-container">
             <img
-              src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"
+              // src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"    
+              src={profilePicture}
               alt="User Profile"
             />
-            <div
-              class="consultant_profile_overlay"
-              onClick={() => setIsPhotoDialogOpen(true)}
-            >
-              <span class="change-text">Change</span>
-            </div>
+            {isOwnProfile && (
+              <div
+                class="consultant_profile_overlay"
+                onClick={() => setIsPhotoDialogOpen(true)}
+              >
+                <span class="change-text">Change</span>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="consultant_profile_details">
-          <h2 style={{ marginBottom: "5px" }}>Keshav Tayal</h2>
-          {/* <p style={{marginBottom:"5px"}}>Profile last updated - 13Sep , 2023</p> */}
-          <hr />
-          <div className="consultant_profile_banner_data">
-            <div className="consultant_profile_banner_data_c1">
-              <p className="constultant_profile_banner_personal_detail">
-                <FaStar className="constultant_profile_banner_personal_detail_icon" />{" "}
-                4.5
-              </p>
-              <p className="constultant_profile_banner_personal_detail">
-                <IoLocationSharp className="constultant_profile_banner_personal_detail_icon" />{" "}
-                Jind, INDIA
-              </p>
-              <p className="constultant_profile_banner_personal_detail">
-                <BiSolidBriefcaseAlt2 className="constultant_profile_banner_personal_detail_icon" />{" "}
-                2 Years
-              </p>
+        {consultantData && consultantData.user && (
+          <div className="consultant_profile_details">
+            <h2 style={{ marginBottom: "5px" }}>
+              {consultantData.user.username}
+            </h2>
+            {/* <p style={{marginBottom:"5px"}}>Profile last updated - 13Sep , 2023</p> */}
+            <hr />
+            <div className="consultant_profile_banner_data">
+              <div className="consultant_profile_banner_data_c1">
+                <p className="constultant_profile_banner_personal_detail">
+                  <FaStar className="constultant_profile_banner_personal_detail_icon" />{" "}
+                  4.5
+                </p>
+                <p className="constultant_profile_banner_personal_detail">
+                  <IoLocationSharp className="constultant_profile_banner_personal_detail_icon" />{" "}
+                  {consultantData.address}
+                </p>
+                <p className="constultant_profile_banner_personal_detail">
+                  <BiSolidBriefcaseAlt2 className="constultant_profile_banner_personal_detail_icon" />{" "}
+                  {consultantData.yearofexp}
+                </p>
+              </div>
+              <div className="consultant_profile_banner_data_c2">
+                <p className="constultant_profile_banner_personal_detail">
+                  <IoMdPhonePortrait className="constultant_profile_banner_personal_detail_icon" />{" "}
+                  {consultantData.phoneno}
+                </p>
+                <p className="constultant_profile_banner_personal_detail">
+                  <IoMdMail className="constultant_profile_banner_personal_detail_icon" />{" "}
+                  {consultantData.user.email}
+                </p>
+              </div>
             </div>
-            <div className="consultant_profile_banner_data_c2">
-              <p className="constultant_profile_banner_personal_detail">
-                <IoMdPhonePortrait className="constultant_profile_banner_personal_detail_icon" />{" "}
-                7082345655
-              </p>
-              <p className="constultant_profile_banner_personal_detail">
-                <IoMdMail className="constultant_profile_banner_personal_detail_icon" />{" "}
-                keshavtayal002@gmail.com
-              </p>
+            {/* <hr/> */}
+            <div className="company-profile-tags">
+              {tags.map((tag, index) => (
+                <span key={index} className="company-profile-tag">
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <div className="company-profile-buttons">
+              <button
+                className="company-profile-button company-profile-rate-button"
+                onClick={() => setIsRatingOpen(true)}
+              >
+                <AiOutlineStar /> Rate me
+              </button>
+              <button className="company-profile-button company-profile-apply-button">
+                Connect <IoMdSend />
+              </button>
             </div>
           </div>
-          {/* <hr/> */}
-          <div className="company-profile-tags">
-            <span className="company-profile-tag">Businees Analyst</span>
-            <span className="company-profile-tag">Consultant</span>
-            <span className="company-profile-tag">Engineer</span>
-            <span className="company-profile-tag">Document Reviewer</span>
-          </div>
-          <div className="company-profile-buttons">
-            <button
-              className="company-profile-button company-profile-rate-button"
-              onClick={() => setIsRatingOpen(true)}
-            >
-              <AiOutlineStar /> Rate me
-            </button>
-            <button className="company-profile-button company-profile-apply-button">
-              Connect <IoMdSend />
-            </button>
-          </div>
-        </div>
+        )}
         {isPhotoDialogOpen && (
           <div
             className="company-profile-photo-upload-dialog"
@@ -374,8 +441,7 @@ function ConsultantProfile() {
                   }
                   alt="Profile"
                   style={{
-                    width: "438px",
-                    height: "104px",
+                    objectFit:"cover",
                     borderRadius: "8px",
                     marginTop: "15px",
                     marginBottom: "15px",
@@ -402,15 +468,15 @@ function ConsultantProfile() {
                     // style={{ marginLeft: "10px", marginTop: "2px" }}
                   >
                     Select Photo
-                    </label>
+                  </label>
                   <input
                     type="file"
                     accept=".png, .jpg, .jpeg, .gif"
                     onChange={handlePhotoUpload}
                     className="company-profile-upload-input"
                     id="uploadButton"
-                    />
-                    </button>
+                  />
+                </button>
                 {/* </div> */}
 
                 {selectedImage && (
@@ -487,7 +553,7 @@ function ConsultantProfile() {
               />
               <label htmlFor="editedTags">Tags:</label>
               <div className="tags-container">
-                {tags.map((tag) => (
+                {editedTags.map((tag) => (
                   <div key={tag} className="cp_tag">
                     {tag}
                     <button onClick={() => handleTagRemove(tag)}>
@@ -520,18 +586,18 @@ function ConsultantProfile() {
         )}
       </div>
       <div className="consultant_profile_professional_summary">
-        <div className="consultant_profile_edit_button">
-          <BiSolidPencil onClick={handleSummaryEditClick} />
-        </div>
+        {isOwnProfile && (
+          <div className="consultant_profile_edit_button">
+            <BiSolidPencil onClick={handleSummaryEditClick} />
+          </div>
+        )}
         <h3>Professional Summary</h3>
+        {consultantData && consultantData.user && (
+
         <p>
-          Experienced and results-oriented Business Analyst and Consultant with
-          a proven track record of success in various projects. Specialized in
-          document review and analysis. Dedicated to delivering high-quality
-          solutions that meet client needs and exceed expectations.
-          Detail-oriented and effective communicator with strong analytical and
-          problem-solving skills.
+          {consultantData.bio}
         </p>
+        )}
         {isEditSummaryOpen && (
           <div className="company-profile-rating-popup-overlay">
             <div className="consultant_profile_edit_popup">
@@ -560,18 +626,21 @@ function ConsultantProfile() {
             <button className="download_button">
               <RxDownload />
             </button>
-
+          {isOwnProfile && (
             <button className="update_button">
               <RxPencil1 />
             </button>
+          )}
           </div>
         </div>
       </div>
 
       <div className="consultant_profile_key_skills_section">
-        <div className="consultant_profile_edit_button">
-          <BiSolidPencil onClick={handleEditSkillsClick} />
-        </div>
+        {isOwnProfile && (
+          <div className="consultant_profile_edit_button">
+            <BiSolidPencil onClick={handleEditSkillsClick} />
+          </div>
+        )}
         <h3>Key Skills</h3>
         <div className="consultant_profile_key_skills_tags">
           {keySkills.map((skill, index) => (

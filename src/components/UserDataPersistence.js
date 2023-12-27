@@ -27,7 +27,7 @@ function UserDataPersistence() {
         dispatch(removeUser());
       }
     }
-  }, []);
+  }, [location.pathname]);
 
   return null;
 }

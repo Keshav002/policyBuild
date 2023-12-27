@@ -392,7 +392,7 @@ function CompanyList() {
     try {
       const response = await fetch(url, {
         headers: {
-          Authorization: `Bearer ${Cookies.get("accessToken")}`,
+          'Authorization': `Bearer ${Cookies.get("accessToken")}`,
         },
       });
       const data = await response.json();
