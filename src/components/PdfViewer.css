@@ -1,0 +1,679 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.pdf {
+  flex-grow: 1;
+  background-color: #ddd;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.pdf-toolbar {
+  background-color: #ecebeb;
+  border-bottom: 1px solid #ddd;
+  box-shadow: inset 0 0 35px 5px rgba(0, 0, 0, 0.25),
+    inset 0 2px 1px 1px rgba(255, 255, 255, 0.9),
+    inset 0 -2px 1px rgba(0, 0, 0, 0.25);
+  display: flex;
+  position: sticky;
+  align-items: center;
+  padding: 8px;
+  z-index: 999;
+  flex-wrap: wrap;
+  top: 0.5px;
+}
+
+.pdf-scroll-toolbar {
+  background-color: #ecebeb;
+  border-bottom: 1px solid #ddd;
+  box-shadow: inset 0 0 35px 5px rgba(0, 0, 0, 0.25),
+    inset 0 2px 1px 1px rgba(255, 255, 255, 0.9),
+    inset 0 -2px 1px rgba(0, 0, 0, 0.25);
+  display: flex;
+  position: sticky;
+  align-items: center;
+  padding: 4px;
+  z-index: 999;
+  flex-wrap: wrap;
+  top: 0.1px;
+  height: 50px;
+}
+
+.note-box {
+  z-index: 2; /* Ensure the note-box appears above other elements */
+}
+
+.note-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  z-index: 3; /* Ensure the note-dialog appears above other elements */
+}
+
+.pdf-scroll-toolbar-content {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  margin-bottom: 30px;
+}
+.pdf-scroll-zoom-icon {
+  cursor: pointer;
+  margin-right: 3px;
+  font-size: 24px;
+  color: black;
+  background-color: transparent;
+  border: none;
+  margin-bottom: 10px;
+}
+.pdf-scroll-divider {
+  margin: 0 10px;
+  color: black;
+  border-left: 1px solid black; /* Create a vertical line */
+  height: 30px;
+  cursor: default;
+  margin-bottom: 20px;
+}
+
+.pdf-scroll-page {
+  margin-bottom: 30px;
+}
+
+.pdf_container.dialog-open .pdf-header {
+  background-color: transparent;
+}
+
+.pdf-toolbar-content {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.pdf-zoom-icon {
+  cursor: pointer;
+  margin-right: 3px;
+  font-size: 24px;
+  color: black;
+  background-color: transparent;
+  border: none;
+}
+
+.pdf-zoom-in-icon,
+.pdf-zoom-out-icon {
+  transition: color 0.2s ease-in-out;
+  background-color: transparent;
+  border: none;
+  color: black;
+  margin-right: 3px;
+}
+
+.pdf-zoom-icon button.pdf-selected-icon {
+  color: #000;
+}
+.pdf-divider {
+  margin: 0 10px;
+  color: black;
+  border-left: 1px solid black; /* Create a vertical line */
+  height: 30px;
+  cursor: default;
+}
+
+.pdf-viewer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: auto;
+  margin-top: 1%;
+}
+.pdf-header {
+  text-align: center;
+}
+.pdf_container {
+  display: flex;
+}
+
+.pdf-container {
+  height: 100vh;
+  /* overflow-y: auto; */
+  background-color: #ddd;
+  margin-left: 50px;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+.pdf-container > canvas {
+  background-color: #ddd;
+}
+
+.pdf_content {
+  width: 75%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.pdf_sample_container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start; /* Align items to the start to show the top content */
+}
+
+.pdf_sample_container canvas {
+  border: 1px solid #ddd;
+  margin: 10px;
+}
+.pdf_top_bar {
+  position: sticky;
+  top: 43px;
+  z-index: 999;
+  flex-wrap: wrap;
+  padding: 10px;
+  background-color: #ecebeb;
+  border-bottom: 1px solid #ddd;
+  box-shadow: inset 0 0 35px 5px rgba(0, 0, 0, 0.25),
+    inset 0 2px 1px 1px rgba(255, 255, 255, 0.9),
+    inset 0 -2px 1px rgba(0, 0, 0, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pdf_view_toggler {
+  display: flex;
+  margin-left: 3%;
+}
+
+/* Add this to your CSS file or style section */
+.note-box {
+  background-color: yellow; /* Set the background color to yellow */
+}
+
+.note-dialog {
+  position: absolute;
+  top: 50%; /* Adjust this value as needed */
+  left: 50%; /* Adjust this value as needed */
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+/* Add any additional styles as needed */
+
+.pdf_icon_label {
+  cursor: pointer;
+  margin-right: 15px;
+}
+
+.pdf_icon {
+  font-size: 24px;
+  color: rgb(133, 130, 130);
+}
+
+.pdf-custom-modal {
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 70%;
+}
+.custom-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.pdf_card_icon,
+.pdf_grid_icon {
+  transition: color 0.3s ease-in-out;
+}
+
+.pdf_selected_icon {
+  color: rgb(0, 0, 0);
+  font-size: 26px;
+}
+
+.pdf_content {
+  flex-grow: 1;
+  background-color: #ddd;
+}
+
+.center-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.pdf-header {
+  text-align: center;
+  background-color: #ddd;
+  margin-top: 38%;
+}
+
+.pdf_header {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: #ddd;
+  margin-left: 60px;
+}
+
+.pdf_sample_container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pdf_sample_container canvas {
+  border: 1px solid #ddd;
+  margin: 10px;
+}
+
+.pdf-zoom-buttons {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  top: 8%;
+  transform: translateY(-50%);
+  right: 10px;
+  z-index: 999;
+  position: fixed;
+}
+
+.pdf-zoom-button {
+  background-color: #fff;
+  border: 1px solid #000;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-left: 5px;
+  color: #000;
+  font-size: 16px;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s ease;
+}
+
+.pdf_previous_icon {
+  cursor: pointer;
+  font-size: 20px;
+  position: absolute;
+  left: 0%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  margin-left: 40px;
+  color: #565656;
+}
+
+.pdf_next_icon {
+  font-size: 20px;
+  position: absolute;
+  right: 34%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #565656;
+}
+
+.pdf-page-info {
+  right: 30px;
+}
+
+.pdf_sidebar {
+  width: 25%;
+  padding: 20px;
+  max-height: 100vh;
+  background-color: #f6f5f5;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 43px;
+  right: 0;
+  height: calc(100% - 43px);
+  border-left: 1px solid #ccc;
+  overflow: auto;
+}
+
+.pdf_content {
+  width: 75%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.pdf-content-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #8d8c8c;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  padding: 0 10px;
+}
+
+.pdf_sidebar_heading {
+  color: #fff;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  right: 10;
+}
+
+.pdf_sidebar_heading_icon {
+  color: white;
+  margin-right: 5px;
+}
+
+.pdf_policy_details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 60px;
+  background-color: #ffffff;
+  padding-bottom: 30px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pdf_policy_details h2 {
+  margin-top: 0px;
+  margin-bottom: 30px;
+  color: black;
+  font-weight: normal;
+  flex: 1;
+  margin-left: 0;
+  text-align: left;
+}
+
+.pdf_policy_details .icon {
+  font-size: 24px; /* Adjust icon size as needed */
+  margin-bottom: 10px;
+}
+
+.pdf_policy_details p {
+  display: inline-block;
+  cursor: default;
+  margin: 0 20px;
+  color: #565656;
+}
+
+.pdf_edit_button {
+  cursor: pointer;
+  color: #636262;
+  font-size: 20px;
+
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 8px;
+  margin-top: 10px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.pdf_edit_button:hover {
+  transform: scale(1.1);
+}
+
+.pdf_table h2 {
+  color: black;
+  font-weight: normal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 60px;
+}
+
+.pdf_table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-collapse: collapse;
+  margin: 25px 0;
+  font-size: 0.9em;
+  min-width: 400px;
+  border-radius: 5px 5px 0 0;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+}
+
+.pdf_table th:nth-child(1),
+.pdf_table td:nth-child(1) {
+  width: 30%;
+}
+
+.pdf_table th,
+.pdf_table td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  color: #636262;
+}
+
+.pdf_table th:first-child,
+.pdf_table td:first-child {
+  border-left: none;
+}
+
+.pdf_table th:last-child,
+.pdf_table td:last-child {
+  border-right: none;
+}
+
+.pdf-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdf_edit_popup {
+  background-color: #fff;
+  width: 500px;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: calc(50% + 20px);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+.pdf_edit_popup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #787878;
+  text-align: left;
+}
+
+.pdf_edit_popup input {
+  width: 96%;
+  padding: 8px;
+  margin-bottom: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.pdf_edit_popup_buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.pdf_edit_popup textarea {
+  width: 96%;
+  height: 150px;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  resize: vertical;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.pdf-popup-table-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pdf-table-content-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #8d8c8c;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  padding: 0 10px;
+  /* z-index: 1001; */
+}
+.pdf_table_pop_heading {
+  color: #636262;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.pdf_edit_table_popup {
+  background-color: white;
+  width: 500px;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: calc(50% + 20px);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  min-width: 500px;
+}
+.pdf-close-button {
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0;
+  position: absolute;
+  top: 20px;
+  right: 10px;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.pdf-table-container {
+  position: relative;
+  margin-top: 20px;
+  overflow-y: auto;
+  overflow-x: auto;
+  border-top: none;
+  border-bottom: none;
+  white-space: nowrap;
+}
+.pdf_table_pop_heading {
+  font-size: 25px;
+  font-weight: normal;
+  margin-top: 20px;
+}
+
+.policy-details-container {
+  max-width: 300px;
+  margin: 20px auto;
+  cursor: default;
+  margin-left: 10px;
+}
+
+.policy-details-container-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 90px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+
+.policy-details-container tr:nth-child(even) {
+  background-color: #e8e8e8;
+}
+
+.policy-details-container tr:nth-child(odd) {
+  background-color: #ddd;
+}
+
+td {
+  padding: 8px;
+  border-top: none;
+  border-bottom: none;
+  white-space: nowrap;
+}
+.policy-title-cell {
+  white-space: normal;
+}
+
+strong {
+  font-weight: bold;
+}
+
+@media only screen and (max-width: 600px) {
+  .pdf-toolbar {
+    flex-direction: column; /* Stack items vertically on small screens */
+    text-align: center; /* Center text on small screens */
+  }
+
+  .pdf-toolbar-content {
+    width: 100%; /* Make the content take full width on small screens */
+  }
+
+  /* Add any other styles you want to adjust for smaller screens */
+}
