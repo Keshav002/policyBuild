@@ -11,6 +11,7 @@ import {
 import SignUp from "./pages/Signup";
 import Consultant from "./pages/Consultant";
 import CompanyList from "./pages/CompanyList";
+import ConsultantList from "./pages/ConsultantList";
 import CompanyProfile from "./pages/CompanyProfile";
 import ConsultantProfile from "./pages/ConsultantProfile";
 import ForgotPass from "./pages/ForgotPass";
@@ -34,6 +35,7 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/consultant" element={<Consultant />} />
             <Route path="/company-list" element={<CompanyList />} />
+            <Route path="/consultant-list" element={<ConsultantList />} />
             <Route path="/company-profile/:id" element={<CompanyProfile />} />
             <Route path="/consultant-profile/:id" element={<ConsultantProfile />} />
             <Route path="/forgot-password" element={<ForgotPass />} />

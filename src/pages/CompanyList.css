@@ -315,7 +315,7 @@
       max-width: 300px;
       width: 100%;
       text-align: center;
-      z-index: 1000;
+      z-index: 1001;
     }
     .save-report-popup label {
       display: block;
@@ -397,8 +397,7 @@
   top: 0;
   left: 0;
   right: 0;
-  width: 100%;
-  
+  width: 100%; 
   overflow: hidden;
   background-color: #ffffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -411,27 +410,23 @@
 
 .top-pannel-content {
   display: flex;
-  padding: 0 20px;
 }
 
 .reports-section {
   flex: 1;
-  
+  min-height: 200px;
 }
 
-.vertical-line {
-  min-height: 60px;
-  width: 1px;
-  background-color: #ccc;
-  margin: 0 20px;
-}
+
 .reports-section h3 {
-  font-weight: 400;
+  font-weight: 700;
   display: block;
   font-size: 18px; 
   margin-bottom: 10px;
   padding: 5px;
   color: #333;
+  text-align: center;
+  background-color: rgb(232, 232, 232);
 }
 
 .reports-section ul {
@@ -443,6 +438,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  flex-wrap: wrap;
   justify-content: flex-start;
   margin-bottom: 8px;
   font-size: 16px; 
@@ -498,6 +494,84 @@
 .ant-select-selector-focused {
   border-color: black !important;
 }
+
+
+
+
+.company_list_flex_container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.company_list_flex_item {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  margin: 10px;
+  /* padding: 4px 20px; */
+  position: relative;
+}
+
+.company_list_flex_content {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 4px 10px;
+  flex-direction: row;
+}
+
+.company_list_options_button {
+  cursor: pointer;
+}
+
+/* ... */
+
+.company_list_options_menu {
+  position: relative;
+  margin-left: 5px;
+  margin-top: 2px;
+}
+
+/* ... */
+
+.company_list_options_dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #fff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  border-radius: 5px;
+}
+
+.company_list_options_dropdown div {
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+
+}
+.company_list_options_dropdown_opt:hover{
+  background-color: #dcdada;
+}
+
+.company_list_flex_item:hover .company_list_options_dropdown,
+.company_list_flex_item:focus-within .company_list_options_dropdown {
+  display: block;
+  border-radius: 5px;
+
+}
+
+.selected-filter {
+  background-color: rgb(157, 157, 157); 
+}
+
+.view-section-active{
+  color: #0d0d0d !important;
+}
+
 
 
 @media screen and (max-width: 768px) {

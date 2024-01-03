@@ -82,7 +82,6 @@
   }
   
   .cc_tags {
-    min-height: 30px;
     display: flex;
     flex-wrap: wrap;
   }

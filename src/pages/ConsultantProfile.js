@@ -53,7 +53,7 @@ function ConsultantProfile() {
     setEditedKeySkills([...keySkills]);
     setIsEditSkillsOpen(true);
   };
-  
+
   const handleCancelEditSkillsClick = () => {
     setEditedKeySkills([]);
     setIsEditSkillsOpen(false);
@@ -77,7 +77,7 @@ function ConsultantProfile() {
         const tagsArray = data.tags
           ? data.tags.split(",").map((tag) => tag.trim())
           : [];
-          const skillsArray = data.experties
+        const skillsArray = data.experties
           ? data.experties.split(",").map((expertise) => expertise.trim())
           : [];
         setKeySkills(skillsArray);
@@ -100,7 +100,7 @@ function ConsultantProfile() {
     const imageUrl = URL.createObjectURL(blob);
     setProfilePicture(imageUrl);
   };
-  const base64ToBlob = (base64String, contentType = 'image/png') => {
+  const base64ToBlob = (base64String, contentType = "image/png") => {
     const byteCharacters = atob(base64String);
     const byteArray = new Uint8Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {
@@ -183,7 +183,7 @@ function ConsultantProfile() {
         }),
       });
       if (response.ok) {
-        fetchData()
+        fetchData();
       } else {
         console.error("Failed to update summary");
       }
@@ -219,7 +219,7 @@ function ConsultantProfile() {
         body: JSON.stringify({
           address: editedLocation,
           phoneno: editedPhone,
-          tags: editedTags.join(", "), 
+          tags: editedTags.join(", "),
           yearofexp: editedExperience,
         }),
       });
@@ -266,10 +266,35 @@ function ConsultantProfile() {
     setReview("");
   };
 
-  const handleSubmitClick = () => {
-    setIsRatingOpen(false);
-    setRating(0);
-    setReview("");
+  const handleSubmitClick = async () => {
+    {
+      try {
+        const response = await fetch(
+          `${API_URL}/main/consultants/${id}/reviews/create/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Cookies.get("accessToken")}`,
+            },
+            body: JSON.stringify({
+              rating: rating,
+              comment: review,
+              consultant: id,
+              user: loggedInUserId,
+            }),
+          }
+        );
+        if (response.ok) {
+          fetchData();
+        } else {
+          console.error("Failed to update review");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+      setIsRatingOpen(false);
+    }
   };
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -311,7 +336,7 @@ function ConsultantProfile() {
       }
       const data = await response.json();
       alert("Image uploaded successfully!");
-      fetchData()
+      fetchData();
     } catch (error) {
       console.error("Error uploading image:", error);
       alert("Error uploading image. Please try again.");
@@ -330,7 +355,7 @@ function ConsultantProfile() {
         <div class="consultant_profile_picture">
           <div class="image-container">
             <img
-              // src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"    
+              // src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"
               src={profilePicture}
               alt="User Profile"
             />
@@ -356,7 +381,7 @@ function ConsultantProfile() {
               <div className="consultant_profile_banner_data_c1">
                 <p className="constultant_profile_banner_personal_detail">
                   <FaStar className="constultant_profile_banner_personal_detail_icon" />{" "}
-                  4.5
+                  {consultantData.average_rating}
                 </p>
                 <p className="constultant_profile_banner_personal_detail">
                   <IoLocationSharp className="constultant_profile_banner_personal_detail_icon" />{" "}
@@ -423,32 +448,42 @@ function ConsultantProfile() {
                   border: "0.1px solid #ddd",
                 }}
               />
-              <h4 style={{ fontSize: "20px", marginTop: "14px" }}>
-                Elevate your presence with a polished profile picture.
-              </h4>
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginTop: "15px",
-                }}
-              >
-                <img
-                  src={
-                    selectedImage ||
-                    "https://static.licdn.com/aero-v1/sc/h/c5ybm82ti04zuasz2a0ubx7bu"
-                  }
-                  alt="Profile"
-                  style={{
-                    objectFit:"cover",
-                    borderRadius: "8px",
-                    marginTop: "15px",
-                    marginBottom: "15px",
-                  }}
-                />
-              </div>
-
+              {selectedImage ? (
+                <div>
+                  {/* Render selected image */}
+                  <img
+                    src={selectedImage}
+                    alt="Selected Profile"
+                    style={{
+                      height: "180px",
+                      borderRadius: "8px",
+                    }}
+                  />
+                </div>
+              ) : (
+                <div>
+                  {/* Render text and default image */}
+                  <h4 style={{ fontSize: "20px", marginTop: "14px" }}>
+                    Elevate your presence with a polished profile picture.
+                  </h4>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      marginTop: "15px",
+                    }}
+                  >
+                    <img
+                      src="https://static.licdn.com/aero-v1/sc/h/c5ybm82ti04zuasz2a0ubx7bu"
+                      alt="Default Profile"
+                      style={{
+                        height: "104px",
+                        borderRadius: "8px",
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
               <hr
                 style={{
                   marginTop: "15px",
@@ -592,12 +627,7 @@ function ConsultantProfile() {
           </div>
         )}
         <h3>Professional Summary</h3>
-        {consultantData && consultantData.user && (
-
-        <p>
-          {consultantData.bio}
-        </p>
-        )}
+        {consultantData && consultantData.user && <p>{consultantData.bio}</p>}
         {isEditSummaryOpen && (
           <div className="company-profile-rating-popup-overlay">
             <div className="consultant_profile_edit_popup">
@@ -626,11 +656,11 @@ function ConsultantProfile() {
             <button className="download_button">
               <RxDownload />
             </button>
-          {isOwnProfile && (
-            <button className="update_button">
-              <RxPencil1 />
-            </button>
-          )}
+            {isOwnProfile && (
+              <button className="update_button">
+                <RxPencil1 />
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -642,13 +672,15 @@ function ConsultantProfile() {
           </div>
         )}
         <h3>Key Skills</h3>
-        <div className="consultant_profile_key_skills_tags">
-          {keySkills.map((skill, index) => (
-            <span key={index} className="consultant_profile_key_skill_tag">
-              {skill}
-            </span>
-          ))}
-        </div>
+        {consultantData && (
+          <div className="consultant_profile_key_skills_tags">
+            {keySkills.map((skill, index) => (
+              <span key={index} className="consultant_profile_key_skill_tag">
+                {skill}
+              </span>
+            ))}
+          </div>
+        )}
         {isEditSkillsOpen && (
           <div className="company-profile-rating-popup-overlay">
             <div className="consultant_profile_edit_popup">

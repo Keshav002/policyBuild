@@ -265,6 +265,8 @@
 .consultant_profile_edit_popup {
   background-color: #fff;
   width: 500px;
+  max-height: 500px;
+  overflow-y: scroll;
   border-radius: 20px;
   padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -273,6 +275,10 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
+}
+.consultant_profile_edit_popup::-webkit-scrollbar {
+  width: 0; /* Remove scrollbar space on Webkit (Chrome, Safari) */
+  background: transparent; /* Optional: just make scrollbar invisible */
 }
 
 .company-profile-rating-popup {

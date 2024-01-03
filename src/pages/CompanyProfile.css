@@ -24,13 +24,6 @@
   width: 15%;
 }
 
-.company-profile-logo-img {
-  width: 140px;
-  height: 140px;
-  border-radius: 10px;
-  border: 2px solid white;
-}
-
 .company-profile-info {
   display: flex;
   flex-direction: column;
@@ -295,11 +288,7 @@ textarea.company-profile-form-control {
 
 /* Add Profile */
 
-.company-profile-logo {
-  margin-left: 20px;
-  width: 15%;
-  position: relative;
-}
+
 
 .company-profile-logo-img {
   width: 140px;
@@ -539,6 +528,8 @@ textarea.company-profile-form-control {
 
 .company-profile-photo-upload-dialog {
   position: fixed;
+  height: 300px;
+  width: 420px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -667,4 +658,14 @@ textarea.company-profile-form-control {
 
 .close-button:hover {
   color: #333;
+}
+
+
+.custom-select {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
 }

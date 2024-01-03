@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import CompanyCard from ".././components/CompanyCard";
+import ConsultantCard from ".././components/ConsultantCard";
 import Nav from ".././components/Nav";
-import "./CompanyList.css";
+import "./ConsultantList.css";
 import { BsGrid } from "react-icons/bs";
 import { CiBoxList } from "react-icons/ci";
 import { AiOutlineFilter } from "react-icons/ai";
@@ -22,7 +22,7 @@ import jwtDecode from "jwt-decode";
 import { API_URL } from "../ConfigApi";
 import { useSelector } from "react-redux";
 import { VscKebabVertical } from "react-icons/vsc";
-function CompanyList() {
+function ConsultantList() {
   const loggedInUserId = useSelector((state) => state.user.userData.user_id);
   const [searchTerm, setSearchTerm] = useState("");
   const [tags, setTags] = useState([]);
@@ -76,11 +76,11 @@ function CompanyList() {
   const [ratingsTo, setRatingsTo] = useState(
     () => localStorage.getItem("ratingsTo") || ""
   );
-  const [numEmployeesFrom, setNumEmployeesFrom] = useState(
-    () => localStorage.getItem("numEmployeesFrom") || ""
+  const [yearOfExpFrom, setyearOfExpFrom] = useState(
+    () => localStorage.getItem("yearOfExpFrom") || ""
   );
-  const [numEmployeesTo, setNumEmployeesTo] = useState(
-    () => localStorage.getItem("numEmployeesTo") || ""
+  const [yearOfExpTo, setyearOfExpTo] = useState(
+    () => localStorage.getItem("yearOfExpTo") || ""
   );
   const [selectedFilter, setSelectedFilter] = useState(
     () => localStorage.getItem("selectedFilter") || ""
@@ -156,8 +156,8 @@ function CompanyList() {
     foundedDateTo,
     ratingsFrom,
     ratingsTo,
-    numEmployeesFrom,
-    numEmployeesTo,
+    yearOfExpFrom,
+    yearOfExpTo,
     selectedCompanyTypes,
     selectedDepartments,
     isSidebarOpen,
@@ -176,8 +176,8 @@ function CompanyList() {
     localStorage.setItem("foundedDateTo", foundedDateTo);
     localStorage.setItem("ratingsFrom", ratingsFrom);
     localStorage.setItem("ratingsTo", ratingsTo);
-    localStorage.setItem("numEmployeesFrom", numEmployeesFrom);
-    localStorage.setItem("numEmployeesTo", numEmployeesTo);
+    localStorage.setItem("yearOfExpFrom", yearOfExpFrom);
+    localStorage.setItem("yearOfExpTo", yearOfExpTo);
     localStorage.setItem(
       "selectedCompanyTypes",
       JSON.stringify(selectedCompanyTypes)
@@ -231,8 +231,8 @@ function CompanyList() {
     setFoundedDateTo("");
     setRatingsFrom("");
     setRatingsTo("");
-    setNumEmployeesFrom("");
-    setNumEmployeesTo("");
+    setyearOfExpFrom("");
+    setyearOfExpTo("");
     setSelectedCompanyTypes([]);
     setSelectedDepartments([]);
     setSearchTerm("");
@@ -295,8 +295,8 @@ function CompanyList() {
       ratingsTo = "",
       foundedDateFrom = "",
       foundedDateTo = "",
-      numEmployeesFrom = "",
-      numEmployeesTo = "",
+      yearOfExpFrom = "",
+      yearOfExpTo = "",
       pageSize = "",
       currentPage = "1",
     } = report;
@@ -310,8 +310,8 @@ function CompanyList() {
     setRatingsTo(ratingsTo || "");
     setFoundedDateFrom(foundedDateFrom || "");
     setFoundedDateTo(foundedDateTo || "");
-    setNumEmployeesFrom(numEmployeesFrom || "");
-    setNumEmployeesTo(numEmployeesTo || "");
+    setyearOfExpFrom(yearOfExpFrom || "");
+    setyearOfExpTo(yearOfExpTo || "");
     setPageSize(pageSize || "");
     setCurrentPage(currentPage || "1");
   };
@@ -336,7 +336,7 @@ function CompanyList() {
 
       const reports = await response.json();
       const companyReports = reports.filter(
-        (report) => report.filter_for === "company"
+        (report) => report.filter_for === "consultant"
       );
       setpersonalReports(companyReports);
     } catch (error) {
@@ -348,16 +348,12 @@ function CompanyList() {
   const createPersonalReport = async () => {
     const reportData = {
       tags,
-      selectedCompanyTypes,
-      selectedDepartments,
       idfrom,
       idto,
       ratingsFrom,
       ratingsTo,
-      foundedDateFrom,
-      foundedDateTo,
-      numEmployeesFrom,
-      numEmployeesTo,
+      yearOfExpFrom,
+      yearOfExpTo,
       pageSize,
       currentPage,
     };
@@ -372,7 +368,7 @@ function CompanyList() {
           user: loggedInUserId,
           filter_name: reportName,
           filter_data: reportData,
-          filter_for: "company",
+          filter_for: "consultant",
         }),
       });
       if (response.ok) {
@@ -498,8 +494,8 @@ function CompanyList() {
       founded_date_to: foundedDateTo,
       rating_from: ratingsFrom,
       rating_to: ratingsTo,
-      num_employees_from: numEmployeesFrom,
-      num_employees_to: numEmployeesTo,
+      num_employees_from: yearOfExpFrom,
+      num_employees_to: yearOfExpTo,
       company_types: selectedCompanyTypes,
       department_types: selectedDepartments,
       q: tags,
@@ -520,7 +516,7 @@ function CompanyList() {
     }
 
     const queryString = params.toString();
-    const url = `${API_URL}/main/search/companies/?${queryString}`;
+    const url = `${API_URL}/main/search/consultants/?${queryString}`;
 
     console.log("Constructed URL:", url);
 
@@ -547,8 +543,8 @@ function CompanyList() {
     foundedDateTo,
     ratingsFrom,
     ratingsTo,
-    numEmployeesFrom,
-    numEmployeesTo,
+    yearOfExpFrom,
+    yearOfExpTo,
     selectedCompanyTypes,
     selectedDepartments,
     tags,
@@ -695,7 +691,7 @@ function CompanyList() {
                 </div>
               </div>
 
-              <div className="cp_filter_section">
+              {/* <div className="cp_filter_section">
                 <h3 className="cp_filter_title">Founded Date Range</h3>
                 <div className="cp_filter_input">
                   <DatePicker
@@ -729,7 +725,7 @@ function CompanyList() {
                     format="DD-MM-YYYY"
                   />
                 </div>
-              </div>
+              </div> */}
 
               <div className="cp_filter_section">
                 <h3 className="cp_filter_title">Ratings Range</h3>
@@ -755,26 +751,26 @@ function CompanyList() {
               </div>
 
               <div className="cp_filter_section">
-                <h3 className="cp_filter_title">Number of Employees</h3>
+                <h3 className="cp_filter_title">Years of Experience</h3>
                 <div className="cp_filter_input">
                   <input
                     type="number"
                     placeholder="From"
-                    value={numEmployeesFrom}
-                    onChange={(e) => setNumEmployeesFrom(e.target.value)}
+                    value={yearOfExpFrom}
+                    onChange={(e) => setyearOfExpFrom(e.target.value)}
                   />
                   <span className="cp_filter_separator">to</span>
                   <input
                     type="number"
                     placeholder="To"
-                    value={numEmployeesTo}
-                    onChange={(e) => setNumEmployeesTo(e.target.value)}
+                    value={yearOfExpTo}
+                    onChange={(e) => setyearOfExpTo(e.target.value)}
                   />
                 </div>
               </div>
 
-              <div className="cp_filter_section">
-                <h3 className="cp_filter_title">
+              {/* <div className="cp_filter_section"> */}
+                {/* <h3 className="cp_filter_title">
                   Company Type{" "}
                   <span
                     className={`dropdown-icon ${
@@ -881,9 +877,9 @@ function CompanyList() {
                       />
                       Retail
                     </label>
-                  </div>
-                )}
-              </div>
+                  </div> */}
+                {/* )} */}
+              {/* </div> */}
             </div>
           )}
           <div
@@ -967,7 +963,7 @@ function CompanyList() {
                 <div className="company_lists_cards">
                   {companies &&
                     companies.paginated_results?.map((company, index) => (
-                      <CompanyCard key={index} company={company} />
+                      <ConsultantCard key={index} consultant={company} />
                     ))}
                 </div>
               )}
@@ -975,7 +971,7 @@ function CompanyList() {
               <div className="company_list_pagination_container">
                 <>
                   <Pagination
-                    total={companies.company_total_hits}
+                    total={companies.consultant_total_hits}
                     current={currentPage}
                     pageSize={pageSize}
                     onChange={handleChangePage}
@@ -996,4 +992,4 @@ function CompanyList() {
   );
 }
 
-export default CompanyList;
+export default ConsultantList;
