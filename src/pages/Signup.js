@@ -10,12 +10,12 @@ import { API_URL } from "../ConfigApi";
 import { useNavigate, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import { googleLogin } from "../store/userSlice";
-import {useDispatch} from 'react-redux';
+import { useDispatch } from "react-redux";
 import ClipLoader from "react-spinners/ClipLoader";
 
 const SignUp = () => {
   const override = {
-    marginLeft : "10px",
+    marginLeft: "10px",
   };
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -104,7 +104,7 @@ const SignUp = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-       setLoading(false);
+        setLoading(false);
         if (data.id) {
           setShowOTPVerification(true);
         } else if (data.email) {
@@ -159,9 +159,6 @@ const SignUp = () => {
   const handleGoogleLoginError = () => {
     console.log("Login Failed");
   };
- 
-
-      
 
   return (
     <>
@@ -235,22 +232,28 @@ const SignUp = () => {
                     required
                   />
                 </div>
-                <div className="verify-button" onClick={handleOTPVerification}>
-                  Verify
+                <div className="company-profile-rating-popup__buttons">
+                  <div
+                    className="verify-button"
+                    onClick={handleOTPVerification}
+                  >
+                    Verify
+                  </div>
+                  <Link to='/login' className="verify-button" style={{textDecoration:"none"}}>Later</Link>
                 </div>
               </div>
             </div>
           )}
 
-          <div className="signup-social-buttons">
+          {/* <div className="signup-social-buttons">
             <GoogleOAuthProvider clientId="720055077366-672hd22rdp8sv2obcfcmp0puqbm8hrs0.apps.googleusercontent.com">
               <GoogleLogin
                 onSuccess={handleGoogleLogin}
                 onError={handleGoogleLoginError}
               />
             </GoogleOAuthProvider>
-          </div>
-          <div className="signup-line">or</div>
+          </div> */}
+          {/* <div className="signup-line">or</div> */}
           <div className="signup-input-fields">
             <div className="signup-input">
               <img src={user_icon} alt="" />
@@ -310,13 +313,13 @@ const SignUp = () => {
             <div className="signup-submit" onClick={handleSignUp}>
               Sign Up
               <ClipLoader
-                  color='white'
-                  loading={loading}
-                  cssOverride={override}
-                  size={16}
-                  aria-label="Loading Spinner"
-                  data-testid="loader"
-                />
+                color="white"
+                loading={loading}
+                cssOverride={override}
+                size={16}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              />
             </div>
           </div>
         </div>

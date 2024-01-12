@@ -19,6 +19,11 @@ import ResetPassword from "./pages/ResetPassword";
 import ConsultantProjects from "./pages/ConsultantProjects";
 import CompanyProjects from "./pages/CompanyProjects";
 import Login from "./pages/Login";
+import Repository from "./pages/Repository";
+import Dashboard from "./pages/Dashboard";
+import Notifications from "./pages/Notifications";
+import Meetings from "./pages/Meetings";
+
 import {Provider} from "react-redux";
 import store from "./store/store";
 import { DataTable } from "./components/DataTable";
@@ -42,6 +47,10 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/consultant-projects" element={<ConsultantProjects />} />
             <Route path="/company-projects" element={<CompanyProjects />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/meetings" element={<Meetings />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/repository" element={<Repository />} />
             <Route path="/" element={<Login />} />
             <Route path= "/datatable" element={<DataTable />} />
             <Route path= "/pdf" element={<PdfViewer />} />

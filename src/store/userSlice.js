@@ -84,7 +84,11 @@ export const logoutUser = (navigate) => {
             expires: expirationDateRefreshToken,
           });
           dispatch(setUser(data));
-          navigate("/consultant");
+          if(decodedToken.role == "Consultant"){
+            navigate("/consultant-projects");
+          }else if(decodedToken.role == "Company"){
+            navigate("/company-projects");
+          }
         } else {
           console.log('Authentication failed');
         }

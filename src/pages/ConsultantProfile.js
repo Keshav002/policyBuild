@@ -73,16 +73,18 @@ function ConsultantProfile() {
         const data = await response.json();
         console.log("data", data);
         setIsOwnProfile(data.user.id === loggedInUserId);
-        convertAndSetProfilePic(data.profilepic);
+        setConsultantData(data);
         const tagsArray = data.tags
-          ? data.tags.split(",").map((tag) => tag.trim())
-          : [];
+        ? data.tags.split(",").map((tag) => tag.trim())
+        : [];
         const skillsArray = data.experties
-          ? data.experties.split(",").map((expertise) => expertise.trim())
-          : [];
+        ? data.experties.split(",").map((expertise) => expertise.trim())
+        : [];
         setKeySkills(skillsArray);
         setTags(tagsArray);
-        setConsultantData(data);
+        if(data.profilepic !== null){
+          convertAndSetProfilePic(data.profilepic);
+        }
       } else {
         console.error("Failed to fetch data. Status:", response.status);
       }
@@ -355,8 +357,11 @@ function ConsultantProfile() {
         <div class="consultant_profile_picture">
           <div class="image-container">
             <img
-              // src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"
-              src={profilePicture}
+              src={
+                profilePicture !== null
+                  ? profilePicture
+                  : "https://cdn-icons-png.flaticon.com/128/8013/8013505.png"
+              }
               alt="User Profile"
             />
             {isOwnProfile && (

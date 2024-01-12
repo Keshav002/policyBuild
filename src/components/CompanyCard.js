@@ -12,10 +12,7 @@ function CompanyCard({ company }) {
         <div className="cc_logo">
           <img
             className="cc_logo_image"
-            src={
-              company.profilepic
-                ? company.profilepic
-                : "https://cdn-icons-png.flaticon.com/128/717/717940.png"
+            src={"https://cdn-icons-png.flaticon.com/128/717/717940.png"
             }
           />
         </div>

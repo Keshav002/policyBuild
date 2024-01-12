@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./Nav.css";
 import { NavLink } from "react-router-dom";
 import { API_URL } from "../ConfigApi";
@@ -6,10 +6,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { logoutUser } from "../store/userSlice";
 import { useDispatch } from "react-redux";
 import { FaUser } from "react-icons/fa";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 function Nav() {
-  const userState = useSelector(state => state.user);
+  const userState = useSelector((state) => state.user);
   console.log("userstate", userState);
   const currentLocation = useLocation();
   const dispatch = useDispatch();
@@ -31,18 +31,44 @@ function Nav() {
       ? `/company-profile/${userState.userData.company.id}`
       : userRole === "Consultant"
       ? `/consultant-profile/${userState.userData.consultant.id}`
-      : "/default-profile";
+      : "/";
+
+      const policyCheckLink =
+      userRole === "Company"
+        ? "/company-projects"
+        : userRole === "Consultant"
+        ? "/consultant-projects"
+        : "/";
+
+        const userPopupRef = useRef(null);
+
+        useEffect(() => {
+          const handleOutsideClick = (event) => {
+            if (
+              userPopupRef.current &&
+              !userPopupRef.current.contains(event.target)
+            ) {
+              setUserPopupVisible(false);
+            }
+          };
+      
+          window.addEventListener("mousedown", handleOutsideClick);
+      
+          return () => {
+            window.removeEventListener("mousedown", handleOutsideClick);
+          };
+        }, [isUserPopupVisible]);
 
   return (
     <div className="navbar">
       <div className="navbar-header">
         <div className="navbar-logo">
-          <a href="/consultant">Policy Check</a>
+        <Link to={policyCheckLink}>Policy Check</Link>
         </div>
         <div
           className={`navbar-hamburger ${isMobileMenuOpen ? "open" : ""}`}
           onClick={toggleMobileMenu}
-        >
+        > 
           <div></div>
           <div></div>
           <div></div>
@@ -51,7 +77,7 @@ function Nav() {
       <ul className={`navbar-nav-links ${isMobileMenuOpen ? "active" : ""}`}>
         <li>
           <NavLink
-            to="/consultant-projects"
+            to={policyCheckLink}
             className={
               currentLocation.pathname === "/consultant-projects" ||
               currentLocation.pathname === "/company-projects"
@@ -62,16 +88,65 @@ function Nav() {
             Projects
           </NavLink>
         </li>
-        <li>
-          <NavLink
-            to="/company-list"
-            className={
-              currentLocation.pathname === "/company-list" ? "active-link" : ""
-            }
-          >
-            Companies
-          </NavLink>
-        </li>
+        {userState.userData.role === "Company" && (
+          <li>
+            <NavLink
+              to="/consultant-list"
+              className={
+                currentLocation.pathname === "/consultant-list"
+                  ? "active-link"
+                  : ""
+              }
+            >
+              Consultants
+            </NavLink>
+          </li>
+        )}
+        {userState.userData.role === "Consultant" && (
+          <li>
+            <NavLink
+              to="/company-list"
+              className={
+                currentLocation.pathname === "/company-list"
+                  ? "active-link"
+                  : ""
+              }
+            >
+              Companies
+            </NavLink>
+          </li>
+        )}
+
+        {/* Show both "Companies" and "Consultants" if the user role is "Admin" */}
+        {userState.userData.role === "Admin" && (
+          <>
+            <li>
+              <NavLink
+                to="/company-list"
+                className={
+                  currentLocation.pathname === "/company-list"
+                    ? "active-link"
+                    : ""
+                }
+              >
+                Companies
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/consultant-list"
+                className={
+                  currentLocation.pathname === "/consultant-list"
+                    ? "active-link"
+                    : ""
+                }
+              >
+                Consultants
+              </NavLink>
+            </li>
+          </>
+        )}
+
         <li>
           <NavLink
             to="/notifications"
@@ -86,7 +161,7 @@ function Nav() {
           <NavLink
             to="/repository"
             className={
-              currentLocation.pathname === "/repositories" ? "active-link" : ""
+              currentLocation.pathname === "/repository" ? "active-link" : ""
             }
           >
             Repository
@@ -98,28 +173,35 @@ function Nav() {
         onClick={toggleUserPopup}
       >
         <img
-          src={userState.userData.profilePic || "https://cdn-icons-png.flaticon.com/128/848/848006.png"}
+          src={
+            userState.userData.profilePic ||
+            "https://cdn-icons-png.flaticon.com/128/848/848006.png"
+          }
           alt="User"
         />
         {isUserPopupVisible && (
-          <div className="user-popup">
+          <div className="user-popup" ref={userPopupRef}>
             <div className="user-info">
-            <Link to={profileLink} className="profile-navlink">
+              <Link to={profileLink} className="profile-navlink">
                 <div className="user-profile">
                   <img
-                    src={userState.userData.profilePic || "https://cdn-icons-png.flaticon.com/128/848/848006.png"}
+                    src={
+                      userState.userData.profilePic ||
+                      "https://cdn-icons-png.flaticon.com/128/848/848006.png"
+                    }
                     alt="User Profile"
                     className="user-profile-image"
                   />
-                  <span className="user-name">{userState.userData.username}</span>
+                  <span className="user-name">
+                    {userState.userData.username}
+                  </span>
                   <br />
                 </div>
               </Link>
               <div className="user-description">{userState.userData.email}</div>
             </div>
             <div className="user-options">
-            <Link to={profileLink} className="profile-navlink">
-
+              <Link to={profileLink} className="profile-navlink">
                 <div className="user-option">
                   <img
                     src="https://cdn-icons-png.flaticon.com/128/9308/9308008.png"
@@ -130,7 +212,7 @@ function Nav() {
                 </div>
               </Link>
               <hr />
-              <a href="/dashboard">
+              <Link to='/dashboard'>
                 <div className="user-option">
                   <img
                     src="https://cdn-icons-png.flaticon.com/128/2329/2329087.png"
@@ -139,7 +221,18 @@ function Nav() {
                   />
                   Dashboard
                 </div>
-              </a>
+              </Link>
+              <hr />
+              <Link to='/meetings'>
+                <div className="user-option">
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/128/9662/9662347.png"
+                    alt="Meetings"
+                    className="option-icon"
+                  />
+                  Chats and Meetings
+                </div>
+              </Link>
               <hr />
               <div className="user-option" onClick={handleLogout}>
                 <img

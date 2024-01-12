@@ -9,7 +9,7 @@ import { FaCaretUp, FaCaretDown } from "react-icons/fa";
 import { FaSave, FaEye } from "react-icons/fa";
 import { PiClipboardTextDuotone } from "react-icons/pi";
 import { MdDelete } from "react-icons/md";
-import { DataTable } from "../components/DataTable";
+import { ConsultantDataTable } from "../components/ConsultantDataTable";
 import { Pagination } from "antd";
 import { HiTableCells } from "react-icons/hi2";
 import { FaTableList } from "react-icons/fa6";
@@ -30,7 +30,8 @@ function ConsultantList() {
   const [pageSize, setPageSize] = useState(2);
   const [personalReports, setpersonalReports] = useState([]);
   const [openMenu, setOpenMenu] = useState(null);
-
+  const [reportNameError, setReportNameError] = useState('');
+  const [reportRenameError, setReportRenameError] = useState('');
   const handleOptionsMenuClick = (id) => {
     if (openMenu === id) {
       // Close the menu if it's already open
@@ -98,7 +99,6 @@ function ConsultantList() {
     }
   };
 
-  //const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedCompanyTypes, setSelectedCompanyTypes] = useState(() => {
     const storedCompanyTypes = localStorage.getItem("selectedCompanyTypes");
     return storedCompanyTypes ? JSON.parse(storedCompanyTypes) : [];
@@ -114,23 +114,23 @@ function ConsultantList() {
     return storedSidebarState ? JSON.parse(storedSidebarState) : false;
   });
 
-  const toggleDropdown = () => {
-    const newDropdownState = !isCompanyTypeDropdownOpen;
-    setIsCompanyTypeDropdownOpen(newDropdownState);
-    localStorage.setItem(
-      "isCompanyTypeDropdownOpen",
-      JSON.stringify(newDropdownState)
-    );
-  };
+  // const toggleDropdown = () => {
+  //   const newDropdownState = !isCompanyTypeDropdownOpen;
+  //   setIsCompanyTypeDropdownOpen(newDropdownState);
+  //   localStorage.setItem(
+  //     "isCompanyTypeDropdownOpen",
+  //     JSON.stringify(newDropdownState)
+  //   );
+  // };
 
-  const toggleDepartmentDropdown = () => {
-    const newDropdownState = !isDepartmentDropdownOpen;
-    setIsDepartmentDropdownOpen(newDropdownState);
-    localStorage.setItem(
-      "isDepartmentDropdownOpen",
-      JSON.stringify(newDropdownState)
-    );
-  };
+  // const toggleDepartmentDropdown = () => {
+  //   const newDropdownState = !isDepartmentDropdownOpen;
+  //   setIsDepartmentDropdownOpen(newDropdownState);
+  //   localStorage.setItem(
+  //     "isDepartmentDropdownOpen",
+  //     JSON.stringify(newDropdownState)
+  //   );
+  // };
 
   const [isReportsPanelOpen, setIsReportsPanelOpen] = useState(() => {
     const storedReportsPanelState = localStorage.getItem("isReportsPanelOpen");
@@ -152,16 +152,10 @@ function ConsultantList() {
   }, [
     idfrom,
     idto,
-    foundedDateFrom,
-    foundedDateTo,
     ratingsFrom,
     ratingsTo,
     yearOfExpFrom,
     yearOfExpTo,
-    selectedCompanyTypes,
-    selectedDepartments,
-    isSidebarOpen,
-    viewType,
     selectedFilter,
   ]);
 
@@ -172,43 +166,13 @@ function ConsultantList() {
   const handleFilterChange = () => {
     localStorage.setItem("idFrom", idfrom);
     localStorage.setItem("idTo", idto);
-    localStorage.setItem("foundedDateFrom", foundedDateFrom);
-    localStorage.setItem("foundedDateTo", foundedDateTo);
     localStorage.setItem("ratingsFrom", ratingsFrom);
     localStorage.setItem("ratingsTo", ratingsTo);
     localStorage.setItem("yearOfExpFrom", yearOfExpFrom);
     localStorage.setItem("yearOfExpTo", yearOfExpTo);
-    localStorage.setItem(
-      "selectedCompanyTypes",
-      JSON.stringify(selectedCompanyTypes)
-    );
-    localStorage.setItem(
-      "selectedDepartments",
-      JSON.stringify(selectedDepartments)
-    );
-    localStorage.setItem("isSidebarOpen", JSON.stringify(isSidebarOpen));
     localStorage.setItem("selectedFilter", selectedFilter);
   };
 
-  useEffect(() => {
-    const storedCompanyTypeDropdownState = localStorage.getItem(
-      "isCompanyTypeDropdownOpen"
-    );
-    setIsCompanyTypeDropdownOpen(
-      storedCompanyTypeDropdownState
-        ? JSON.parse(storedCompanyTypeDropdownState)
-        : false
-    );
-
-    const storedDepartmentDropdownState = localStorage.getItem(
-      "isDepartmentDropdownOpen"
-    );
-    setIsDepartmentDropdownOpen(
-      storedDepartmentDropdownState
-        ? JSON.parse(storedDepartmentDropdownState)
-        : false
-    );
-  }, []);
 
   const toggleSidebar = () => {
     if (isReportsPanelOpen) {
@@ -227,19 +191,12 @@ function ConsultantList() {
   const clearFilters = () => {
     setIdFrom("");
     setIdTo("");
-    setFoundedDateFrom("");
-    setFoundedDateTo("");
     setRatingsFrom("");
     setRatingsTo("");
     setyearOfExpFrom("");
     setyearOfExpTo("");
-    setSelectedCompanyTypes([]);
-    setSelectedDepartments([]);
     setSearchTerm("");
     setTags([]);
-    setSelectedLogic("and");
-    setIsCompanyTypeDropdownOpen(false);
-    setIsDepartmentDropdownOpen(false);
     handleFilterChange();
     setSelectedFilter("");
   };
@@ -261,40 +218,36 @@ function ConsultantList() {
     const updatedTags = tags.filter((t) => t !== tag);
     setTags(updatedTags);
   };
-  const handleCompanyTypeChange = (value) => {
-    const updatedSelectedCompanyTypes = selectedCompanyTypes.includes(value)
-      ? selectedCompanyTypes.filter((type) => type !== value)
-      : [...selectedCompanyTypes, value];
+  // const handleCompanyTypeChange = (value) => {
+  //   const updatedSelectedCompanyTypes = selectedCompanyTypes.includes(value)
+  //     ? selectedCompanyTypes.filter((type) => type !== value)
+  //     : [...selectedCompanyTypes, value];
 
-    setSelectedCompanyTypes(updatedSelectedCompanyTypes);
-  };
-  const handleDepartmentCheckboxChange = (value) => {
-    if (selectedDepartments.includes(value)) {
-      setSelectedDepartments(
-        selectedDepartments.filter((dept) => dept !== value)
-      );
-    } else {
-      setSelectedDepartments([...selectedDepartments, value]);
-    }
-  };
-  const [selectedLogic, setSelectedLogic] = useState("and");
+  //   setSelectedCompanyTypes(updatedSelectedCompanyTypes);
+  // };
+  // const handleDepartmentCheckboxChange = (value) => {
+  //   if (selectedDepartments.includes(value)) {
+  //     setSelectedDepartments(
+  //       selectedDepartments.filter((dept) => dept !== value)
+  //     );
+  //   } else {
+  //     setSelectedDepartments([...selectedDepartments, value]);
+  //   }
+  // };
+  // const [selectedLogic, setSelectedLogic] = useState("and");
 
-  const handleLogicChange = (e) => {
-    setSelectedLogic(e.target.value);
-  };
+  // const handleLogicChange = (e) => {
+  //   setSelectedLogic(e.target.value);
+  // };
 
   const applyFilter = (report) => {
     console.log("Report object:", report);
     const {
       tags = [],
-      selectedCompanyTypes = [],
-      selectedDepartments = [],
       idfrom = "",
       idto = "",
       ratingsFrom = "",
       ratingsTo = "",
-      foundedDateFrom = "",
-      foundedDateTo = "",
       yearOfExpFrom = "",
       yearOfExpTo = "",
       pageSize = "",
@@ -302,14 +255,10 @@ function ConsultantList() {
     } = report;
 
     setTags(tags);
-    setSelectedCompanyTypes(selectedCompanyTypes);
-    setSelectedDepartments(selectedDepartments);
     setIdFrom(idfrom || "");
     setIdTo(idto || "");
     setRatingsFrom(ratingsFrom || "");
     setRatingsTo(ratingsTo || "");
-    setFoundedDateFrom(foundedDateFrom || "");
-    setFoundedDateTo(foundedDateTo || "");
     setyearOfExpFrom(yearOfExpFrom || "");
     setyearOfExpTo(yearOfExpTo || "");
     setPageSize(pageSize || "");
@@ -346,6 +295,10 @@ function ConsultantList() {
   };
 
   const createPersonalReport = async () => {
+    if (reportName.trim() === "") {
+      setReportNameError('Please enter a name first');
+      return;
+    }
     const reportData = {
       tags,
       idfrom,
@@ -412,6 +365,10 @@ function ConsultantList() {
   };
 
   const renamePersonalReport = async () => {
+    if (newReportName.trim() === "") {
+      setReportRenameError('Please enter a name first');
+      return;
+    }
     try {
       const response = await fetch(
         `${API_URL}/main/saved-filters/${renameFilterId}/`,
@@ -449,6 +406,7 @@ function ConsultantList() {
       <div className="save-report-popup">
         <label>
           <p>Report Name:</p>
+          {reportNameError && <p>{reportNameError}</p>}
           <input
             type="text"
             value={reportName}
@@ -457,7 +415,7 @@ function ConsultantList() {
         </label>
         <div className="popup-buttons">
           <button onClick={createPersonalReport}>Save</button>
-          <button onClick={() => setIsSaveReportPopup(false)}>Cancel</button>
+          <button onClick={() => { setIsSaveReportPopup(false); setReportNameError(''); }}>Cancel</button>
         </div>
       </div>
     </>
@@ -472,6 +430,7 @@ function ConsultantList() {
       <div className="save-report-popup">
         <label>
           <p>New Name:</p>
+          {reportRenameError && <p>{reportRenameError}</p>}
           <input
             type="text"
             value={newReportName}
@@ -480,7 +439,7 @@ function ConsultantList() {
         </label>
         <div className="popup-buttons">
           <button onClick={renamePersonalReport}>Save</button>
-          <button onClick={() => setIsRenamePopup(false)}>Cancel</button>
+          <button onClick={() => {setIsRenamePopup(false); setReportRenameError('');}}>Cancel</button>
         </div>
       </div>
     </>
@@ -490,15 +449,11 @@ function ConsultantList() {
     const filters = {
       id_from: idfrom,
       id_to: idto,
-      founded_date_from: foundedDateFrom,
-      founded_date_to: foundedDateTo,
       rating_from: ratingsFrom,
       rating_to: ratingsTo,
-      num_employees_from: yearOfExpFrom,
-      num_employees_to: yearOfExpTo,
-      company_types: selectedCompanyTypes,
-      department_types: selectedDepartments,
       q: tags,
+      yearofexp_from:yearOfExpFrom,
+      yearofexp_to:yearOfExpTo,
       page_size: pageSize,
       page_number: currentPage,
     };
@@ -539,14 +494,10 @@ function ConsultantList() {
   }, [
     idfrom,
     idto,
-    foundedDateFrom,
-    foundedDateTo,
     ratingsFrom,
     ratingsTo,
     yearOfExpFrom,
     yearOfExpTo,
-    selectedCompanyTypes,
-    selectedDepartments,
     tags,
     pageSize,
     currentPage,
@@ -956,7 +907,7 @@ function ConsultantList() {
             <div className="company-list-container">
               {viewType === "table" && (
                 <div className="table-container">
-                  <DataTable data={companies?.paginated_results || []} />
+                  <ConsultantDataTable data={companies?.paginated_results || []} />
                 </div>
               )}
               {viewType !== "table" && (

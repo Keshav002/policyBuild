@@ -1,7 +1,7 @@
 import React from 'react';
 import "./CompanyCard.css";
 
-function CompanyCard({ consultant }) {
+function ConsultantCard({ consultant }) {
   const tagsArray = consultant.tags.split(",");
 
   return (
@@ -11,7 +11,7 @@ function CompanyCard({ consultant }) {
           <span>ID : {consultant.id}</span>
         </div>
       <div className="cc_logo">
-        <img className="cc_logo_image" src={consultant.profilepic ? consultant.profilepic : "https://cdn-icons-png.flaticon.com/128/717/717940.png"}/>
+        <img className="cc_logo_image" src={"https://cdn-icons-png.flaticon.com/128/2102/2102633.png"}/>
       </div>
         <div className="cc_content">
           <div className="cc_name">{consultant.username}</div>
@@ -43,4 +43,4 @@ function CompanyCard({ consultant }) {
   );
 }
 
-export default CompanyCard;
+export default ConsultantCard;

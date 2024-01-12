@@ -30,7 +30,8 @@ function CompanyList() {
   const [pageSize, setPageSize] = useState(2);
   const [personalReports, setpersonalReports] = useState([]);
   const [openMenu, setOpenMenu] = useState(null);
-
+  const [reportNameError, setReportNameError] = useState('');
+  const [reportRenameError, setReportRenameError] = useState('');
   const handleOptionsMenuClick = (id) => {
     if (openMenu === id) {
       // Close the menu if it's already open
@@ -346,6 +347,10 @@ function CompanyList() {
   };
 
   const createPersonalReport = async () => {
+    if (reportName.trim() === "") {
+      setReportNameError('Please enter a name first');
+      return;
+    }
     const reportData = {
       tags,
       selectedCompanyTypes,
@@ -416,6 +421,10 @@ function CompanyList() {
   };
 
   const renamePersonalReport = async () => {
+    if (newReportName.trim() === "") {
+      setReportRenameError('Please enter a name first');
+      return;
+    }
     try {
       const response = await fetch(
         `${API_URL}/main/saved-filters/${renameFilterId}/`,
@@ -453,6 +462,7 @@ function CompanyList() {
       <div className="save-report-popup">
         <label>
           <p>Report Name:</p>
+          {reportNameError && <p>{reportNameError}</p>}
           <input
             type="text"
             value={reportName}
@@ -461,7 +471,8 @@ function CompanyList() {
         </label>
         <div className="popup-buttons">
           <button onClick={createPersonalReport}>Save</button>
-          <button onClick={() => setIsSaveReportPopup(false)}>Cancel</button>
+          <button onClick={() => { setIsSaveReportPopup(false); setReportNameError(''); }}>Cancel</button>
+
         </div>
       </div>
     </>
@@ -476,6 +487,7 @@ function CompanyList() {
       <div className="save-report-popup">
         <label>
           <p>New Name:</p>
+          {reportRenameError && <p>{reportRenameError}</p>}
           <input
             type="text"
             value={newReportName}
@@ -484,7 +496,7 @@ function CompanyList() {
         </label>
         <div className="popup-buttons">
           <button onClick={renamePersonalReport}>Save</button>
-          <button onClick={() => setIsRenamePopup(false)}>Cancel</button>
+          <button onClick={() => {setIsRenamePopup(false); setReportRenameError('');}}>Cancel</button>
         </div>
       </div>
     </>

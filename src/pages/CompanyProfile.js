@@ -9,7 +9,9 @@ import Cookies from "js-cookie";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { API_URL } from "../ConfigApi";
-
+import { IoIosBusiness } from "react-icons/io";
+import { FaToolbox } from "react-icons/fa";
+import { FaBuilding } from "react-icons/fa";
 import {
   FaMapMarkerAlt,
   FaPhone,
@@ -30,6 +32,7 @@ function CompanyProfile() {
   const [review, setReview] = useState("");
   const [editedDescription, setEditedDescription] = useState("");
   const [editedTags, setEditedTags] = useState([]);
+  const [profilePicture, setProfilePicture] = useState(null);
   const reviews = [
     {
       stars: 5,
@@ -65,17 +68,17 @@ function CompanyProfile() {
   ];
 
   const DEPARTMENT_CHOICES = [
-    { value: 1, label: "Healthcare" },
-    { value: 2, label: "Education" },
-    { value: 3, label: "IT" },
-    { value: 4, label: "Retail" },
+    { value: "healthcare", label: "Healthcare" },
+    { value: "education", label: "Education" },
+    { value: "it", label: "IT" },
+    { value: "retail", label: "Retail" },
   ];
 
   const COMPANY_CHOICES = [
-    { value: 1, label: "Corporate" },
-    { value: 2, label: "Startup" },
-    { value: 3, label: "MNC" },
-    { value: 4, label: "Other" },
+    { value: "corporate", label: "Corporate" },
+    { value: "startup", label: "Startup" },
+    { value: "mnc", label: "MNC" },
+    { value: "other", label: "Other" },
   ];
 
   const handleStarClick = (starNumber) => {
@@ -142,7 +145,7 @@ function CompanyProfile() {
     {
       try {
         const response = await fetch(`${API_URL}/main/companies/${id}/`, {
-          method: "POST",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${Cookies.get("accessToken")}`,
@@ -166,21 +169,22 @@ function CompanyProfile() {
 
   const handleDetailsSubmitClick = async () => {
     try {
+      const requestBody = {
+        ...(editedDetails.headquarters && { address: editedDetails.headquarters }),
+        ...(editedDetails.contactNumber && { phoneno: editedDetails.contactNumber }),
+        ...(editedDetails.website && { website: editedDetails.website }),
+        ...(editedDetails.employees && { numofemploy: editedDetails.employees }),
+        ...(editedDetails.founded && { companyregyear: editedDetails.founded }),
+        ...(editedDetails.companyType && { company_type: editedDetails.companyType }),
+        ...(editedDetails.department && { department_type: editedDetails.department }),
+      };
       const response = await fetch(`${API_URL}/main/companies/${id}/`, {
-        method: "POST",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${Cookies.get("accessToken")}`,
         },
-        body: JSON.stringify({
-          address: editedDetails.headquarters,
-          phoneno: editedDetails.contactNumber,
-          website: editedDetails.website,
-          numofemploy: editedDetails.employees,
-          companyregyear: editedDetails.founded,
-          company_type: editedDetails.companyType,
-          department_type: editedDetails.department,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (response.ok) {
@@ -216,6 +220,20 @@ function CompanyProfile() {
     setIsPhotoDialogOpen(false);
   };
 
+  const convertAndSetProfilePic = (base64String) => {
+    const blob = base64ToBlob(base64String);
+    const imageUrl = URL.createObjectURL(blob);
+    setProfilePicture(imageUrl);
+  };
+  const base64ToBlob = (base64String, contentType = "image/png") => {
+    const byteCharacters = atob(base64String);
+    const byteArray = new Uint8Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteArray[i] = byteCharacters.charCodeAt(i);
+    }
+    return new Blob([byteArray], { type: contentType });
+  };
+
   const handlePhotoUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -227,9 +245,35 @@ function CompanyProfile() {
     }
   };
 
-  const handleUpload = () => {
-    alert("Image uploaded!");
+  const handleUpload = async () => {
+    if (!selectedImage) {
+      alert("Please select an image before uploading.");
+      return;
+    }
+    const base64Image = selectedImage.split(",")[1];
+    try {
+      const response = await fetch(`${API_URL}/main/companies/${id}/`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("accessToken")}`,
+        },
+        body: JSON.stringify({
+          profilepic: base64Image,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      alert("Image uploaded successfully!");
+      fetchData();
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("Error uploading image. Please try again.");
+    }
   };
+
   const handleCompanyTypeChange = (e) => {
     setEditedDetails({
       ...editedDetails,
@@ -262,6 +306,9 @@ function CompanyProfile() {
           : [];
         setTags(tagsArray);
         setCompanyData(data);
+        if (data.profilepic !== null) {
+          convertAndSetProfilePic(data.profilepic);
+        }
       } else {
         console.error("Failed to fetch data. Status:", response.status);
       }
@@ -426,8 +473,12 @@ function CompanyProfile() {
         <div class="consultant_profile_picture">
           <div class="image-container">
             <img
-              src="https://mergerlinks-production.s3.eu-west-2.amazonaws.com/files/company/65710/logo/ENVERUS.jpg"
-              alt="Company Logo"
+              src={
+                profilePicture !== null
+                  ? profilePicture
+                  : "https://cdn-icons-png.flaticon.com/128/8013/8013505.png"
+              }
+              alt="User Profile"
             />
             {isOwnProfile && (
               <div
@@ -607,7 +658,7 @@ function CompanyProfile() {
           </div>
           <div className="company-profile-info-item">
             <div className="info-icon">
-              <MdEmail className="info-icon" />
+              <FaBuilding className="info-icon" />
             </div>
             <div className="info-details">
               <span className="info-label">Company Type</span>
@@ -616,7 +667,7 @@ function CompanyProfile() {
           </div>
           <div className="company-profile-info-item">
             <div className="info-icon">
-              <MdEmail className="info-icon" />
+              <FaToolbox className="info-icon" />
             </div>
             <div className="info-details">
               <span className="info-label">Company Department</span>
