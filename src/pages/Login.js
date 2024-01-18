@@ -15,6 +15,9 @@ import ClipLoader from "react-spinners/ClipLoader";
 
 const SignUp = () => {
   const dispatch = useDispatch();
+  const override = {
+    marginLeft: "10px",
+  };
   const [userDetails, setUserDetails] = useState({
     username: "",
     password: "",
@@ -28,43 +31,22 @@ const SignUp = () => {
 
 
   const handlelogin = () => {
-    // fetch(`${API_URL}/users/users/login/`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     username: userDetails.username, // Provide the user's email
-    //     password: userDetails.password, // Provide the user's password
-    //   }),
-    // })
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     console.log(data);
-    //     if (data.token) {
-    //       localStorage.setItem('jwtToken', data.token.access); 
-    //         navigate('/consultant');
-    //     } else {
-    //       Swal.fire({
-    //         icon: 'error',
-    //         title: 'Error',
-    //         text: 'User not found. Please check your credentials and try again.',
-    //       });
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.error('Error:', error);
-    //     Swal.fire({
-    //       icon: 'error',
-    //       title: 'Error',
-    //       text: 'An error occurred. Please try again.',
-    //     });
-    //   });
-    setLoading(true);
-    dispatch(handleSignIn(userDetails, navigate))
-    setLoading(false);
+    try {
+      console.log("loading started")
+      setLoading(true);
+      dispatch(handleSignIn(userDetails, navigate));
+      // setLoading(false);
+    } catch (error) {
+      console.error('Error:', error);
+      setLoading(false);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An error occurred. Please try again.',
+      });
+    }
   };
-
+  
   return (
     <>
       <div className="signup-page">
@@ -125,6 +107,14 @@ const SignUp = () => {
           <div className="signup-submit-container">
             <div className="signup-submit" onClick={handlelogin}>
               Sign In
+              <ClipLoader
+                color="white"
+                loading={loading}
+                cssOverride={override}
+                size={16}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              />
             </div>
           </div>
         </div>

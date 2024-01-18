@@ -47,6 +47,7 @@ function Nav() {
             if (
               userPopupRef.current &&
               !userPopupRef.current.contains(event.target)
+              && !document.querySelector(".navbar-user-photo").contains(event.target)
             ) {
               setUserPopupVisible(false);
             }

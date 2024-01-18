@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import ConsultantCard from ".././components/ConsultantCard";
+import PolicyCard from ".././components/PolicyCard";
 import Nav from ".././components/Nav";
-import "./ConsultantList.css";
+import "./CompanyList.css";
 import { BsGrid } from "react-icons/bs";
 import { CiBoxList } from "react-icons/ci";
 import { AiOutlineFilter } from "react-icons/ai";
@@ -9,7 +9,8 @@ import { FaCaretUp, FaCaretDown } from "react-icons/fa";
 import { FaSave, FaEye } from "react-icons/fa";
 import { PiClipboardTextDuotone } from "react-icons/pi";
 import { MdDelete } from "react-icons/md";
-import { ConsultantDataTable } from "../components/ConsultantDataTable";
+import { DataTable } from "../components/PolicyPdfData";
+import  PolicyPdfCard  from ".././components/PolicyPdfCard";
 import { Pagination } from "antd";
 import { HiTableCells } from "react-icons/hi2";
 import { FaTableList } from "react-icons/fa6";
@@ -23,7 +24,7 @@ import { API_URL } from "../ConfigApi";
 import { useSelector } from "react-redux";
 import { VscKebabVertical } from "react-icons/vsc";
 import { Link } from "react-router-dom";
-function ConsultantList() {
+function PolicyList() {
   const loggedInUserId = useSelector((state) => state.user.userData.user_id);
   const [searchTerm, setSearchTerm] = useState("");
   const [tags, setTags] = useState([]);
@@ -31,8 +32,7 @@ function ConsultantList() {
   const [pageSize, setPageSize] = useState(2);
   const [personalReports, setpersonalReports] = useState([]);
   const [openMenu, setOpenMenu] = useState(null);
-  const [reportNameError, setReportNameError] = useState("");
-  const [reportRenameError, setReportRenameError] = useState("");
+
   const handleOptionsMenuClick = (id) => {
     if (openMenu === id) {
       // Close the menu if it's already open
@@ -57,7 +57,7 @@ function ConsultantList() {
   const [isRenamePopup, setIsRenamePopup] = useState(false);
   const [renameFilterId, setRenameFilterId] = useState("");
 
-  const [viewType, setViewType] = useState("card");
+  const [viewType, setViewType] = useState("table");
 
   const [idfrom, setIdFrom] = useState("");
   const [idto, setIdTo] = useState("");
@@ -65,13 +65,13 @@ function ConsultantList() {
   const [foundedDateTo, setFoundedDateTo] = useState("");
   const [ratingsFrom, setRatingsFrom] = useState("");
   const [ratingsTo, setRatingsTo] = useState("");
-  const [yearOfExpFrom, setyearOfExpFrom] = useState("");
-  const [yearOfExpTo, setyearOfExpTo] = useState("");
+  const [numEmployeesFrom, setNumEmployeesFrom] = useState("");
+  const [numEmployeesTo, setNumEmployeesTo] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("");
-  // const [isCompanyTypeDropdownOpen, setIsCompanyTypeDropdownOpen] =
-  //   useState(false);
-  // const [isDepartmentDropdownOpen, setIsDepartmentDropdownOpen] =
-  //   useState(false);
+  const [isCompanyTypeDropdownOpen, setIsCompanyTypeDropdownOpen] =
+    useState(false);
+  const [isDepartmentDropdownOpen, setIsDepartmentDropdownOpen] =
+    useState(false);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -81,41 +81,32 @@ function ConsultantList() {
     }
   };
 
-  // const [selectedCompanyTypes, setSelectedCompanyTypes] = useState(() => {
-  //   const storedCompanyTypes = localStorage.getItem("selectedCompanyTypes");
-  //   return storedCompanyTypes ? JSON.parse(storedCompanyTypes) : [];
-  // });
+  //const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedCompanyTypes, setSelectedCompanyTypes] = useState([]);
 
-  // const [selectedDepartments, setSelectedDepartments] = useState(() => {
-  //   const storedDepartments = localStorage.getItem("selectedDepartments");
-  //   return storedDepartments ? JSON.parse(storedDepartments) : [];
-  // });
+  const [selectedDepartments, setSelectedDepartments] = useState([]);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // const toggleDropdown = () => {
-  //   const newDropdownState = !isCompanyTypeDropdownOpen;
-  //   setIsCompanyTypeDropdownOpen(newDropdownState);
-  //   localStorage.setItem(
-  //     "isCompanyTypeDropdownOpen",
-  //     JSON.stringify(newDropdownState)
-  //   );
-  // };
+  const toggleDropdown = () => {
+    const newDropdownState = !isCompanyTypeDropdownOpen;
+    setIsCompanyTypeDropdownOpen(newDropdownState);
+  };
 
-  // const toggleDepartmentDropdown = () => {
-  //   const newDropdownState = !isDepartmentDropdownOpen;
-  //   setIsDepartmentDropdownOpen(newDropdownState);
-  //   localStorage.setItem(
-  //     "isDepartmentDropdownOpen",
-  //     JSON.stringify(newDropdownState)
-  //   );
-  // };
+  const toggleDepartmentDropdown = () => {
+    const newDropdownState = !isDepartmentDropdownOpen;
+    setIsDepartmentDropdownOpen(newDropdownState);
+  };
 
   const [isReportsPanelOpen, setIsReportsPanelOpen] = useState(false);
 
   const toggleReportsPanel = () => {
     setIsReportsPanelOpen(!isReportsPanelOpen);
   };
+
+
+
+
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -124,12 +115,19 @@ function ConsultantList() {
   const clearFilters = () => {
     setIdFrom("");
     setIdTo("");
+    setFoundedDateFrom("");
+    setFoundedDateTo("");
     setRatingsFrom("");
     setRatingsTo("");
-    setyearOfExpFrom("");
-    setyearOfExpTo("");
+    setNumEmployeesFrom("");
+    setNumEmployeesTo("");
+    setSelectedCompanyTypes([]);
+    setSelectedDepartments([]);
     setSearchTerm("");
     setTags([]);
+    setSelectedLogic("and");
+    setIsCompanyTypeDropdownOpen(false);
+    setIsDepartmentDropdownOpen(false);
     setSelectedFilter("");
   };
   const [isDatePicker1Open, setDatePicker1Open] = useState(false);
@@ -150,49 +148,57 @@ function ConsultantList() {
     const updatedTags = tags.filter((t) => t !== tag);
     setTags(updatedTags);
   };
-  // const handleCompanyTypeChange = (value) => {
-  //   const updatedSelectedCompanyTypes = selectedCompanyTypes.includes(value)
-  //     ? selectedCompanyTypes.filter((type) => type !== value)
-  //     : [...selectedCompanyTypes, value];
+  const handleCompanyTypeChange = (value) => {
+    const updatedSelectedCompanyTypes = selectedCompanyTypes.includes(value)
+      ? selectedCompanyTypes.filter((type) => type !== value)
+      : [...selectedCompanyTypes, value];
 
-  //   setSelectedCompanyTypes(updatedSelectedCompanyTypes);
-  // };
-  // const handleDepartmentCheckboxChange = (value) => {
-  //   if (selectedDepartments.includes(value)) {
-  //     setSelectedDepartments(
-  //       selectedDepartments.filter((dept) => dept !== value)
-  //     );
-  //   } else {
-  //     setSelectedDepartments([...selectedDepartments, value]);
-  //   }
-  // };
-  // const [selectedLogic, setSelectedLogic] = useState("and");
+    setSelectedCompanyTypes(updatedSelectedCompanyTypes);
+  };
+  const handleDepartmentCheckboxChange = (value) => {
+    if (selectedDepartments.includes(value)) {
+      setSelectedDepartments(
+        selectedDepartments.filter((dept) => dept !== value)
+      );
+    } else {
+      setSelectedDepartments([...selectedDepartments, value]);
+    }
+  };
+  const [selectedLogic, setSelectedLogic] = useState("and");
 
-  // const handleLogicChange = (e) => {
-  //   setSelectedLogic(e.target.value);
-  // };
+  const handleLogicChange = (e) => {
+    setSelectedLogic(e.target.value);
+  };
 
   const applyFilter = (report) => {
     console.log("Report object:", report);
     const {
       tags = [],
+      selectedCompanyTypes = [],
+      selectedDepartments = [],
       idfrom = "",
       idto = "",
       ratingsFrom = "",
       ratingsTo = "",
-      yearOfExpFrom = "",
-      yearOfExpTo = "",
+      foundedDateFrom = "",
+      foundedDateTo = "",
+      numEmployeesFrom = "",
+      numEmployeesTo = "",
       pageSize = "",
       currentPage = "1",
     } = report;
 
     setTags(tags);
+    setSelectedCompanyTypes(selectedCompanyTypes);
+    setSelectedDepartments(selectedDepartments);
     setIdFrom(idfrom || "");
     setIdTo(idto || "");
     setRatingsFrom(ratingsFrom || "");
     setRatingsTo(ratingsTo || "");
-    setyearOfExpFrom(yearOfExpFrom || "");
-    setyearOfExpTo(yearOfExpTo || "");
+    setFoundedDateFrom(foundedDateFrom || "");
+    setFoundedDateTo(foundedDateTo || "");
+    setNumEmployeesFrom(numEmployeesFrom || "");
+    setNumEmployeesTo(numEmployeesTo || "");
     setPageSize(pageSize || "");
     setCurrentPage(currentPage || "1");
   };
@@ -217,7 +223,7 @@ function ConsultantList() {
 
       const reports = await response.json();
       const companyReports = reports.filter(
-        (report) => report.filter_for === "consultant"
+        (report) => report.filter_for === "Project"
       );
       setpersonalReports(companyReports);
     } catch (error) {
@@ -227,18 +233,18 @@ function ConsultantList() {
   };
 
   const createPersonalReport = async () => {
-    if (reportName.trim() === "") {
-      setReportNameError("Please enter a name first");
-      return;
-    }
     const reportData = {
       tags,
+      selectedCompanyTypes,
+      selectedDepartments,
       idfrom,
       idto,
       ratingsFrom,
       ratingsTo,
-      yearOfExpFrom,
-      yearOfExpTo,
+      foundedDateFrom,
+      foundedDateTo,
+      numEmployeesFrom,
+      numEmployeesTo,
       pageSize,
       currentPage,
     };
@@ -253,7 +259,7 @@ function ConsultantList() {
           user: loggedInUserId,
           filter_name: reportName,
           filter_data: reportData,
-          filter_for: "consultant",
+          filter_for: "Project",
         }),
       });
       if (response.ok) {
@@ -297,10 +303,6 @@ function ConsultantList() {
   };
 
   const renamePersonalReport = async () => {
-    if (newReportName.trim() === "") {
-      setReportRenameError("Please enter a name first");
-      return;
-    }
     try {
       const response = await fetch(
         `${API_URL}/main/saved-filters/${renameFilterId}/`,
@@ -338,7 +340,6 @@ function ConsultantList() {
       <div className="save-report-popup">
         <label>
           <p>Report Name:</p>
-          {reportNameError && <p>{reportNameError}</p>}
           <input
             type="text"
             value={reportName}
@@ -347,14 +348,7 @@ function ConsultantList() {
         </label>
         <div className="popup-buttons">
           <button onClick={createPersonalReport}>Save</button>
-          <button
-            onClick={() => {
-              setIsSaveReportPopup(false);
-              setReportNameError("");
-            }}
-          >
-            Cancel
-          </button>
+          <button onClick={() => setIsSaveReportPopup(false)}>Cancel</button>
         </div>
       </div>
     </>
@@ -369,7 +363,6 @@ function ConsultantList() {
       <div className="save-report-popup">
         <label>
           <p>New Name:</p>
-          {reportRenameError && <p>{reportRenameError}</p>}
           <input
             type="text"
             value={newReportName}
@@ -378,14 +371,7 @@ function ConsultantList() {
         </label>
         <div className="popup-buttons">
           <button onClick={renamePersonalReport}>Save</button>
-          <button
-            onClick={() => {
-              setIsRenamePopup(false);
-              setReportRenameError("");
-            }}
-          >
-            Cancel
-          </button>
+          <button onClick={() => setIsRenamePopup(false)}>Cancel</button>
         </div>
       </div>
     </>
@@ -395,11 +381,15 @@ function ConsultantList() {
     const filters = {
       id_from: idfrom,
       id_to: idto,
+      founded_date_from: foundedDateFrom,
+      founded_date_to: foundedDateTo,
       rating_from: ratingsFrom,
       rating_to: ratingsTo,
+      num_employees_from: numEmployeesFrom,
+      num_employees_to: numEmployeesTo,
+      company_types: selectedCompanyTypes,
+      department_types: selectedDepartments,
       q: tags,
-      yearofexp_from: yearOfExpFrom,
-      yearofexp_to: yearOfExpTo,
       page_size: pageSize,
       page_number: currentPage,
     };
@@ -417,7 +407,7 @@ function ConsultantList() {
     }
 
     const queryString = params.toString();
-    const url = `${API_URL}/main/search/consultants/?${queryString}`;
+    const url = `${API_URL}/main/search/companies/?${queryString}`;
 
     console.log("Constructed URL:", url);
 
@@ -440,10 +430,14 @@ function ConsultantList() {
   }, [
     idfrom,
     idto,
+    foundedDateFrom,
+    foundedDateTo,
     ratingsFrom,
     ratingsTo,
-    yearOfExpFrom,
-    yearOfExpTo,
+    numEmployeesFrom,
+    numEmployeesTo,
+    selectedCompanyTypes,
+    selectedDepartments,
     tags,
     pageSize,
     currentPage,
@@ -465,6 +459,15 @@ function ConsultantList() {
     return formattedDate;
   };
 
+  const CustomTooltip = ({ children, tooltipText }) => {
+    return (
+      <div className="custom-tooltip">
+        {children}
+        <span className="tooltip-text">{tooltipText}</span>
+      </div>
+    );
+  };
+
   return (
     <>
       <div className="company-list-page">
@@ -472,9 +475,11 @@ function ConsultantList() {
         <div className="cp_company_top_bar">
           <div
             className={`cp_filter_icon ${isSidebarOpen ? "active" : ""}`}
-            onClick={toggleSidebar}
+            // onClick={toggleSidebar}
           >
+             <CustomTooltip tooltipText="Will Update Soon..">
             <AiOutlineFilter className="cp_icon" />
+            </CustomTooltip>
           </div>
 
           {/* <div className="cp_current_report_name">{currentReportName}</div> */}
@@ -588,8 +593,8 @@ function ConsultantList() {
                 </div>
               </div>
 
-              {/* <div className="cp_filter_section">
-                <h3 className="cp_filter_title">Founded Date Range</h3>
+              <div className="cp_filter_section">
+                <h3 className="cp_filter_title">Created Date Range</h3>
                 <div className="cp_filter_input">
                   <DatePicker
                     onChange={(date) => {
@@ -622,9 +627,9 @@ function ConsultantList() {
                     format="DD-MM-YYYY"
                   />
                 </div>
-              </div> */}
+              </div>
 
-              <div className="cp_filter_section">
+              {/* <div className="cp_filter_section">
                 <h3 className="cp_filter_title">Ratings Range</h3>
                 <div className="cp_filter_input">
                   <input
@@ -645,29 +650,29 @@ function ConsultantList() {
                     }}
                   />
                 </div>
-              </div>
+              </div> */}
 
-              <div className="cp_filter_section">
-                <h3 className="cp_filter_title">Years of Experience</h3>
+              {/* <div className="cp_filter_section">
+                <h3 className="cp_filter_title">Number of Employees</h3>
                 <div className="cp_filter_input">
                   <input
                     type="number"
                     placeholder="From"
-                    value={yearOfExpFrom}
-                    onChange={(e) => setyearOfExpFrom(e.target.value)}
+                    value={numEmployeesFrom}
+                    onChange={(e) => setNumEmployeesFrom(e.target.value)}
                   />
                   <span className="cp_filter_separator">to</span>
                   <input
                     type="number"
                     placeholder="To"
-                    value={yearOfExpTo}
-                    onChange={(e) => setyearOfExpTo(e.target.value)}
+                    value={numEmployeesTo}
+                    onChange={(e) => setNumEmployeesTo(e.target.value)}
                   />
                 </div>
-              </div>
+              </div> */}
 
-              {/* <div className="cp_filter_section"> */}
-              {/* <h3 className="cp_filter_title">
+              <div className="cp_filter_section">
+                <h3 className="cp_filter_title">
                   Company Type{" "}
                   <span
                     className={`dropdown-icon ${
@@ -774,9 +779,9 @@ function ConsultantList() {
                       />
                       Retail
                     </label>
-                  </div> */}
-              {/* )} */}
-              {/* </div> */}
+                  </div>
+                )}
+              </div>
             </div>
           )}
           <div
@@ -853,32 +858,47 @@ function ConsultantList() {
             <div className="company-list-container">
               {viewType === "table" && (
                 <div className="table-container">
-                  {companies && companies.paginated_results?.length > 0 ? (
-                    <ConsultantDataTable data={companies.paginated_results} />
-                  ) : (
-                    <div style={{ marginTop: "20px", textAlign:"center" }}>No data found</div>
-                  )}
+                  <DataTable
+                    data={
+                      // companies?.paginated_results ||
+                      []
+                    }
+                  />
                 </div>
               )}
               {viewType !== "table" && (
                 <div className="company_lists_cards">
-                  {companies && companies.paginated_results?.length > 0 ? (
-                    companies.paginated_results.map((company, index) => (
-                      <Link to = {`/consultant-profile/${company.id}`} style={{ textDecoration: "none" }}>
-                      <ConsultantCard key={index} consultant={company} />
-                      </Link>
-                    ))
-                  ) : (
-                    <div style={{ marginTop: "20px" }}>No data found</div>
-                  )}
+                    {/* <p>Cards will be updated soon</p> */}
+                  {/* {companies &&
+                    companies.paginated_results?.map((company, index) => (
+                      <CompanyCard key={index} company={company} />
+                    ))} */}
+                  <Link to="/pdf" style={{ textDecoration: "none" }}>
+                    <PolicyPdfCard />
+                  </Link>
+                  <Link to="/pdf" style={{ textDecoration: "none" }}>
+                    <PolicyPdfCard />
+                  </Link>
+                  <Link to="/pdf"style={{ textDecoration: "none" }}>
+                    <PolicyPdfCard />
+                  </Link>
+                  <Link to="/pdf"style={{ textDecoration: "none" }}>
+                    <PolicyPdfCard />
+                  </Link>
+                  <Link to="/pdf"style={{ textDecoration: "none" }}>
+                    <PolicyPdfCard />
+                  </Link> 
+                  <Link to="/pdf"style={{ textDecoration: "none" }}>
+                    <PolicyPdfCard />
+                  </Link>
+                
                 </div>
               )}
-
               <hr />
               <div className="company_list_pagination_container">
                 <>
-                  <Pagination
-                    total={companies.consultant_total_hits}
+                  {/* <Pagination
+                    total={companies.company_total_hits}
                     current={currentPage}
                     pageSize={pageSize}
                     onChange={handleChangePage}
@@ -888,7 +908,7 @@ function ConsultantList() {
                     showSizeChanger
                     onShowSizeChange={handleChangePageSize}
                     pageSizeOptions={[2, 4, 6, 8]}
-                  />
+                  /> */}
                 </>
               </div>
             </div>
@@ -899,4 +919,4 @@ function ConsultantList() {
   );
 }
 
-export default ConsultantList;
+export default PolicyList;

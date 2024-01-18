@@ -2,8 +2,10 @@ import React, { useMemo } from "react";
 import { useTable } from "react-table";
 import MOCK_DATA from "../assets/MOCK_DATAA.json";
 import "./DataTable.css"; // Import the CSS file
+import { Link, useNavigate } from "react-router-dom";
 
 export const ConsultantDataTable = ({ data }) => {
+  const navigate = useNavigate();
   const columns = useMemo(
     () => [
       {
@@ -55,7 +57,9 @@ export const ConsultantDataTable = ({ data }) => {
           {rows.map((row) => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()}>
+              <tr {...row.getRowProps()}
+              onClick={() => navigate(`/consultant-profile/${row.original.id}`)}
+              >
                 {row.cells.map((cell) => (
                   <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
                 ))}

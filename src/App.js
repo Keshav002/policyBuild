@@ -13,6 +13,7 @@ import Consultant from "./pages/Consultant";
 import CompanyList from "./pages/CompanyList";
 import ConsultantList from "./pages/ConsultantList";
 import CompanyProfile from "./pages/CompanyProfile";
+import PolicyList from "./pages/PolicyList";
 import ConsultantProfile from "./pages/ConsultantProfile";
 import ForgotPass from "./pages/ForgotPass";
 import ResetPassword from "./pages/ResetPassword";
@@ -54,6 +55,7 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path= "/datatable" element={<DataTable />} />
             <Route path= "/pdf" element={<PdfViewer />} />
+            <Route path= "/policy-list" element={<PolicyList />} />
           </Routes>
         </Router>
       </Provider>

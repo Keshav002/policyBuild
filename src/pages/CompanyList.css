@@ -26,7 +26,6 @@
     position: sticky;
     top: 40px;
     z-index: 999;
-    
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;

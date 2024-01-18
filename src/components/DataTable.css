@@ -70,12 +70,13 @@ tr:nth-child(odd) {
   background-color: #e8e8e8;
 }
 
-td:hover {
+/* td:hover {
   background-color: #c0c0c0;
-}
+} */
 
-tr:hover td:not(:hover) {
-  background-color: #D3D3D3;
+tr:hover {
+  background-color: #9e9b9b;
+  cursor: pointer;
 }
 
 @media screen and (max-width: 600px) {

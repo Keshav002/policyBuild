@@ -22,6 +22,7 @@ import jwtDecode from "jwt-decode";
 import { API_URL } from "../ConfigApi";
 import { useSelector } from "react-redux";
 import { VscKebabVertical } from "react-icons/vsc";
+import { Link } from "react-router-dom";
 function CompanyList() {
   const loggedInUserId = useSelector((state) => state.user.userData.user_id);
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,8 +31,8 @@ function CompanyList() {
   const [pageSize, setPageSize] = useState(2);
   const [personalReports, setpersonalReports] = useState([]);
   const [openMenu, setOpenMenu] = useState(null);
-  const [reportNameError, setReportNameError] = useState('');
-  const [reportRenameError, setReportRenameError] = useState('');
+  const [reportNameError, setReportNameError] = useState("");
+  const [reportRenameError, setReportRenameError] = useState("");
   const handleOptionsMenuClick = (id) => {
     if (openMenu === id) {
       // Close the menu if it's already open
@@ -56,36 +57,17 @@ function CompanyList() {
   const [isRenamePopup, setIsRenamePopup] = useState(false);
   const [renameFilterId, setRenameFilterId] = useState("");
 
-  const [viewType, setViewType] = useState(() => {
-    const storedViewType = localStorage.getItem("viewType");
-    return storedViewType || "card";
-  });
+  const [viewType, setViewType] = useState("card");
 
-  const [idfrom, setIdFrom] = useState(
-    () => localStorage.getItem("idFrom") || ""
-  );
-  const [idto, setIdTo] = useState(() => localStorage.getItem("idTo") || "");
-  const [foundedDateFrom, setFoundedDateFrom] = useState(
-    () => localStorage.getItem("foundedDateFrom") || ""
-  );
-  const [foundedDateTo, setFoundedDateTo] = useState(
-    () => localStorage.getItem("foundedDateTo") || ""
-  );
-  const [ratingsFrom, setRatingsFrom] = useState(
-    () => localStorage.getItem("ratingsFrom") || ""
-  );
-  const [ratingsTo, setRatingsTo] = useState(
-    () => localStorage.getItem("ratingsTo") || ""
-  );
-  const [numEmployeesFrom, setNumEmployeesFrom] = useState(
-    () => localStorage.getItem("numEmployeesFrom") || ""
-  );
-  const [numEmployeesTo, setNumEmployeesTo] = useState(
-    () => localStorage.getItem("numEmployeesTo") || ""
-  );
-  const [selectedFilter, setSelectedFilter] = useState(
-    () => localStorage.getItem("selectedFilter") || ""
-  );
+  const [idfrom, setIdFrom] = useState("");
+  const [idto, setIdTo] = useState("");
+  const [foundedDateFrom, setFoundedDateFrom] = useState("");
+  const [foundedDateTo, setFoundedDateTo] = useState("");
+  const [ratingsFrom, setRatingsFrom] = useState("");
+  const [ratingsTo, setRatingsTo] = useState("");
+  const [numEmployeesFrom, setNumEmployeesFrom] = useState("");
+  const [numEmployeesTo, setNumEmployeesTo] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("");
   const [isCompanyTypeDropdownOpen, setIsCompanyTypeDropdownOpen] =
     useState(false);
   const [isDepartmentDropdownOpen, setIsDepartmentDropdownOpen] =
@@ -100,129 +82,93 @@ function CompanyList() {
   };
 
   //const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedCompanyTypes, setSelectedCompanyTypes] = useState(() => {
-    const storedCompanyTypes = localStorage.getItem("selectedCompanyTypes");
-    return storedCompanyTypes ? JSON.parse(storedCompanyTypes) : [];
-  });
+  const [selectedCompanyTypes, setSelectedCompanyTypes] = useState([]);
 
-  const [selectedDepartments, setSelectedDepartments] = useState(() => {
-    const storedDepartments = localStorage.getItem("selectedDepartments");
-    return storedDepartments ? JSON.parse(storedDepartments) : [];
-  });
+  const [selectedDepartments, setSelectedDepartments] = useState([]);
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-    const storedSidebarState = localStorage.getItem("isSidebarOpen");
-    return storedSidebarState ? JSON.parse(storedSidebarState) : false;
-  });
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleDropdown = () => {
     const newDropdownState = !isCompanyTypeDropdownOpen;
     setIsCompanyTypeDropdownOpen(newDropdownState);
-    localStorage.setItem(
-      "isCompanyTypeDropdownOpen",
-      JSON.stringify(newDropdownState)
-    );
   };
 
   const toggleDepartmentDropdown = () => {
     const newDropdownState = !isDepartmentDropdownOpen;
     setIsDepartmentDropdownOpen(newDropdownState);
-    localStorage.setItem(
-      "isDepartmentDropdownOpen",
-      JSON.stringify(newDropdownState)
-    );
   };
 
-  const [isReportsPanelOpen, setIsReportsPanelOpen] = useState(() => {
-    const storedReportsPanelState = localStorage.getItem("isReportsPanelOpen");
-    return storedReportsPanelState
-      ? JSON.parse(storedReportsPanelState)
-      : false;
-  });
+  const [isReportsPanelOpen, setIsReportsPanelOpen] = useState(false);
 
   const toggleReportsPanel = () => {
     setIsReportsPanelOpen(!isReportsPanelOpen);
-    localStorage.setItem(
-      "isReportsPanelOpen",
-      JSON.stringify(!isReportsPanelOpen)
-    );
   };
 
-  useEffect(() => {
-    handleFilterChange();
-  }, [
-    idfrom,
-    idto,
-    foundedDateFrom,
-    foundedDateTo,
-    ratingsFrom,
-    ratingsTo,
-    numEmployeesFrom,
-    numEmployeesTo,
-    selectedCompanyTypes,
-    selectedDepartments,
-    isSidebarOpen,
-    viewType,
-    selectedFilter,
-  ]);
+  // useEffect(() => {
+  //   handleFilterChange();
+  // }, [
+  //   idfrom,
+  //   idto,
+  //   foundedDateFrom,
+  //   foundedDateTo,
+  //   ratingsFrom,
+  //   ratingsTo,
+  //   numEmployeesFrom,
+  //   numEmployeesTo,
+  //   selectedCompanyTypes,
+  //   selectedDepartments,
+  //   isSidebarOpen,
+  //   viewType,
+  //   selectedFilter,
+  // ]);
 
-  useEffect(() => {
-    localStorage.setItem("viewType", viewType);
-  }, [viewType]);
+  // useEffect(() => {
+  //   localStorage.setItem("viewType", viewType);
+  // }, [viewType]);
 
-  const handleFilterChange = () => {
-    localStorage.setItem("idFrom", idfrom);
-    localStorage.setItem("idTo", idto);
-    localStorage.setItem("foundedDateFrom", foundedDateFrom);
-    localStorage.setItem("foundedDateTo", foundedDateTo);
-    localStorage.setItem("ratingsFrom", ratingsFrom);
-    localStorage.setItem("ratingsTo", ratingsTo);
-    localStorage.setItem("numEmployeesFrom", numEmployeesFrom);
-    localStorage.setItem("numEmployeesTo", numEmployeesTo);
-    localStorage.setItem(
-      "selectedCompanyTypes",
-      JSON.stringify(selectedCompanyTypes)
-    );
-    localStorage.setItem(
-      "selectedDepartments",
-      JSON.stringify(selectedDepartments)
-    );
-    localStorage.setItem("isSidebarOpen", JSON.stringify(isSidebarOpen));
-    localStorage.setItem("selectedFilter", selectedFilter);
-  };
+  // const handleFilterChange = () => {
+  //   localStorage.setItem("idFrom", idfrom);
+  //   localStorage.setItem("idTo", idto);
+  //   localStorage.setItem("foundedDateFrom", foundedDateFrom);
+  //   localStorage.setItem("foundedDateTo", foundedDateTo);
+  //   localStorage.setItem("ratingsFrom", ratingsFrom);
+  //   localStorage.setItem("ratingsTo", ratingsTo);
+  //   localStorage.setItem("numEmployeesFrom", numEmployeesFrom);
+  //   localStorage.setItem("numEmployeesTo", numEmployeesTo);
+  //   localStorage.setItem(
+  //     "selectedCompanyTypes",
+  //     JSON.stringify(selectedCompanyTypes)
+  //   );
+  //   localStorage.setItem(
+  //     "selectedDepartments",
+  //     JSON.stringify(selectedDepartments)
+  //   );
+  //   localStorage.setItem("isSidebarOpen", JSON.stringify(isSidebarOpen));
+  //   localStorage.setItem("selectedFilter", selectedFilter);
+  // };
 
-  useEffect(() => {
-    const storedCompanyTypeDropdownState = localStorage.getItem(
-      "isCompanyTypeDropdownOpen"
-    );
-    setIsCompanyTypeDropdownOpen(
-      storedCompanyTypeDropdownState
-        ? JSON.parse(storedCompanyTypeDropdownState)
-        : false
-    );
+  // useEffect(() => {
+  //   const storedCompanyTypeDropdownState = localStorage.getItem(
+  //     "isCompanyTypeDropdownOpen"
+  //   );
+  //   setIsCompanyTypeDropdownOpen(
+  //     storedCompanyTypeDropdownState
+  //       ? JSON.parse(storedCompanyTypeDropdownState)
+  //       : false
+  //   );
 
-    const storedDepartmentDropdownState = localStorage.getItem(
-      "isDepartmentDropdownOpen"
-    );
-    setIsDepartmentDropdownOpen(
-      storedDepartmentDropdownState
-        ? JSON.parse(storedDepartmentDropdownState)
-        : false
-    );
-  }, []);
+  //   const storedDepartmentDropdownState = localStorage.getItem(
+  //     "isDepartmentDropdownOpen"
+  //   );
+  //   setIsDepartmentDropdownOpen(
+  //     storedDepartmentDropdownState
+  //       ? JSON.parse(storedDepartmentDropdownState)
+  //       : false
+  //   );
+  // }, []);
 
   const toggleSidebar = () => {
-    if (isReportsPanelOpen) {
-      setIsReportsPanelOpen(false);
-      localStorage.setItem("isReportsPanelOpen", JSON.stringify(false));
-    }
-
-    // Toggle the sidebar
     setIsSidebarOpen(!isSidebarOpen);
-    localStorage.setItem("isSidebarOpen", JSON.stringify(!isSidebarOpen));
-
-    // Update the viewType in localStorage
-    localStorage.setItem("viewType", isSidebarOpen ? "card" : "table");
   };
 
   const clearFilters = () => {
@@ -241,7 +187,6 @@ function CompanyList() {
     setSelectedLogic("and");
     setIsCompanyTypeDropdownOpen(false);
     setIsDepartmentDropdownOpen(false);
-    handleFilterChange();
     setSelectedFilter("");
   };
   const [isDatePicker1Open, setDatePicker1Open] = useState(false);
@@ -348,7 +293,7 @@ function CompanyList() {
 
   const createPersonalReport = async () => {
     if (reportName.trim() === "") {
-      setReportNameError('Please enter a name first');
+      setReportNameError("Please enter a name first");
       return;
     }
     const reportData = {
@@ -422,7 +367,7 @@ function CompanyList() {
 
   const renamePersonalReport = async () => {
     if (newReportName.trim() === "") {
-      setReportRenameError('Please enter a name first');
+      setReportRenameError("Please enter a name first");
       return;
     }
     try {
@@ -471,8 +416,14 @@ function CompanyList() {
         </label>
         <div className="popup-buttons">
           <button onClick={createPersonalReport}>Save</button>
-          <button onClick={() => { setIsSaveReportPopup(false); setReportNameError(''); }}>Cancel</button>
-
+          <button
+            onClick={() => {
+              setIsSaveReportPopup(false);
+              setReportNameError("");
+            }}
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </>
@@ -496,7 +447,14 @@ function CompanyList() {
         </label>
         <div className="popup-buttons">
           <button onClick={renamePersonalReport}>Save</button>
-          <button onClick={() => {setIsRenamePopup(false); setReportRenameError('');}}>Cancel</button>
+          <button
+            onClick={() => {
+              setIsRenamePopup(false);
+              setReportRenameError("");
+            }}
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </>
@@ -524,7 +482,7 @@ function CompanyList() {
     for (const [key, value] of Object.entries(filters)) {
       if (value !== "" && (Array.isArray(value) ? value.length > 0 : true)) {
         if (Array.isArray(value)) {
-          value.forEach((v) => params.append(key, v));
+          params.append(key, value.join(","));
         } else {
           params.append(key, value);
         }
@@ -972,17 +930,27 @@ function CompanyList() {
             <div className="company-list-container">
               {viewType === "table" && (
                 <div className="table-container">
-                  <DataTable data={companies?.paginated_results || []} />
+                  {companies && companies.paginated_results?.length > 0 ? (
+                    <DataTable data={companies.paginated_results} />
+                  ) : (
+                    <div style={{ marginTop: "20px", textAlign:"center" }}>No data found</div>
+                  )}
                 </div>
               )}
               {viewType !== "table" && (
                 <div className="company_lists_cards">
-                  {companies &&
-                    companies.paginated_results?.map((company, index) => (
+                  {companies && companies.paginated_results?.length > 0 ? (
+                    companies.paginated_results.map((company, index) => (
+                  <Link to = {`/company-profile/${company.id}`} style={{ textDecoration: "none" }}>
                       <CompanyCard key={index} company={company} />
-                    ))}
+                      </Link>
+                    ))
+                  ) : (
+                    <div style={{ marginTop: "20px" }}>No data found</div>
+                  )}
                 </div>
               )}
+
               <hr />
               <div className="company_list_pagination_container">
                 <>

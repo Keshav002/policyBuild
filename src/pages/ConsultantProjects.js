@@ -22,6 +22,7 @@ import jwtDecode from "jwt-decode";
 import { API_URL } from "../ConfigApi";
 import { useSelector } from "react-redux";
 import { VscKebabVertical } from "react-icons/vsc";
+import { Link } from "react-router-dom";
 function ConsultantProjects() {
   const loggedInUserId = useSelector((state) => state.user.userData.user_id);
   const [searchTerm, setSearchTerm] = useState("");
@@ -55,36 +56,17 @@ function ConsultantProjects() {
   const [isRenamePopup, setIsRenamePopup] = useState(false);
   const [renameFilterId, setRenameFilterId] = useState("");
 
-  const [viewType, setViewType] = useState(() => {
-    const storedViewType = localStorage.getItem("viewType");
-    return storedViewType || "card";
-  });
+  const [viewType, setViewType] = useState("card");
 
-  const [idfrom, setIdFrom] = useState(
-    () => localStorage.getItem("idFrom") || ""
-  );
-  const [idto, setIdTo] = useState(() => localStorage.getItem("idTo") || "");
-  const [foundedDateFrom, setFoundedDateFrom] = useState(
-    () => localStorage.getItem("foundedDateFrom") || ""
-  );
-  const [foundedDateTo, setFoundedDateTo] = useState(
-    () => localStorage.getItem("foundedDateTo") || ""
-  );
-  const [ratingsFrom, setRatingsFrom] = useState(
-    () => localStorage.getItem("ratingsFrom") || ""
-  );
-  const [ratingsTo, setRatingsTo] = useState(
-    () => localStorage.getItem("ratingsTo") || ""
-  );
-  const [numEmployeesFrom, setNumEmployeesFrom] = useState(
-    () => localStorage.getItem("numEmployeesFrom") || ""
-  );
-  const [numEmployeesTo, setNumEmployeesTo] = useState(
-    () => localStorage.getItem("numEmployeesTo") || ""
-  );
-  const [selectedFilter, setSelectedFilter] = useState(
-    () => localStorage.getItem("selectedFilter") || ""
-  );
+  const [idfrom, setIdFrom] = useState("");
+  const [idto, setIdTo] = useState("");
+  const [foundedDateFrom, setFoundedDateFrom] = useState("");
+  const [foundedDateTo, setFoundedDateTo] = useState("");
+  const [ratingsFrom, setRatingsFrom] = useState("");
+  const [ratingsTo, setRatingsTo] = useState("");
+  const [numEmployeesFrom, setNumEmployeesFrom] = useState("");
+  const [numEmployeesTo, setNumEmployeesTo] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("");
   const [isCompanyTypeDropdownOpen, setIsCompanyTypeDropdownOpen] =
     useState(false);
   const [isDepartmentDropdownOpen, setIsDepartmentDropdownOpen] =
@@ -99,129 +81,29 @@ function ConsultantProjects() {
   };
 
   //const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedCompanyTypes, setSelectedCompanyTypes] = useState(() => {
-    const storedCompanyTypes = localStorage.getItem("selectedCompanyTypes");
-    return storedCompanyTypes ? JSON.parse(storedCompanyTypes) : [];
-  });
+  const [selectedCompanyTypes, setSelectedCompanyTypes] = useState([]);
 
-  const [selectedDepartments, setSelectedDepartments] = useState(() => {
-    const storedDepartments = localStorage.getItem("selectedDepartments");
-    return storedDepartments ? JSON.parse(storedDepartments) : [];
-  });
+  const [selectedDepartments, setSelectedDepartments] = useState([]);
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-    const storedSidebarState = localStorage.getItem("isSidebarOpen");
-    return storedSidebarState ? JSON.parse(storedSidebarState) : false;
-  });
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleDropdown = () => {
     const newDropdownState = !isCompanyTypeDropdownOpen;
     setIsCompanyTypeDropdownOpen(newDropdownState);
-    localStorage.setItem(
-      "isCompanyTypeDropdownOpen",
-      JSON.stringify(newDropdownState)
-    );
   };
 
   const toggleDepartmentDropdown = () => {
     const newDropdownState = !isDepartmentDropdownOpen;
     setIsDepartmentDropdownOpen(newDropdownState);
-    localStorage.setItem(
-      "isDepartmentDropdownOpen",
-      JSON.stringify(newDropdownState)
-    );
   };
 
-  const [isReportsPanelOpen, setIsReportsPanelOpen] = useState(() => {
-    const storedReportsPanelState = localStorage.getItem("isReportsPanelOpen");
-    return storedReportsPanelState
-      ? JSON.parse(storedReportsPanelState)
-      : false;
-  });
+  const [isReportsPanelOpen, setIsReportsPanelOpen] = useState(false);
 
   const toggleReportsPanel = () => {
     setIsReportsPanelOpen(!isReportsPanelOpen);
-    localStorage.setItem(
-      "isReportsPanelOpen",
-      JSON.stringify(!isReportsPanelOpen)
-    );
   };
-
-  useEffect(() => {
-    handleFilterChange();
-  }, [
-    idfrom,
-    idto,
-    foundedDateFrom,
-    foundedDateTo,
-    ratingsFrom,
-    ratingsTo,
-    numEmployeesFrom,
-    numEmployeesTo,
-    selectedCompanyTypes,
-    selectedDepartments,
-    isSidebarOpen,
-    viewType,
-    selectedFilter,
-  ]);
-
-  useEffect(() => {
-    localStorage.setItem("viewType", viewType);
-  }, [viewType]);
-
-  const handleFilterChange = () => {
-    localStorage.setItem("idFrom", idfrom);
-    localStorage.setItem("idTo", idto);
-    localStorage.setItem("foundedDateFrom", foundedDateFrom);
-    localStorage.setItem("foundedDateTo", foundedDateTo);
-    localStorage.setItem("ratingsFrom", ratingsFrom);
-    localStorage.setItem("ratingsTo", ratingsTo);
-    localStorage.setItem("numEmployeesFrom", numEmployeesFrom);
-    localStorage.setItem("numEmployeesTo", numEmployeesTo);
-    localStorage.setItem(
-      "selectedCompanyTypes",
-      JSON.stringify(selectedCompanyTypes)
-    );
-    localStorage.setItem(
-      "selectedDepartments",
-      JSON.stringify(selectedDepartments)
-    );
-    localStorage.setItem("isSidebarOpen", JSON.stringify(isSidebarOpen));
-    localStorage.setItem("selectedFilter", selectedFilter);
-  };
-
-  useEffect(() => {
-    const storedCompanyTypeDropdownState = localStorage.getItem(
-      "isCompanyTypeDropdownOpen"
-    );
-    setIsCompanyTypeDropdownOpen(
-      storedCompanyTypeDropdownState
-        ? JSON.parse(storedCompanyTypeDropdownState)
-        : false
-    );
-
-    const storedDepartmentDropdownState = localStorage.getItem(
-      "isDepartmentDropdownOpen"
-    );
-    setIsDepartmentDropdownOpen(
-      storedDepartmentDropdownState
-        ? JSON.parse(storedDepartmentDropdownState)
-        : false
-    );
-  }, []);
-
   const toggleSidebar = () => {
-    if (isReportsPanelOpen) {
-      setIsReportsPanelOpen(false);
-      localStorage.setItem("isReportsPanelOpen", JSON.stringify(false));
-    }
-
-    // Toggle the sidebar
     setIsSidebarOpen(!isSidebarOpen);
-    localStorage.setItem("isSidebarOpen", JSON.stringify(!isSidebarOpen));
-
-    // Update the viewType in localStorage
-    localStorage.setItem("viewType", isSidebarOpen ? "card" : "table");
   };
 
   const clearFilters = () => {
@@ -240,7 +122,6 @@ function ConsultantProjects() {
     setSelectedLogic("and");
     setIsCompanyTypeDropdownOpen(false);
     setIsDepartmentDropdownOpen(false);
-    handleFilterChange();
     setSelectedFilter("");
   };
   const [isDatePicker1Open, setDatePicker1Open] = useState(false);
@@ -525,11 +406,12 @@ function ConsultantProjects() {
     console.log("Constructed URL:", url);
 
     try {
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get("accessToken")}`,
-        },
-      });
+      const response = []
+      // await fetch(url, {
+      //   headers: {
+      //     Authorization: `Bearer ${Cookies.get("accessToken")}`,
+      //   },
+      // });
       const data = await response.json();
       setCompanies(data);
       console.log("Fetched data:", data);
@@ -571,6 +453,14 @@ function ConsultantProjects() {
     });
     return formattedDate;
   };
+  const CustomTooltip = ({ children, tooltipText }) => {
+    return (
+      <div className="custom-tooltip">
+        {children}
+        <span className="tooltip-text">{tooltipText}</span>
+      </div>
+    );
+  };
 
   return (
     <>
@@ -579,9 +469,11 @@ function ConsultantProjects() {
         <div className="cp_company_top_bar">
           <div
             className={`cp_filter_icon ${isSidebarOpen ? "active" : ""}`}
-            onClick={toggleSidebar}
+            // onClick={toggleSidebar}
           >
+              <CustomTooltip tooltipText="Will Update Soon..">
             <AiOutlineFilter className="cp_icon" />
+            </CustomTooltip>
           </div>
 
           {/* <div className="cp_current_report_name">{currentReportName}</div> */}
@@ -971,18 +863,30 @@ function ConsultantProjects() {
                     companies.paginated_results?.map((company, index) => (
                       <CompanyCard key={index} company={company} />
                     ))} */}
-                    <PolicyCard/>
-                    <PolicyCard/>
-                    <PolicyCard/>
-                    <PolicyCard/>
-                    <PolicyCard/>
-                    <PolicyCard/>
+                   <Link to="/policy-list" style={{ textDecoration: "none" }}>
+                    <PolicyCard />
+                  </Link>
+                  <Link to="/policy-list" style={{ textDecoration: "none" }}>
+                    <PolicyCard />
+                  </Link>
+                  <Link to="/policy-list"style={{ textDecoration: "none" }}>
+                    <PolicyCard />
+                  </Link>
+                  <Link to="/policy-list"style={{ textDecoration: "none" }}>
+                    <PolicyCard />
+                  </Link>
+                  <Link to="/policy-list"style={{ textDecoration: "none" }}>
+                    <PolicyCard />
+                  </Link> 
+                  <Link to="/policy-list"style={{ textDecoration: "none" }}>
+                    <PolicyCard />
+                  </Link>
                 </div>
               )}
               <hr />
               <div className="company_list_pagination_container">
                 <>
-                  <Pagination
+                  {/* <Pagination
                     total={companies.company_total_hits}
                     current={currentPage}
                     pageSize={pageSize}
@@ -993,7 +897,7 @@ function ConsultantProjects() {
                     showSizeChanger
                     onShowSizeChange={handleChangePageSize}
                     pageSizeOptions={[2, 4, 6, 8]}
-                  />
+                  /> */}
                 </>
               </div>
             </div>
