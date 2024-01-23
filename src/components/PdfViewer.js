@@ -13,6 +13,7 @@ import "./PdfViewer.css";
 import NoteDialog from "./NoteDialog";
 import { PiNoteThin } from "react-icons/pi";
 import { FaRegFilePdf } from "react-icons/fa6";
+
 import { MdOutlinePictureAsPdf, MdOutlineDelete } from "react-icons/md";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
@@ -129,6 +130,7 @@ function PdfViewer() {
       }
     }
   }
+  
 
   useEffect(() => {
     document.addEventListener("mouseup", handleTextSelection);
