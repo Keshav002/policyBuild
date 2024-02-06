@@ -20,6 +20,7 @@ import {
   FaRegCalendarAlt,
   FaPlusCircle,
 } from "react-icons/fa";
+import CompanyProjects from "./CompanyProjects";
 
 function CompanyProfile() {
   const { id } = useParams();
@@ -774,6 +775,8 @@ function CompanyProfile() {
           </div>
         </div>
       )}
+
+
 
       {/* <div className="company-details-heading-div">
         <h2 className="company-details-heading">Reviews</h2>

@@ -280,7 +280,7 @@ function PdfViewer() {
                 }`}
               />
             </label>
-            <label
+            {/* <label
               className="pdfview_icon_label"
               onClick={() => toggleView("scrollbar")}
             >
@@ -289,7 +289,7 @@ function PdfViewer() {
                   viewType === "scrollbar" ? "pdfview_selected_icon" : ""
                 }`}
               />
-            </label>
+            </label> */}
           </div>
 
           <div class="pdf_zoom_buttons_container">
@@ -405,7 +405,7 @@ function PdfViewer() {
             </>
           )}
 
-          {viewType === "scrollbar" && (
+          {/* {viewType === "scrollbar" && (
             <div
               className="pdfview_scrollbar"
               style={{ marginLeft: isExtended ? "160px" : "0px" }}
@@ -425,7 +425,7 @@ function PdfViewer() {
                 ))}
               </Document>
             </div>
-          )}
+          )} */}
         </div>
 
         <div className={`pdf_sidebar${isDialogOpen ? " dialog-open" : ""}`}>
@@ -616,7 +616,7 @@ function PdfViewer() {
             <table>
               <thead>
                 <tr>
-                  <th>Policy Name</th>
+                  <th>Policy Scope</th>
                   <th>Score</th>
                   <th>Comments</th>
                   <th>Edit</th>

@@ -715,9 +715,7 @@ function ConsultantProfile() {
           </div>
         )}
       </div>
-      {/* You can add a similar set of buttons for DOC file if needed */}
-
-      {/* ... (existing code below) */}
+      
     </div>
   );
 }

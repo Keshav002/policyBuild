@@ -3,118 +3,65 @@ import { useTable } from "react-table";
 import MOCK_DATA from "../assets/MOCK_DATAA.json";
 import "./DataTable.css"; // Import the CSS file
 import { Link, useNavigate } from "react-router-dom";
+import { BiSolidEdit } from "react-icons/bi";
+import { AiFillDelete } from "react-icons/ai";
 
-export const DataTable = ({ data }) => {
+export const DataTable = ({ data, handleDeleteProjectClick, openEditForm }) => {
   const navigate = useNavigate();
 
-  data = [
-    {
-      id: 1,
-      username: "Diversity and Inclusion",
-      company: "XYZ Corp",
-      department: "HR",
-      revision: 2,
-      status: "Active",
-      created: "2023-01-01",
-      updated: "2023-01-02",
-    },
-    {
-      id: 2,
-      username: "Diversity and Inclusion",
-      company: "XYZ Corp",
-      department: "HR",
-      revision: 2,
-      status: "Active",
-      created: "2023-01-01",
-      updated: "2023-01-02",
-    },
-    {
-      id: 3,
-      username: "Diversity and Inclusion",
-      company: "XYZ Corp",
-      department: "HR",
-      revision: 2,
-      status: "Active",
-      created: "2023-01-01",
-      updated: "2023-01-02",
-    },
-    {
-      id: 4,
-      username: "Diversity and Inclusion",
-      company: "XYZ Corp",
-      department: "HR",
-      revision: 2,
-      status: "Active",
-      created: "2023-01-01",
-      updated: "2023-01-02",
-    },
-    {
-      id: 5,
-      username: "Diversity and Inclusion",
-      company: "XYZ Corp",
-      department: "HR",
-      revision: 2,
-      status: "Active",
-      created: "2023-01-01",
-      updated: "2023-01-02",
-    },
-    {
-      id: 6,
-      username: "Diversity and Inclusion",
-      company: "XYZ Corp",
-      department: "HR",
-      revision: 2,
-      status: "Active",
-      created: "2023-01-01",
-      updated: "2023-01-02",
-    },
-  ];
   const columns = useMemo(
     () => [
       {
-        Header: "ID",
-        accessor: "id",
+        Header: "Project Name",
+        accessor: "name",
       },
       {
-        Header: "Policy Name",
-        accessor: "username",
-      }, 
-      {
-        Header: "Company",
-        accessor: "company",
-      }, 
-      {
-        Header: "Department",
-        accessor: "department",
+        Header: "Description",
+        accessor: "description",
       },
       {
-        Header: "Revision No.",
-        accessor: "revision",
+        Header: "Assigned To",
+        accessor: "assigned_to",
       },
-       {
-        Header: "Status",
-        accessor: "status",
+      {
+        Header: "Start date",
+        accessor: "start_date",
+        
       },
-       {
-        Header: "Created",
-        accessor: "created",
+      {
+        Header: "End Date",
+        accessor: "end_date",
       },
-     {
-        Header: "Updated",
-        accessor: "updated",
+      {
+        Header: "Actions",
+        accessor: "policy_posts_id",
+        Cell: ({ row }) => (
+          <td>
+            <BiSolidEdit
+              className="project-table-edit-button"
+              style={{ cursor: "pointer", marginRight: "10px" }}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevents the row click event from triggering
+                openEditForm(row.original.id);
+              }}
+            />
+            <AiFillDelete
+              className="project-table-delete-button"
+              style={{ cursor: "pointer" }}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevents the row click event from triggering
+                handleDeleteProjectClick(row.original.id);
+              }}
+            />
+          </td>
+        ),
       },
     ],
-    []
+    [handleDeleteProjectClick, openEditForm]
   );
-  // const data = useMemo(() => MOCK_DATA, []);
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({ columns, data });
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable({ columns, data });
 
   return (
     <div className="table-container">
@@ -132,9 +79,10 @@ export const DataTable = ({ data }) => {
           {rows.map((row) => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()}
-              onClick={() => navigate("/policy-list")}
-              
+              <tr
+                {...row.getRowProps()}
+                onClick={() => navigate("/policy-list")}
+                style={{ cursor: "pointer" }}
               >
                 {row.cells.map((cell) => (
                   <td {...cell.getCellProps()}>{cell.render("Cell")}</td>

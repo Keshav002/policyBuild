@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import PolicyCard from ".././components/PolicyCard";
 import Nav from ".././components/Nav";
 import "./CompanyList.css";
@@ -10,7 +10,7 @@ import { FaSave, FaEye } from "react-icons/fa";
 import { PiClipboardTextDuotone } from "react-icons/pi";
 import { MdDelete } from "react-icons/md";
 import { DataTable } from "../components/PolicyPdfData";
-import  PolicyPdfCard  from ".././components/PolicyPdfCard";
+import PolicyPdfCard from ".././components/PolicyPdfCard";
 import { Pagination } from "antd";
 import { HiTableCells } from "react-icons/hi2";
 import { FaTableList } from "react-icons/fa6";
@@ -24,8 +24,28 @@ import { API_URL } from "../ConfigApi";
 import { useSelector } from "react-redux";
 import { VscKebabVertical } from "react-icons/vsc";
 import { Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { RxCross2 } from "react-icons/rx";
+import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
+
 function PolicyList() {
   const loggedInUserId = useSelector((state) => state.user.userData.user_id);
+  console.log(loggedInUserId);
+
+  const userData = useSelector((state) => state.user.userData);
+  const userRole = userData?.role;
+  console.log(userRole);
+  const companyId = userData?.company?.id;
+
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      company: companyId,
+    });
+  }, [companyId]);
+  console.log(companyId);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [tags, setTags] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -57,7 +77,7 @@ function PolicyList() {
   const [isRenamePopup, setIsRenamePopup] = useState(false);
   const [renameFilterId, setRenameFilterId] = useState("");
 
-  const [viewType, setViewType] = useState("table");
+  const [viewType, setViewType] = useState("card");
 
   const [idfrom, setIdFrom] = useState("");
   const [idto, setIdTo] = useState("");
@@ -103,10 +123,6 @@ function PolicyList() {
   const toggleReportsPanel = () => {
     setIsReportsPanelOpen(!isReportsPanelOpen);
   };
-
-
-
-
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -468,6 +484,427 @@ function PolicyList() {
     );
   };
 
+  const [projectId, setProjectId] = useState(null);
+  const location = useLocation();
+  const [isEditPolicyOpen, setisEditPolicyOpen] = useState(false);
+  const [editedPolicyId, setEditedPolicyId] = useState(null);
+  const [policies, setPolicies] = useState([]);
+
+  const handleEditPolicyClick = () => {
+    setisEditPolicyOpen(true);
+  };
+
+  const openEditForm = (policyId) => {
+    const selectedPolicy = policies.find((policy) => policy.id === policyId);
+
+    if (selectedPolicy) {
+      setEditFormData(selectedPolicy);
+      setEditedPolicyId(policyId);
+      handleEditPolicyClick();
+    }
+  };
+
+  const [isAddPolicyOpen, setisAddPolicyOpen] = useState(false);
+  const handleAddPolicyClick = () => {
+    setisAddPolicyOpen(true);
+  };
+
+  const [formData, setFormData] = useState({
+    jobtitle: "",
+    policytype: "",
+    description: "",
+    website: "",
+    expertiesreq: "",
+    banner: "",
+    salaryrange: "",
+    location: "",
+    emploeType: "",
+    policydeadline: "",
+    contactinfo: "",
+    companyregyear: "",
+    created_at: "",
+    updated_at: "",
+    average_rating: "",
+    total_ratings: "",
+    // document: null,
+    assigned_to: [],
+    
+  });
+
+//   const handleFileChange = (e) => {
+//     const file = e.target.files[0];
+//     if (file && file.type === 'application/pdf') {
+//         setFormData(prevData => ({
+//             ...prevData,
+//             document: file
+//         }));
+//     } else {
+//         // Handle invalid file type
+//         alert('Please select a PDF file.');
+//     }
+// };
+
+  const [editformData, setEditFormData] = useState({
+    jobtitle: "",
+    policytype: "",
+    description: "",
+    website: "",
+    expertiesreq: "",
+    banner: "",
+    salaryrange: "",
+    location: "",
+    emploeType: "",
+    policydeadline: "",
+    contactinfo: "",
+    companyregyear: "",
+    created_at: "",
+    updated_at: "",
+    average_rating: "",
+    total_ratings: "",
+    document: null,
+    assigned_to: [],
+  });
+
+  const handleInputChange = useCallback(
+    (e) => {
+      const { name, value, type, selectedOptions } = e.target;
+
+      // Check if it's a multi-select field
+      const updatedValue =
+        type === "select-multiple"
+          ? Array.from(selectedOptions, (option) => option.value)
+          : value;
+
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: updatedValue,
+      }));
+    },
+    [setFormData]
+  );
+
+  const handleEditInputChange = useCallback(
+    (e) => {
+      const { name, value, type, options } = e.target;
+
+      const updatedValue =
+        type === "select-multiple"
+          ? Array.from(options)
+              .filter((option) => option.selected)
+              .map((option) => option.value)
+          : value;
+
+      setEditFormData((prevData) => ({
+        ...prevData,
+        [name]: updatedValue,
+      }));
+    },
+    [setEditFormData]
+  );
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const id = params.get("projectId");
+    if (!id) {
+      const storedProjectId = localStorage.getItem("projectId");
+      if (storedProjectId) {
+        setProjectId(storedProjectId);
+      } else {
+        console.error("Project ID is missing.");
+      }
+    } else {
+      setProjectId(id);
+    }
+  }, [location.search]);
+
+  useEffect(() => {
+    if (projectId) {
+      fetchPolicies(projectId);
+    }
+  }, [projectId]);
+
+  const fetchPolicies = async (projectId) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/main/projects/${projectId}/policy_posts/`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("accessToken")}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setPolicies(data);
+        localStorage.setItem("policies", JSON.stringify(data));
+      } else {
+        console.error("Failed to fetch policies. Status:", response.status);
+        setPolicies([]);
+        localStorage.setItem("policies", "[]");
+      }
+    } catch (error) {
+      console.error("Error fetching policies:", error);
+      setPolicies([]);
+      localStorage.setItem("policies", "[]");
+    }
+  };
+
+  console.log("Policies in PolicyList:", policies);
+
+  const policyIds = policies ? policies.map((policy) => policy.id) : [];
+  console.log("Policy IDs:", policyIds);
+
+  useEffect(() => {
+    localStorage.setItem("policies", JSON.stringify(policies));
+  }, [policies]);
+  useEffect(() => {
+    const storedPolicies = localStorage.getItem("policies");
+    if (storedPolicies) {
+      try {
+        const parsedPolicies = JSON.parse(storedPolicies);
+        setPolicies(parsedPolicies);
+      } catch (error) {
+        console.error("Error parsing stored policies:", error);
+        setPolicies([]);
+      }
+    } else {
+      setPolicies([]);
+    }
+  }, []);
+
+  const handleAddPolicy = async () => {
+    console.log("Current projectId in handleAddPolicy:", projectId);
+    if (!projectId) {
+      console.error("Project ID is missing.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${API_URL}/main/projects/${projectId}/policy_posts/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("accessToken")}`,
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (response.ok) {
+        console.log("Policy created successfully!");
+
+        setFormData({});
+
+        const newPolicy = await response.json();
+        setPolicies((prevPolicies) => [...prevPolicies, newPolicy]);
+
+        Swal.fire({
+          icon: "success",
+          title: "Policy Created Successfully!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        console.error("Failed to create policy. Status:", response.status);
+
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to create policy. Please try again.",
+        });
+      }
+    } catch (error) {
+      console.error("Error creating policy:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An error occurred. Please try again.",
+      });
+    }
+  };
+
+  const handleCancelClick = () => {
+    setisAddPolicyOpen(false);
+    setisEditPolicyOpen(false);
+  };
+
+  const [editedPolicy, setEditedPolicy] = useState(null);
+
+  const handleDelete = async (policyId) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/main/projects/${projectId}/policy_posts/${policyId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("accessToken")}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        console.log("Policy deleted successfully!");
+
+        const updatedPolicies = policies.filter(
+          (policy) => policy.id !== policyId
+        );
+        setPolicies(updatedPolicies);
+        localStorage.setItem("policies", JSON.stringify(updatedPolicies));
+
+        Swal.fire({
+          icon: "success",
+          title: "Policy Deleted Successfully!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        console.error("Failed to delete policy. Status:", response.status);
+
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to delete policy. Please try again.",
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting policy:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An error occurred. Please try again.",
+      });
+    }
+  };
+
+  const handleEdit = async () => {
+    try {
+      if (!editedPolicyId) {
+        console.error("Invalid editedPolicyId");
+        return;
+      }
+
+      const originalPolicy = policies.find(
+        (policy) => policy.id === editedPolicyId
+      );
+
+      if (!originalPolicy) {
+        console.error("Original policy not found");
+        return;
+      }
+
+      const updatedFields = {};
+
+      for (const key in editformData) {
+        if (editformData[key] !== originalPolicy[key]) {
+          updatedFields[key] = editformData[key];
+        }
+      }
+
+      console.log("editedPolicyId:", editedPolicyId);
+      console.log("editformData:", editformData);
+
+      const response = await fetch(
+        `${API_URL}/main/projects/${projectId}/policy_posts/${editedPolicyId}/`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("accessToken")}`,
+          },
+          body: JSON.stringify(updatedFields),
+        }
+      );
+
+      if (response.ok) {
+        console.log("Policy updated successfully!");
+
+        const updatedPolicies = [...policies];
+
+        const editedPolicyIndex = updatedPolicies.findIndex(
+          (policy) => policy.id === editedPolicyId
+        );
+
+        updatedPolicies[editedPolicyIndex] = {
+          ...originalPolicy,
+          ...updatedFields,
+        };
+
+        setPolicies(updatedPolicies);
+
+        setisEditPolicyOpen(false);
+
+        Swal.fire({
+          icon: "success",
+          title: "Policy Updated Successfully!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        console.error("Failed to update policy. Status:", response.status);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to update policy. Please try again.",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating policy:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An error occurred. Please try again.",
+      });
+    }
+  };
+
+  const [consultants, setConsultants] = useState([]);
+  const fetchConsultants = async () => {
+    try {
+      const response = await fetch(`${API_URL}/main/consultants/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("accessToken")}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setConsultants(data);
+      } else {
+        console.error("Failed to fetch consultants. Status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching consultants:", error);
+    }
+  };
+  useEffect(() => {
+    fetchConsultants();
+  }, []);
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const handleConsultantSelect = (consultantId) => {
+    if (formData.assigned_to.includes(consultantId)) {
+      setFormData((prevData) => ({
+        ...prevData,
+        assigned_to: prevData.assigned_to.filter((id) => id !== consultantId),
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        assigned_to: [...prevData.assigned_to, consultantId],
+      }));
+    }
+    setDropdownOpen(false);
+  };
+
   return (
     <>
       <div className="company-list-page">
@@ -477,8 +914,8 @@ function PolicyList() {
             className={`cp_filter_icon ${isSidebarOpen ? "active" : ""}`}
             // onClick={toggleSidebar}
           >
-             <CustomTooltip tooltipText="Will Update Soon..">
-            <AiOutlineFilter className="cp_icon" />
+            <CustomTooltip tooltipText="Will Update Soon..">
+              <AiOutlineFilter className="cp_icon" />
             </CustomTooltip>
           </div>
 
@@ -855,45 +1292,473 @@ function PolicyList() {
               </div>
             )}
 
+            
+
+            {userRole === "Company" && (
+              <div className="company-list-heading">
+                <h1>
+                  Policy Lists
+                  <button
+                    className="company_project_add_edit_button"
+                    onClick={handleAddPolicyClick}
+                  >
+                    Create Policy
+                  </button>
+                </h1>
+              </div>
+            )}
+
+            {isAddPolicyOpen && (
+              <div className="company-profile-rating-popup-overlay">
+                <div className="consultant_profile_edit_popup">
+                  <h2 className="project_table_pop_heading">Add Policy</h2>
+                  <button
+                    className="project-close-button"
+                    onClick={handleCancelClick}
+                  >
+                    <RxCross2 />
+                  </button>
+                  <form encType="multipart/form-data">
+                    <label>
+                      Policy Type
+                      <input
+                        type="text"
+                        name="policytype"
+                        value={formData.policytype}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Contact
+                      <input
+                        type="text"
+                        name="contactinfo"
+                        value={formData.contactinfo}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+                    {/* <label>
+                      Document
+                      <input
+                        type="file"
+                        name="document"
+                        
+                        accept=".pdf"
+                        onChange={handleFileChange}
+                      />
+                    </label> */}
+
+                    <label>
+                      Registered Date
+                      <input
+                        type="text"
+                        name="companyregyear"
+                        value={formData.companyregyear}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Location
+                      <input
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Website
+                      <input
+                        type="text"
+                        name="website"
+                        value={formData.website}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Job Title
+                      <input
+                        type="text"
+                        name="jobtitle"
+                        value={formData.jobtitle}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Banner
+                      <input
+                        type="text"
+                        name="banner"
+                        value={formData.banner}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Salary Range
+                      <input
+                        type="text"
+                        name="salaryrange"
+                        value={formData.salaryrange}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Average Rating
+                      <input
+                        type="number"
+                        name="average_rating"
+                        value={formData.average_rating}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Total Ratings
+                      <input
+                        type="number"
+                        name="total_ratings"
+                        value={formData.total_ratings}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Experties Required
+                      <input
+                        type="text"
+                        name="expertiesreq"
+                        value={formData.expertiesreq}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Employee Type
+                      <input
+                        type="text"
+                        name="emploeType"
+                        value={formData.emploeType}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Policy Deadline
+                      <input
+                        type="text"
+                        name="policydeadline"
+                        value={formData.policydeadline}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Description
+                      <textarea
+                        name="description"
+                        value={formData.description}
+                        onChange={handleInputChange}
+                        style={{ height: "40px", marginTop: "0px" }}
+                      />
+                    </label>
+
+                    <label>
+                      Assigned To
+                      <div className="custom-dropdown">
+                        <div
+                          className="selected-consultants"
+                          onClick={() => setDropdownOpen(!isDropdownOpen)}
+                        >
+                          {Array.isArray(formData.assigned_to) &&
+                          formData.assigned_to.length > 0
+                            ? formData.assigned_to.map((consultantId) => {
+                                const consultant = consultants.find(
+                                  (c) => c.id === consultantId
+                                );
+                                return consultant
+                                  ? consultant.user.username + ", "
+                                  : "";
+                              })
+                            : "Select Consultants"}
+                        </div>
+
+                        {isDropdownOpen && (
+                          <div className="dropdown-list">
+                            {consultants.map((consultant) => (
+                              <div
+                                key={consultant.id}
+                                onClick={() =>
+                                  handleConsultantSelect(consultant.id)
+                                }
+                              >
+                                {consultant.user.username}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </label>
+                  </form>
+                  <div className="company-profile-rating-popup__buttons">
+                    <button onClick={() => handleAddPolicy(projectId)}>
+                      Submit
+                    </button>
+
+                    {/* <button onClick={handleCancelClick}>Cancel</button> */}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {isEditPolicyOpen && (
+              <div className="company-profile-rating-popup-overlay">
+                <div className="consultant_profile_edit_popup">
+                  <h2 className="project_table_pop_heading">Edit Policy</h2>
+                  <button
+                    className="project-close-button"
+                    onClick={handleCancelClick}
+                  >
+                    <RxCross2 />
+                  </button>
+                  <form encType="multipart/form-data">
+
+                    <label>
+                      Policy Type
+                      <input
+                        type="text"
+                        name="policytype"
+                        // value={editformData.policytype}
+                        value={editedPolicy?.policytype || ""}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Contact
+                      <input
+                        type="text"
+                        name="contactinfo"
+                        value={editformData.contactinfo}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Registered Date
+                      <input
+                        type="text"
+                        name="companyregyear"
+                        value={editformData.companyregyear}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Location
+                      <input
+                        type="text"
+                        name="location"
+                        value={editformData.location}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Website
+                      <input
+                        type="text"
+                        name="website"
+                        value={editformData.website}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Job Title
+                      <input
+                        type="text"
+                        name="jobtitle"
+                        value={editformData.jobtitle}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Banner
+                      <input
+                        type="text"
+                        name="banner"
+                        value={editformData.banner}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Salary Range
+                      <input
+                        type="text"
+                        name="salaryrange"
+                        value={editformData.salaryrange}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Average Rating
+                      <input
+                        type="number"
+                        name="average_rating"
+                        value={editformData.average_rating}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Total Ratings
+                      <input
+                        type="number"
+                        name="total_ratings"
+                        value={editformData.total_ratings}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Experties Required
+                      <input
+                        type="text"
+                        name="expertiesreq"
+                        value={editformData.expertiesreq}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Employee Type
+                      <input
+                        type="text"
+                        name="emploeType"
+                        value={editformData.emploeType}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Policy Deadline
+                      <input
+                        type="text"
+                        name="policydeadline"
+                        value={editformData.policydeadline}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Description
+                      <textarea
+                        name="description"
+                        value={editformData.description}
+                        onChange={handleEditInputChange}
+                        style={{ height: "40px", marginTop: "0px" }}
+                      />
+                    </label>
+
+                    <label>
+                      Assigned To
+                      <div className="custom-dropdown">
+                        <div
+                          className="selected-consultants"
+                          onClick={() => setDropdownOpen(!isDropdownOpen)}
+                        >
+                          {Array.isArray(formData.assigned_to) &&
+                          formData.assigned_to.length > 0
+                            ? formData.assigned_to.map((consultantId) => {
+                                const consultant = consultants.find(
+                                  (c) => c.id === consultantId
+                                );
+                                return consultant
+                                  ? consultant.user.username + ", "
+                                  : "";
+                              })
+                            : "Select Consultants"}
+                        </div>
+
+                        {isDropdownOpen && (
+                          <div className="dropdown-list">
+                            {consultants.map((consultant) => (
+                              <div
+                                key={consultant.id}
+                                onClick={() =>
+                                  handleConsultantSelect(consultant.id)
+                                }
+                              >
+                                {consultant.user.username}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </label>
+                  </form>
+                  <div className="company-profile-rating-popup__buttons">
+                    <button onClick={() => handleEdit(projectId)}>
+                      Submit
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="company-list-container">
               {viewType === "table" && (
                 <div className="table-container">
-                  <DataTable
-                    data={
-                      // companies?.paginated_results ||
-                      []
-                    }
-                  />
+                  {policies && policies.length > 0 ? (
+                    <DataTable
+                      data={policies}
+                      handleDelete={handleDelete}
+                      handleEdit={handleEdit}
+                      openEditForm={openEditForm}
+                      projectId={projectId}
+                      policyId={policyIds}
+                      editFormData={editformData}
+                      editedPolicyId={editedPolicyId}
+                    />
+                  ) : (
+                    <div style={{ marginTop: "20px", textAlign: "center" }}>
+                      No policies found
+                    </div>
+                  )}
                 </div>
               )}
+
               {viewType !== "table" && (
                 <div className="company_lists_cards">
-                    {/* <p>Cards will be updated soon</p> */}
-                  {/* {companies &&
-                    companies.paginated_results?.map((company, index) => (
-                      <CompanyCard key={index} company={company} />
-                    ))} */}
-                  <Link to="/pdf" style={{ textDecoration: "none" }}>
-                    <PolicyPdfCard />
-                  </Link>
-                  <Link to="/pdf" style={{ textDecoration: "none" }}>
-                    <PolicyPdfCard />
-                  </Link>
-                  <Link to="/pdf"style={{ textDecoration: "none" }}>
-                    <PolicyPdfCard />
-                  </Link>
-                  <Link to="/pdf"style={{ textDecoration: "none" }}>
-                    <PolicyPdfCard />
-                  </Link>
-                  <Link to="/pdf"style={{ textDecoration: "none" }}>
-                    <PolicyPdfCard />
-                  </Link> 
-                  <Link to="/pdf"style={{ textDecoration: "none" }}>
-                    <PolicyPdfCard />
-                  </Link>
-                
+                  {policies &&
+                    policies.map((policy, index) => (
+                      <PolicyPdfCard
+                        policy={policy}
+                        userRole={userRole}
+                        key={index}
+                        handleDelete={() => handleDelete(policy.id)}
+                        handleEdit={handleEdit}
+                        openEditForm={openEditForm}
+                        fetchPolicies={fetchPolicies}
+                        projectId={projectId}
+                        policyId={policyIds}
+                        style={{ textDecoration: "none" }}
+                      />
+                    ))}
                 </div>
               )}
+
               <hr />
               <div className="company_list_pagination_container">
                 <>

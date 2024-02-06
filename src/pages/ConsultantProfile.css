@@ -1,66 +1,66 @@
 /* ConsultantProfile.css */
 
-.consultant_profile_page{
+.consultant_profile_page {
   background-color: #ddd;
-    min-height: 100vh;
-    padding-bottom: 20px;
+  min-height: 100vh;
+  padding-bottom: 20px;
 }
 
 .consultant_profile_banner {
-    width: 90%;
-    border-radius: 30px;
-    margin: auto;
-    margin-top: 10px;
-    display: flex;
-    align-items: center;
-    padding: 20px;
-    padding-bottom: 30px;
-    background-color: #ffffff; /* Set your desired background color */
-    position: relative;
-    /* height: 270px; */
-  }
-  
-  .consultant_profile_picture img {
-    width: 170px; /* Set your desired width for the profile picture */
-    height: 180px; /* Set your desired height for the profile picture */
-    border-radius: 20px; /* To make the picture circular */
-    object-fit: cover; /* Ensure the picture covers the entire space */
-    /* position: relative; */
-  }
-  
-  .consultant_profile_details {
-    flex: 1;
-    margin-left: 10px;
-  }
-  .consultant_profile_banner_data {
-    display: flex;
-    justify-content: space-between;
-    align-items: stretch; /* Equal height for both columns */
-    margin: 10px;
-  }
-  
-  .consultant_profile_banner_data_c1,
-  .consultant_profile_banner_data_c2 {
-    flex: 1;
-    padding: 0 5px; /* Add padding as needed */
-    border-right: 1px solid #a4a3a3; /* Vertical line between columns */
-    box-sizing: border-box; /* Include padding and border in the total width */
-  }
-  
-  /* Remove the border-right from the last column */
-  .consultant_profile_banner_data_c2 {
-    border-right: none;
-  }
+  width: 90%;
+  border-radius: 30px;
+  margin: auto;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  padding-bottom: 30px;
+  background-color: #ffffff; /* Set your desired background color */
+  position: relative;
+  /* height: 270px; */
+}
 
-  .constultant_profile_banner_personal_detail_icon{
-    margin-right: 10px;
-    color: rgb(121, 122, 122);
-  }
+.consultant_profile_picture img {
+  width: 170px; /* Set your desired width for the profile picture */
+  height: 180px; /* Set your desired height for the profile picture */
+  border-radius: 20px; /* To make the picture circular */
+  object-fit: cover; /* Ensure the picture covers the entire space */
+  /* position: relative; */
+}
 
-  .constultant_profile_banner_personal_detail{
-    display: flex;
-    align-items: center;
-    padding: 10px;
+.consultant_profile_details {
+  flex: 1;
+  margin-left: 10px;
+}
+.consultant_profile_banner_data {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch; /* Equal height for both columns */
+  margin: 10px;
+}
+
+.consultant_profile_banner_data_c1,
+.consultant_profile_banner_data_c2 {
+  flex: 1;
+  padding: 0 5px; /* Add padding as needed */
+  border-right: 1px solid #a4a3a3; /* Vertical line between columns */
+  box-sizing: border-box; /* Include padding and border in the total width */
+}
+
+/* Remove the border-right from the last column */
+.consultant_profile_banner_data_c2 {
+  border-right: none;
+}
+
+.constultant_profile_banner_personal_detail_icon {
+  margin-right: 10px;
+  color: rgb(121, 122, 122);
+}
+
+.constultant_profile_banner_personal_detail {
+  display: flex;
+  align-items: center;
+  padding: 10px;
 }
 
 .consultant_profile_professional_summary {
@@ -140,9 +140,9 @@
 .update_button:hover {
   background-color: #4d4d4d;
   color: white;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 4px 6px -1px, rgba(255, 255, 255, 0.3) 0px 3px 5px -1px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 4px 6px -1px,
+    rgba(255, 255, 255, 0.3) 0px 3px 5px -1px;
 }
-
 
 /* Add these styles to ConsultantProfile.css */
 
@@ -169,7 +169,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-
 }
 
 .consultant_profile_key_skill_tag {
@@ -206,8 +205,6 @@
   background-color: #f0f0f0; /* Change background color on hover */
   transform: scale(1.1); /* Add a slight scale effect on hover */
 }
-
-
 
 .consultant_profile_picture {
   display: inline-block;
@@ -258,15 +255,21 @@
   width: 100%;
   height: 100%;
   cursor: pointer;
-  
 }
 
 /* Add these styles to ConsultantProfile.css */
+
+.consultant_profile_edit_popup form {
+  max-height: 400px; 
+  overflow: auto;
+  overflow-x: hidden;
+}
 .consultant_profile_edit_popup {
   background-color: #fff;
   width: 500px;
   max-height: 500px;
-  overflow-y: scroll;
+
+  overflow: auto;
   border-radius: 20px;
   padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -307,7 +310,7 @@
   border-radius: 5px;
 }
 
-.tags-container{
+.tags-container {
   display: flex;
   flex-wrap: wrap;
 }
@@ -328,7 +331,3 @@
   font-size: 16px;
   line-height: 1.5;
 }
-
-
-
-

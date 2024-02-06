@@ -36,13 +36,52 @@
     font-weight: 700;
     color: #565656;
   }
+
+  .parent-container {
+    display: flex;
+    align-items: center; /* Align items vertically in the center */
+  }
+  
+  .pc_header {
+    position: relative;
+  }
+  
+  .pc_menu {
+    position: absolute;
+    top: 0%;
+    left: 37%; 
+    background-color: #fff; 
+    border: 1px solid #ccc; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    padding: 8px; 
+    z-index: 1000; 
+    border-radius: 5px;
+    
+  }
+  
+  .pc_header:hover .pc_menu {
+    display: block; 
+  }
+  
+  .pc_menu div {
+    cursor: pointer;
+    padding: 8px;
+    transition: background-color 0.3s; 
+  }
+  
+  .pc_menu div:hover {
+    background-color: #f5f5f5; 
+  }
+  
+  
+  
   
  /* PolicyCard.css */
 
 /* PolicyCard.css */
 
 .pc_info {
-    margin-top: 10px;
+    margin-top: 18px;
     font-size: 14px;
     display: flex;
     align-items: center;

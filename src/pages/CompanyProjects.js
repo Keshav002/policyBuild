@@ -20,11 +20,29 @@ import dayjs from "dayjs";
 import Cookies from "js-cookie";
 import jwtDecode from "jwt-decode";
 import { API_URL } from "../ConfigApi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { VscKebabVertical } from "react-icons/vsc";
+import { GrAdd } from "react-icons/gr";
 import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+
+import { RxCross2 } from "react-icons/rx";
+import Swal from "sweetalert2";
+
 function CompanyProjects() {
   const loggedInUserId = useSelector((state) => state.user.userData.user_id);
+  const userData = useSelector((state) => state.user.userData);
+
+  const companyId = userData?.company?.id;
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      company: companyId,
+    });
+  }, [companyId]);
+  const navigate = useNavigate();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [tags, setTags] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -102,10 +120,6 @@ function CompanyProjects() {
   const toggleReportsPanel = () => {
     setIsReportsPanelOpen(!isReportsPanelOpen);
   };
-
-
-
-
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -411,7 +425,7 @@ function CompanyProjects() {
     console.log("Constructed URL:", url);
 
     try {
-      const response = []
+      const response = [];
       // await fetch(url, {
       //   headers: {
       //     Authorization: `Bearer ${Cookies.get("accessToken")}`,
@@ -468,6 +482,404 @@ function CompanyProjects() {
     );
   };
 
+  const [projects, setProjects] = useState([]);
+  const [consultants, setConsultants] = useState([]);
+  const [isAddProjectOpen, setisAddProjectOpen] = useState(false);
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+
+  const [formData, setFormData] = useState({
+    company: "",
+    name: "",
+    description: "",
+    start_date: "",
+    end_date: "",
+    assigned_to: [],
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value, type } = e.target;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]:
+        type === "select-multiple"
+          ? Array.from(e.target.selectedOptions, (option) => option.value)
+          : value,
+    }));
+  };
+
+  const handleCancelClick = () => {
+    setisAddProjectOpen(false);
+    setisEditProjectOpen(false);
+  };
+
+  const location = useLocation();
+
+  const handleAddProjectClick = async () => {
+    setisAddProjectOpen(true);
+  };
+
+  const [projectId, setProjectId] = useState(null);
+  const [projectCreatedId, setProjectCreatedId] = useState(null);
+
+  const handleAddProject = async () => {
+    try {
+      const response = await fetch(`${API_URL}/main/projects/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("accessToken")}`,
+        },
+        body: JSON.stringify({
+          ...formData,
+        }),
+      });
+
+      if (response.ok) {
+        const newProject = await response.json();
+        console.log("New Project:", newProject);
+        console.log("New Project ID:", newProject.id);
+
+        const existingProjectIds =
+          JSON.parse(localStorage.getItem("projectIds")) || [];
+
+        const updatedProjectIds = [...existingProjectIds, newProject.id];
+
+        localStorage.removeItem("projectId");
+
+        localStorage.setItem("projectIds", JSON.stringify(updatedProjectIds));
+
+        console.log(localStorage.getItem("projectIds"));
+
+        console.log(
+          "After updating local storage:",
+          localStorage.getItem("projectIds")
+        );
+
+        setProjects((prevProjects) => [...prevProjects, newProject]);
+        setProjectCreatedId(newProject.id);
+        setProjectId(newProject.id);
+        setFormData({
+          name: "",
+          description: "",
+          start_date: "",
+          end_date: "",
+          assigned_to: [],
+        });
+
+        // navigate(`/policy-list?projectId=${newProject.id}`);
+        Swal.fire({
+          icon: "success",
+          title: "Project Created Successfully!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        setisAddProjectOpen(false);
+      } else {
+        console.error("Failed to add project. Status:", response.status);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to add project. Please try again.",
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An error occurred. Please try again.",
+      });
+      console.error("Error during handleAddProject:", error);
+    }
+  };
+
+  const fetchConsultants = async () => {
+    try {
+      const response = await fetch(`${API_URL}/main/consultants/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("accessToken")}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setConsultants(data);
+      } else {
+        console.error("Failed to fetch consultants. Status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching consultants:", error);
+    }
+  };
+
+  // const fetchProjects = async () => {
+  //   try {
+  //     const response = await fetch(`${API_URL}/main/projects/`, {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${Cookies.get("accessToken")}`,
+  //       },
+  //     });
+  
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       localStorage.setItem("projects", JSON.stringify(data)); // Store projects in localStorage
+  //       return data;
+  //     } else {
+  //       console.error("Failed to fetch data. Status:", response.status);
+  //       return null;
+  //     }
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     return null;
+  //   }
+  // };
+  
+  // useEffect(() => {
+  //   const storedProjects = localStorage.getItem("projects");
+  //   if (storedProjects) {
+  //     setProjects(JSON.parse(storedProjects)); 
+  //   } else {
+  //     fetchProjects();
+  //   }
+  // }, []);
+  const fetchProjects = async () => {
+    try {
+      const response = await fetch(`${API_URL}/main/projects/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("accessToken")}`,
+        },
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      } else {
+        console.error("Failed to fetch data. Status:", response.status);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      return null;
+    }
+  };
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      const projectsData = await fetchProjects();
+      if (projectsData) {
+        setProjects(projectsData); // Update state with fetched projects data
+      } else {
+        // Handle error if fetching projects data fails
+        console.error("Failed to fetch projects data.");
+      }
+    };
+  
+    fetchData(); // Call fetchData function when the component mounts
+  }, []);
+  
+
+  
+
+
+  useEffect(() => {
+    fetchConsultants();
+    fetchProjects();
+  }, []);
+
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const handleConsultantSelect = (consultantId) => {
+    
+    if (formData.assigned_to.includes(consultantId)) {
+      
+      setFormData((prevData) => ({
+        ...prevData,
+        assigned_to: prevData.assigned_to.filter((id) => id !== consultantId),
+      }));
+    } else {
+      
+      setFormData((prevData) => ({
+        ...prevData,
+        assigned_to: [...prevData.assigned_to, consultantId],
+      }));
+    }
+   
+    setDropdownOpen(false);
+  };
+
+ 
+
+  const handleDeleteProjectClick = async (projectId) => {
+    try {
+      const response = await fetch(`${API_URL}/main/projects/${projectId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${Cookies.get("accessToken")}`,
+        },
+      });
+      if (response.ok) {
+        console.log("Project deleted successfully!");
+  
+        // Update state immediately after successful deletion
+        setProjects((prevProjects) =>
+          prevProjects.filter((project) => project.id !== projectId)
+        );
+  
+        Swal.fire({
+          icon: "success",
+          title: "Project Deleted Successfully!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        console.error("Failed to delete project. Status:", response.status);
+  
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to delete project. Please try again.",
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+  
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An error occurred. Please try again.",
+      });
+    }
+  };
+  
+
+
+  const [editformData, setEditFormData] = useState({
+    company: "",
+    name: "",
+    description: "",
+    start_date: "",
+    end_date: "",
+    assigned_to: [],
+  });
+
+  const [editedProjectId, setEditedProjectId] = useState(null);
+
+  
+
+  const handleEditInputChange = (e) => {
+    const { name, value, type } = e.target;
+
+    setEditFormData((prevData) => ({
+      ...prevData,
+      [name]:
+        type === "select-multiple"
+          ? Array.from(e.target.selectedOptions, (option) => option.value)
+          : value,
+    }));
+  };
+
+  const [editingProject, setEditingProject] = useState(null);
+
+  const [isEditProjectOpen, setisEditProjectOpen] = useState(false);
+
+ 
+  const handleEditFormClick = async () => {
+    try {
+      if (!editedProjectId) {
+        console.error("Invalid editedProjectId");
+        return;
+      }
+
+      
+      const originalProject = projects.find(
+        (project) => project.id === editedProjectId
+      );
+
+      if (!originalProject) {
+        console.error("Original project not found");
+        return;
+      }
+
+      
+      const updatedFields = {};
+
+     
+      for (const key in editformData) {
+        if (editformData[key] !== originalProject[key]) {
+          updatedFields[key] = editformData[key];
+        }
+      }
+
+      console.log("editedProjectId:", editedProjectId);
+      console.log("editformData:", editformData);
+
+      
+      const response = await fetch(
+        `${API_URL}/main/projects/${editedProjectId}/`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("accessToken")}`,
+          },
+          body: JSON.stringify(updatedFields),
+        }
+      );
+      const updatedProjects = await fetchProjects();
+
+      if (updatedProjects) {
+       
+        setProjects(updatedProjects);
+    
+        
+        setisEditProjectOpen(false);
+    
+        
+        Swal.fire({
+          icon: "success",
+          title: "Project Updated Successfully!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }else {
+        console.error("Failed to update project. Status:", response.status);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to update project. Please try again.",
+        });
+        
+      }
+    } catch (error) {
+      console.error("Error updating project:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An error occurred. Please try again.",
+      });
+      
+    }
+  };
+
+  const openEditForm = (projectId) => {
+    const selectedProject = projects.find(
+      (project) => project.id === projectId
+    );
+
+    if (selectedProject) {
+      setisEditProjectOpen(true);
+      setEditFormData(selectedProject);
+      setEditedProjectId(projectId);
+      setEditingProject(selectedProject);
+    }
+  };
+
+  
   return (
     <>
       <div className="company-list-page">
@@ -478,7 +890,7 @@ function CompanyProjects() {
             // onClick={toggleSidebar}
           >
             <CustomTooltip tooltipText="Will Update Soon..">
-            <AiOutlineFilter className="cp_icon" />
+              <AiOutlineFilter className="cp_icon" />
             </CustomTooltip>
           </div>
 
@@ -855,42 +1267,240 @@ function CompanyProjects() {
               </div>
             )}
 
+            <div className="company-list-heading">
+              <h1>
+                Projects
+                <button
+                  className="company_project_add_edit_button"
+                  onClick={handleAddProjectClick}
+                >
+                  Create Project
+                </button>
+              </h1>
+            </div>
+
+            {isAddProjectOpen && (
+              <div className="company-profile-rating-popup-overlay">
+                <div className="consultant_profile_edit_popup">
+                  <h2 className="project_table_pop_heading">Add Project</h2>
+                  <button
+                    className="project-close-button"
+                    onClick={handleCancelClick}
+                  >
+                    <RxCross2 />
+                  </button>
+
+                  <label>
+                    Project Name
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                    />
+                  </label>
+
+                  <label>
+                    Description
+                    <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      style={{ height: "30px", marginTop: "0px" }}
+                    />
+                  </label>
+                  <label>
+                    Assigned To
+                    <div className="custom-dropdown">
+                      <div
+                        className="selected-consultants"
+                        onClick={() => setDropdownOpen(!isDropdownOpen)}
+                      >
+                        {formData.assigned_to.length > 0
+                          ? formData.assigned_to.map((consultantId) => {
+                              const consultant = consultants.find(
+                                (c) => c.id === consultantId
+                              );
+                              return consultant
+                                ? consultant.user.username + ", "
+                                : "";
+                            })
+                          : "Select Consultants"}
+                      </div>
+                      {isDropdownOpen && (
+                        <div className="dropdown-list">
+                          {consultants.map((consultant) => (
+                            <div
+                              key={consultant.id}
+                              onClick={() =>
+                                handleConsultantSelect(consultant.id)
+                              }
+                            >
+                              {consultant.user.username}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </label>
+
+                  <label>
+                    Start Date
+                    <input
+                      type="date"
+                      name="start_date"
+                      value={formData.start_date}
+                      onChange={handleInputChange}
+                    />
+                  </label>
+
+                  <label>
+                    End Date
+                    <input
+                      type="date"
+                      name="end_date"
+                      value={formData.end_date}
+                      onChange={handleInputChange}
+                    />
+                  </label>
+
+                  <div className="company-profile-rating-popup__buttons">
+                    <button onClick={handleAddProject}>Submit</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {isEditProjectOpen && (
+              <div className="company-profile-rating-popup-overlay">
+                <div className="consultant_profile_edit_popup">
+                  <h2 className="project_table_pop_heading">Edit Project</h2>
+                  <button
+                    className="project-close-button"
+                    onClick={handleCancelClick}
+                  >
+                    <RxCross2 />
+                  </button>
+
+                  <label>
+                    Project Name
+                    <input
+                      type="text"
+                      name="name"
+                      value={editformData.name}
+                      onChange={handleEditInputChange}
+                    />
+                  </label>
+
+                  <label>
+                    Description
+                    <textarea
+                      name="description"
+                      value={editformData.description}
+                      onChange={handleEditInputChange}
+                      style={{ height: "30px", marginTop: "0px" }}
+                    />
+                  </label>
+                  <label>
+                    Assigned To
+                    <div className="custom-dropdown">
+                      <div
+                        className="selected-consultants"
+                        onClick={() => setDropdownOpen(!isDropdownOpen)}
+                      >
+                        {editformData.assigned_to.length > 0
+                          ? editformData.assigned_to.map((consultantId) => {
+                              const consultant = consultants.find(
+                                (c) => c.id === consultantId
+                              );
+                              return consultant
+                                ? consultant.user.username + ", "
+                                : "";
+                            })
+                          : "Select Consultants"}
+                      </div>
+                      {isDropdownOpen && (
+                        <div className="dropdown-list">
+                          {consultants.map((consultant) => (
+                            <div
+                              key={consultant.id}
+                              onClick={() =>
+                                handleConsultantSelect(consultant.id)
+                              }
+                            >
+                              {consultant.user.username}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </label>
+
+                  <label>
+                    Start Date
+                    <input
+                      type="date"
+                      name="start_date"
+                      value={editformData.start_date}
+                      onChange={handleEditInputChange}
+                    />
+                  </label>
+
+                  <label>
+                    End Date
+                    <input
+                      type="date"
+                      name="end_date"
+                      value={editformData.end_date}
+                      onChange={handleEditInputChange}
+                    />
+                  </label>
+
+                  <div className="company-profile-rating-popup__buttons">
+                    <button onClick={handleEditFormClick}>Submit</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="company-list-container">
               {viewType === "table" && (
                 <div className="table-container">
-                  <DataTable
-                    data={
-                      // companies?.paginated_results ||
-                      []
-                    }
-                  />
+                  {projects && projects.length > 0 ? (
+                    
+                    <DataTable
+                      data={projects}
+                      handleDeleteProjectClick={handleDeleteProjectClick}
+                      openEditForm={openEditForm}
+                      isEditFormOpen={isEditFormOpen}
+                    />
+                  ) : (
+                    <p>No projects available.</p>
+                  )}
                 </div>
               )}
+
               {viewType !== "table" && (
                 <div className="company_lists_cards">
+                  {projects &&
+                    projects.map((project) => (
+                      <PolicyCard
+                        {...project}
+                        projectId={project.id}
+                        handleEditFormClick={handleEditFormClick}
+                        openEditForm={openEditForm}
+                        handleDeleteProjectClick={() =>
+                          handleDeleteProjectClick(project.id)
+                        }
+                        isEditFormOpen={isEditFormOpen}
+                      />
+                    ))}
+
                   {/* {companies &&
                     companies.paginated_results?.map((company, index) => (
                       <CompanyCard key={index} company={company} />
                     ))} */}
-                  <Link to="/policy-list" style={{ textDecoration: "none" }}>
-                    <PolicyCard />
-                  </Link>
-                  <Link to="/policy-list" style={{ textDecoration: "none" }}>
-                    <PolicyCard />
-                  </Link>
-                  <Link to="/policy-list"style={{ textDecoration: "none" }}>
-                    <PolicyCard />
-                  </Link>
-                  <Link to="/policy-list"style={{ textDecoration: "none" }}>
-                    <PolicyCard />
-                  </Link>
-                  <Link to="/policy-list"style={{ textDecoration: "none" }}>
-                    <PolicyCard />
-                  </Link> 
-                  <Link to="/policy-list"style={{ textDecoration: "none" }}>
-                    <PolicyCard />
-                  </Link>
-                
+                  
                 </div>
               )}
               <hr />
