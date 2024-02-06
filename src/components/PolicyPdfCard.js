@@ -13,7 +13,7 @@ function PolicyPdfCard() {
         <div className="ppc_policy-name">Equal Opportunity Policy</div>
       </div>
       <div className="ppc_info">
-        <div className="ppc_detail">Company  : XYZ Corp</div>
+        <div className="ppc_detail">Status  : Active</div>
         <div className="ppc_detail">Scope: IT Sector</div>
         <div className="ppc_detail">Score: 8 out of 10</div>
         <div className="ppc_detail">Version: 1</div>

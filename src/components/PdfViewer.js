@@ -278,7 +278,7 @@ function PdfViewer() {
                 }`}
               />
             </label>
-            <label
+            {/* <label
               className="pdfview_icon_label"
               onClick={() => toggleView("scrollbar")}
             >
@@ -287,7 +287,7 @@ function PdfViewer() {
                   viewType === "scrollbar" ? "pdfview_selected_icon" : ""
                 }`}
               />
-            </label>
+            </label> */}
           </div>
 
           <div class="pdf_zoom_buttons_container">

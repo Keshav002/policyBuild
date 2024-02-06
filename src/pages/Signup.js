@@ -128,6 +128,7 @@ const SignUp = () => {
         }
       })
       .catch((error) => {
+        setLoading(false);
         console.error("Error:", error);
         Swal.fire({
           icon: "error",

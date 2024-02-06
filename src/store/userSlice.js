@@ -8,6 +8,7 @@ const userSlice = createSlice({
   name: "user",
   initialState: {
     userData: {},
+    loading:false
   },
   reducers: {
     setUser(state, action) {
@@ -15,11 +16,15 @@ const userSlice = createSlice({
     },
     removeUser(state) {
       state.userData = {}; // Clear user data
+      state.loading = false
     },
+    setLoading(state, action){
+      state.loading = action.payload;
+    }
   },
 });
 
-export const { setUser, removeUser, updateUser } = userSlice.actions;
+export const { setUser, removeUser, updateUser, setLoading } = userSlice.actions;
 export default userSlice.reducer;
   
 
@@ -106,6 +111,7 @@ export function handleSignIn(userDetails, navigate) {
   // const navigate = useNavigate();
 
   return async function handleSignInThunk(dispatch, getState) {
+    dispatch(setLoading(true));
     fetch(`${API_URL}/users/users/login/`, {
       method: "POST",
       headers: {
@@ -133,12 +139,14 @@ export function handleSignIn(userDetails, navigate) {
             expires: expirationDateRefreshToken,
           });
           dispatch(setUser(data));
+          dispatch(setLoading(false));
           if(data.role == "Consultant"){
             navigate("/consultant-projects");
           }else if(data.role == "Company"){
             navigate("/company-projects");
           }
         } else {
+          dispatch(setLoading(false));
           Swal.fire({
             icon: "error",
             title: "Error",
@@ -148,6 +156,7 @@ export function handleSignIn(userDetails, navigate) {
       })
       .catch((error) => {
         console.error("Error:", error);
+        dispatch(setLoading(false));
         Swal.fire({
           icon: "error",
           title: "Error",

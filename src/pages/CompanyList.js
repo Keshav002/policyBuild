@@ -933,7 +933,9 @@ function CompanyList() {
                   {companies && companies.paginated_results?.length > 0 ? (
                     <DataTable data={companies.paginated_results} />
                   ) : (
-                    <div style={{ marginTop: "20px", textAlign:"center" }}>No data found</div>
+                    <div style={{ marginTop: "20px", textAlign: "center" }}>
+                      No data found
+                    </div>
                   )}
                 </div>
               )}
@@ -941,8 +943,11 @@ function CompanyList() {
                 <div className="company_lists_cards">
                   {companies && companies.paginated_results?.length > 0 ? (
                     companies.paginated_results.map((company, index) => (
-                  <Link to = {`/company-profile/${company.id}`} style={{ textDecoration: "none" }}>
-                      <CompanyCard key={index} company={company} />
+                      <Link
+                        to={`/company-profile/${company.id}`}
+                        style={{ textDecoration: "none" }}
+                      >
+                        <CompanyCard key={index} company={company} />
                       </Link>
                     ))
                   ) : (

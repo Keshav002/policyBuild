@@ -1,0 +1,661 @@
+/* App.css */
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  .mnc_search_bar {
+    margin-bottom: 10px;
+  }
+  
+  .mnc_search_bar input {
+    width: 70%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  .mnc_icon {
+    margin-left: 20px;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  .mnc_app {
+    display: flex;
+    height: calc(100vh - 45px);
+  }
+  
+  .mnc_sidebar {
+    width: 380px;
+    background-color: #ffffff;
+    color: grey;
+    padding: 20px;
+    padding-top: 10px;
+    overflow-y: auto;  /* Add this line to enable vertical scrolling */
+    max-height: calc(100vh - 20px);  /* Set a maximum height for the sidebar */
+  }
+  
+  .mnc_sidebar h2 {
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  .mnc_sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .mnc_sidebar li {
+    cursor: pointer;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .mnc_user_avatar {
+    border-radius: 50%;
+    margin-right: 10px;
+    height: 40px;
+    width: 40px;
+  }
+  
+  .mnc_content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh-48px); 
+    overflow-y: auto;
+    position: relative;
+  }
+  
+  .mnc_top_bar {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background-color: #4d4d4d;
+    color: white;
+    /* padding: 10px; */
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    z-index: 1;
+  }
+  
+  
+  .mnc_avatar {
+    border-radius: 50%;
+    margin-right: 10px;
+    height: 40px;
+    width: 40px;
+    padding: 10px;
+  }
+  
+  .mnc_chatbox {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #e1e2e3;
+    padding: 20px;
+  }
+  .mnc_messages_time {
+    position: absolute;
+    bottom: 2px;
+    right: 7px;
+    font-size: 12px;
+    margin-left: 10px;
+    font-style: italic;
+    color: #363636;
+  }
+  
+  .mnc_messages {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.mnc_sent {
+  font-size: 15px;
+    background-color: #cbffd6;
+    position: relative;
+    color: rgb(0, 0, 0);
+    max-width: 50%;
+    min-width: 5%;
+    align-self: flex-end;
+    border-radius: 10px;
+    padding: 12px;
+    margin: 2px 0;
+    border: .5px solid rgb(174, 174, 174);
+    margin-left: auto;
+    display: inline-block;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+  }
+
+.mnc_sent p{
+margin-right: 50px;
+}
+  
+  .mnc_received {
+  font-size: 15px;
+
+    background-color: #ffffff;
+    position: relative;
+    max-width: 50%;
+    min-width: 10%;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 2px 0;
+    margin-right: auto;
+    border: .5px solid rgb(176, 176, 176);
+    display: inline-block;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+  }
+
+  .mnc_received p{
+    margin-right: 50px;
+    }
+  
+
+  
+  .mnc_selected_user {
+    background-color: #eae7e7; /* Example background color for highlighting */
+    color: #333; /* Example text color for highlighting */
+    border-radius: 5px;
+  }
+
+  .mnc_view_buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+    background-color: #ccc;
+    border-radius: 5px;
+  }
+  
+  .mnc_view_buttons button {
+    padding: 10px;
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    color: #8a8a8a;
+  }
+  
+  .mnc_view_buttons button:focus {
+    outline: none;
+  }
+  
+  .mnc_view_buttons button:hover {
+    color: #222222; /* Change color on hover as needed */
+  }
+  
+  .mnc_view_buttons button.chats.active,
+  .mnc_view_buttons button.meetings.active {
+    color: #000000;
+    font-weight: bold;
+  }
+  
+  .mnc_view_buttons button svg {
+    margin-right: 5px;
+  }
+  
+  .mnc_upcoming_meetings {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .mnc_meeting_item {
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 8px;
+  }
+  
+  .mnc_meeting_title {
+    color: #36938d;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  .mnc_meeting_details {
+    margin: 5px 0;
+    font-size: 14px;
+  }
+
+  .mnc_selected_meeting {
+    background-color: #eae7e7;
+  }
+ 
+/* Add these styles to your CSS file */
+
+.mnc_meeting_view {
+  flex: 1;
+  /* justify-content: center; */
+  /* display: flex;
+  align-items: center; */
+  padding: 40px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.mnc_meeting_info_right {
+  text-align: left;
+  position: relative;
+}
+
+.mnc_meeting_info_right h2 {
+  color: #414141;
+  font-size: 28px;
+  margin-bottom: 35px;
+  text-align: center;
+}
+
+.mnc_meeting_details_right {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.mnc_meeting_details_right p {
+  margin: 0;
+  color: #555;
+  font-size: 18px;
+  line-height: 2;
+}
+
+.mnc_meeting_description {
+  color: #777;
+  font-size: 18px;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.mnc_participants {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  color: #555;
+  font-size: 18px;
+  line-height: 1.5;
+  gap: 20px;
+}
+
+.mnc_participants_list {
+  list-style: none;
+  padding: 0;
+  margin: 15px 0 0 0;
+  margin-bottom: 15px;
+}
+
+.mnc_participants_list li {
+  display: inline-block;
+  margin-right: 15px;
+  background-color: #ddd;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+.mnc_join_button {
+  background-color: #535353;
+  color: #fff;
+  padding: 18px 22px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  margin-top: 20px;
+  /* margin-left: 40%; */
+}
+
+.mnc_no_meeting_selected {
+  text-align: center;
+  padding: 30px;
+  color: grey;
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+.mnc_meeting_datetime_right{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  padding: 30px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid grey;
+  background-color: rgb(148, 225, 255);
+}
+
+.mnc_meeting_host_right{
+  margin:   20px 0 20px 0;
+  color: #777;
+  font-size: 18px;
+  line-height: 1.5;
+  text-align: left;
+}
+
+
+
+/* Add this CSS to your existing CSS file or create a new CSS file for the Meetings component */
+/* Add this CSS to your existing CSS file or create a new CSS file for the Meetings component */
+.mnc_new_meeting_form {
+  background-color: #ffffff00;
+  border-radius: 10px;
+}
+
+.mnc_meeting_form_title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333; /* Dark grey text color */
+  text-align: center;
+}
+
+.mnc_meeting_form {
+  display: flex;
+  flex-direction: column;
+}
+
+.mnc_meeting_form_label {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 5px;
+  color: #757575; /* Grey text color */
+}
+
+.mnc_meeting_form_input,
+.mnc_meeting_form_textarea {
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd; /* Light grey border */
+  border-radius: 8px;
+  width: 100%; /* Make the input fields and textarea take up full width */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  font-size: 16px; /* Adjust font size */
+  transition: border-color 0.3s ease; /* Add transition for border color */
+}
+
+.mnc_meeting_form_input:focus,
+.mnc_meeting_form_textarea:focus {
+  outline: none;
+  border-color: #4d4d4d; /* Change border color on focus */
+}
+
+
+.mnc_meeting_form_submit {
+  background-color: #868686; /* Light grey background */
+  color: #e9e9e9; /* Dark grey text color */
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.3s ease;
+}
+
+.mnc_meeting_form_submit:hover {
+  background-color: #5a5a5a; /* Slightly darker grey on hover */
+}
+
+
+
+
+/* Add these styles to your CSS file */
+.mnc_dropdown {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 20px;
+  background-color: rgb(255, 255, 255);
+}
+
+.mnc_selected_users {
+  padding: 10px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.mnc_dropdown_list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.mnc_dropdown_item {
+  padding: 10px;
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+}
+
+.mnc_dropdown_item input {
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+/* Highlight selected user in the dropdown */
+.mnc_dropdown_item input:checked + label {
+  font-weight: bold;
+}
+
+
+/* Add these styles to your CSS file */
+
+
+/* Additional styles for the edit icon, such as hover effects */
+.mnc_edit_icon:hover {
+  color: #3f3f3f; /* Change the hover color to your preference */
+}
+
+
+.mnc_edit_meeting_buttons {
+  margin-top: 20px;
+}
+
+.mnc_edit_meeting_buttons button {
+  margin-right: 10px;
+  padding: 10px 15px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #f1f1f1; /* Light grey background */
+  border: 1px solid #ccc; /* Light grey border */
+}
+
+.mnc_edit_meeting_buttons button:last-child {
+  background-color: #dc3545; /* Red color for delete button */
+  color: #fff;
+}
+
+.mnc_edit_delete_buttons {
+  display: flex;
+  gap: 30px; /* Adjust the gap as needed */
+  position: absolute;
+  right: -5px;
+  top: -25px;
+}
+
+ .mnc_edit_icon {
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #5c5c5c; /* Change the color to your preference */
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  background-color: #e1e1e1;
+} 
+
+.mnc_edit-button {
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  visibility: hidden;
+
+}
+
+.mnc_sent:hover .mnc_edit-button {
+  visibility: visible;
+}
+
+.mnc_message-options {
+  position: absolute;
+  bottom: 100%; /* Adjust as needed to position the options */
+  right: 0%; /* Adjust as needed to position the options */
+  background-color: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  z-index: 1;
+}
+
+
+.mnc_message-options > div {
+  padding: 10px;
+  cursor: pointer;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.mnc_message-options > div:hover {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+
+}
+
+
+/* .mnc_input {
+  display: flex;
+  padding-top: 10px;
+}
+
+.mnc_input input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.mnc_input input:focus {
+  outline: none;
+} */
+
+/* Meetings.css */
+
+.mnc_input {
+  display: flex;
+  align-items: center;
+  background-color: #f5f5f5; /* Set your desired background color */
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.mnc_input input {
+  flex: 1;
+  padding: 10px;
+  font-size: large;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin: 20px;
+  margin-right: 10px;
+}
+
+.mnc_send_button {
+  background-color: #5f5f5f; /* Set your desired button color */
+  color: #fff;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 10px;
+  outline: none;
+  font-size: large;
+}
+
+.mnc_send_button:hover {
+  background-color: #393939; /* Set your desired button hover color */
+}
+
+.mnc_sidebar::-webkit-scrollbar {
+  width: 8px; /* Set the width of the scrollbar */
+}
+
+.mnc_sidebar::-webkit-scrollbar-thumb {
+  background-color: #b1b1b1; /* Set the color of the scrollbar thumb */
+  border-radius: 4px; /* Set the border-radius for a rounded look */
+}
+
+.mnc_sidebar::-webkit-scrollbar-track {
+  background-color: #f5f5f500; /* Set the background color of the scrollbar track */
+}
+
+.infinite-scroll-component{
+  background-color: 	#e1e1e1;
+  flex: 1;
+  min-height: calc(100vh - 190px);
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.infinite-scroll-component::-webkit-scrollbar {
+  width: 8px; /* Set the width of the scrollbar */
+}
+
+.infinite-scroll-component::-webkit-scrollbar-thumb {
+  background-color: #b1b1b1; /* Set the color of the scrollbar thumb */
+  border-radius: 4px; /* Set the border-radius for a rounded look */
+}
+
+.infinite-scroll-component::-webkit-scrollbar-track {
+  background-color: #f5f5f500; /* Set the background color of the scrollbar track */
+}
+
+.custom-chat-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: auto;
+}
+
+/* Add some padding and background color for better visibility */
+.custom-chat-loader > div {
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.8); /* Adjust the opacity and color as needed */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+}
+
+
+.chat-refresh-icon {
+  cursor: pointer;
+  color: #ffffff; /* Adjust the color as needed */
+  font-size: 20px; /* Adjust the size as needed */
+  margin-left: auto;
+  margin-right: 30px;
+}
+
+.chat-refresh-icon:hover {
+  color: #d0d0d0; /* Adjust the color for hover effect */
+}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import jwt_decode from "jwt-decode";
 import "./Login.css";
@@ -10,11 +10,12 @@ import { API_URL } from '../ConfigApi';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import {handleSignIn} from '../store/userSlice';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import ClipLoader from "react-spinners/ClipLoader";
 
 const SignUp = () => {
   const dispatch = useDispatch();
+  const userLoading = useSelector((state) => state.user.loading); 
   const override = {
     marginLeft: "10px",
   };
@@ -31,21 +32,19 @@ const SignUp = () => {
 
 
   const handlelogin = () => {
-    try {
+    setLoading(true);
       console.log("loading started")
-      setLoading(true);
-      dispatch(handleSignIn(userDetails, navigate));
-      // setLoading(false);
-    } catch (error) {
-      console.error('Error:', error);
-      setLoading(false);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'An error occurred. Please try again.',
-      });
-    }
+     dispatch(handleSignIn(userDetails, navigate));
   };
+
+  useEffect(() => {
+    if (userLoading) {
+      setLoading(true)
+      console.log("loading started");
+    } else {
+      setLoading(false)
+    }
+  }, [userLoading]);
   
   return (
     <>

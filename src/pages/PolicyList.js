@@ -57,7 +57,7 @@ function PolicyList() {
   const [isRenamePopup, setIsRenamePopup] = useState(false);
   const [renameFilterId, setRenameFilterId] = useState("");
 
-  const [viewType, setViewType] = useState("table");
+  const [viewType, setViewType] = useState("card");
 
   const [idfrom, setIdFrom] = useState("");
   const [idto, setIdTo] = useState("");

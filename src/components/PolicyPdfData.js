@@ -9,50 +9,50 @@ export const DataTable = ({ data }) => {
     {
       id: 1,
       username: "Policy 1",
-      company: "Company A",
       department: "Finance",
       revision: 2,
       status: "Active",
+      score: "7 out of 10",
       created: "2022-01-01",
       updated: "2022-01-15",
     },
     {
       id: 2,
       username: "Policy 2",
-      company: "Company B",
       department: "Human Resources",
       revision: 1,
-      status: "Inactive",
+      status: "Active",
+      score: "7 out of 10",
       created: "2022-02-01",
       updated: "2022-02-15",
     },
     {
       id: 3,
       username: "Policy 3",
-      company: "Company C",
       department: "IT",
       revision: 3,
       status: "Active",
+      score: "7 out of 10",
       created: "2022-03-01",
       updated: "2022-03-15",
     },
     {
       id: 4,
       username: "Policy 4",
-      company: "Company A",
       department: "Marketing",
       revision: 1,
       status: "Active",
+      score: "7 out of 10",
       created: "2022-04-01",
       updated: "2022-04-15",
     },
     {
       id: 5,
       username: "Policy 5",
-      company: "Company B",
       department: "Legal",
       revision: 2,
-      status: "Inactive",
+      status: "Active",
+      score: "7 out of 10",
       created: "2022-05-01",
       updated: "2022-05-15",
     },
@@ -69,20 +69,20 @@ export const DataTable = ({ data }) => {
         accessor: "username",
       },
       {
-        Header: "Company",
-        accessor: "company",
-      },
-      {
-        Header: "Department",
+        Header: "Scope",
         accessor: "department",
       },
       {
-        Header: "Revision No.",
+        Header: "Version",
         accessor: "revision",
       },
       {
         Header: "Status",
         accessor: "status",
+      },
+      {
+        Header: "Score",
+        accessor: "score",
       },
       {
         Header: "Created",
@@ -125,7 +125,6 @@ export const DataTable = ({ data }) => {
                     <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
                   ))}
                 </tr>
-        
             );
           })}
         </tbody>

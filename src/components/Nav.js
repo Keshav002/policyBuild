@@ -64,7 +64,7 @@ function Nav() {
     <div className="navbar">
       <div className="navbar-header">
         <div className="navbar-logo">
-        <Link to={policyCheckLink}>Policy Check</Link>
+        <Link to={policyCheckLink}>Policy Lens</Link>
         </div>
         <div
           className={`navbar-hamburger ${isMobileMenuOpen ? "open" : ""}`}

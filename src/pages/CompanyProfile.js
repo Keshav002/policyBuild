@@ -6,12 +6,14 @@ import { IoMdSend } from "react-icons/io";
 import { LuPen } from "react-icons/lu";
 import { MdEmail } from "react-icons/md";
 import Cookies from "js-cookie";
+import { API_URL } from "../ConfigApi";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { API_URL } from "../ConfigApi";
 import { IoIosBusiness } from "react-icons/io";
 import { FaToolbox } from "react-icons/fa";
 import { FaBuilding } from "react-icons/fa";
+import { DatePicker } from "antd";
+import dayjs from "dayjs";
 import {
   FaMapMarkerAlt,
   FaPhone,
@@ -170,13 +172,23 @@ function CompanyProfile() {
   const handleDetailsSubmitClick = async () => {
     try {
       const requestBody = {
-        ...(editedDetails.headquarters && { address: editedDetails.headquarters }),
-        ...(editedDetails.contactNumber && { phoneno: editedDetails.contactNumber }),
+        ...(editedDetails.headquarters && {
+          address: editedDetails.headquarters,
+        }),
+        ...(editedDetails.contactNumber && {
+          phoneno: editedDetails.contactNumber,
+        }),
         ...(editedDetails.website && { website: editedDetails.website }),
-        ...(editedDetails.employees && { numofemploy: editedDetails.employees }),
+        ...(editedDetails.employees && {
+          numofemploy: editedDetails.employees,
+        }),
         ...(editedDetails.founded && { companyregyear: editedDetails.founded }),
-        ...(editedDetails.companyType && { company_type: editedDetails.companyType }),
-        ...(editedDetails.department && { department_type: editedDetails.department }),
+        ...(editedDetails.companyType && {
+          company_type: editedDetails.companyType,
+        }),
+        ...(editedDetails.department && {
+          department_type: editedDetails.department,
+        }),
       };
       const response = await fetch(`${API_URL}/main/companies/${id}/`, {
         method: "PATCH",
@@ -727,7 +739,22 @@ function CompanyProfile() {
               }
             />
             <label htmlFor="editedFounded">Founded</label>
-            <input
+            {/* <DatePicker
+              id="editedFounded"
+              onChange={(date) =>
+                setEditedDetails({
+                  ...editedDetails,
+                  founded: date ? dayjs(date).format("DD-MM-YYYY") : "",
+                })
+              }
+              value={
+                editedDetails.founded !== "Unset"
+                ? dayjs(editedDetails.founded, "DD-MM-YYYY").toDate()
+                : null
+              }
+              format="DD-MM-YYYY"
+            /> */}
+             <input
               type="text"
               id="editedFounded"
               value={editedDetails.founded}

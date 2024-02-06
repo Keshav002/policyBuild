@@ -76,7 +76,7 @@ export const DataTable = ({ data }) => {
         accessor: "id",
       },
       {
-        Header: "Policy Name",
+        Header: "Project Name",
         accessor: "username",
       }, 
       {
