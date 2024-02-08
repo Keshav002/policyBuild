@@ -466,11 +466,38 @@ function ConsultantProjects() {
     );
   };
 
-  
   const [projects, setProjects] = useState([]);
   const [policies, setPolicies] = useState([]);
   const { project_id } = useParams();
 
+  // const fetchProjects = async () => {
+  //   try {
+  //     const response = await fetch(`${API_URL}/main/projects/`, {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${Cookies.get("accessToken")}`,
+  //       },
+  //     });
+
+  //     if (response.ok) {
+  //       const fetchedProjects = await response.json();
+  //       console.log("Fetched Projects:", fetchedProjects);
+  //       setProjects(fetchedProjects);
+
+  //       // Fetch policies for the specific project
+  //       if (project_id) {
+  //         fetchPolicies(project_id);
+  //       }
+  //     } else {
+  //       console.error("Failed to fetch projects. Status:", response.status);
+  //       // Handle the error
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching projects:", error);
+  //     // Handle unexpected errors
+  //   }
+  // };
   const fetchProjects = async () => {
     try {
       const response = await fetch(`${API_URL}/main/projects/`, {
@@ -490,6 +517,39 @@ function ConsultantProjects() {
         if (project_id) {
           fetchPolicies(project_id);
         }
+
+        // Fetch policy_posts_id for the consultants
+        const policyPostsIds = await Promise.all(
+          fetchedProjects.map(async (project) => {
+            const policyPostsResponse = await fetch(
+              `${API_URL}/main/projects/${project.id}/policy_posts/`,
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${Cookies.get("accessToken")}`,
+                },
+              }
+            );
+
+            if (policyPostsResponse.ok) {
+              const policyPostsData = await policyPostsResponse.json();
+              return {
+                projectId: project.id,
+                policyPostsIds: policyPostsData.map((policy) => policy.id),
+              };
+            } else {
+              console.error(
+                `Failed to fetch policy posts for project ${project.id}. Status:`,
+                policyPostsResponse.status
+              );
+              return { projectId: project.id, policyPostsIds: [] };
+            }
+          })
+        );
+
+        console.log("Policy Posts IDs:", policyPostsIds);
+        // Here, you can handle the policy posts IDs as needed, such as storing them in state or processing them further
       } else {
         console.error("Failed to fetch projects. Status:", response.status);
         // Handle the error
@@ -529,7 +589,6 @@ function ConsultantProjects() {
   };
 
   useEffect(() => {
-    // Fetch projects when the component mounts
     fetchProjects();
   }, [project_id]);
 
@@ -940,8 +999,8 @@ function ConsultantProjects() {
                   ))}
                 </div>
               )}
-
               
+
               <hr />
               <div className="company_list_pagination_container">
                 <>

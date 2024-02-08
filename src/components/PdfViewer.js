@@ -13,6 +13,12 @@ import "./PdfViewer.css";
 import NoteDialog from "./NoteDialog";
 import { PiNoteThin } from "react-icons/pi";
 import { FaRegFilePdf } from "react-icons/fa6";
+import { useLocation } from "react-router-dom";
+import { PDFDocument, MissingPDFHeaderError } from "pdf-lib";
+import Cookies from "js-cookie";
+import { API_URL } from "../ConfigApi";
+import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 import { MdOutlinePictureAsPdf, MdOutlineDelete } from "react-icons/md";
 
@@ -69,6 +75,166 @@ function PdfViewer() {
   const [viewType, setViewType] = useState("pagination");
   const [scale, setScale] = useState(1.0);
 
+  async function repairPDF(documentParam) {
+    try {
+      const response = await fetch(documentParam);
+      if (!response.ok) {
+        throw new Error("Failed to fetch PDF document");
+      }
+      const pdfBuffer = await response.arrayBuffer();
+      const pdfDoc = await PDFDocument.load(pdfBuffer);
+      // Save the repaired PDF document
+      const repairedPdfBytes = await pdfDoc.save();
+      // Optionally, you can update the PDF file on the server with the repaired version
+      return repairedPdfBytes;
+    } catch (error) {
+      console.error("Failed to repair PDF:", error);
+      throw error;
+    }
+  }
+
+  const [policyId, setPolicyId] = useState(null); // State to store policyId
+  const [documentPath, setDocumentPath] = useState("");
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const documentParam = params.get("document");
+    const extractedPolicyId = params.get("policyId");
+    console.log("Policy ID:", extractedPolicyId);
+
+    // Extract only the path part of the URL
+    const path = new URL(documentParam).pathname;
+    setDocumentPath(path);
+
+    // Set the policyId state
+    setPolicyId(extractedPolicyId);
+
+    // Attempt to repair the PDF document
+    repairPDF(documentParam)
+      .then(() => {
+        console.log("PDF repaired successfully");
+      })
+      .catch((error) => {
+        console.error("Failed to repair PDF:", error);
+      });
+  }, [location]);
+
+  const fetchReviews = async () => {
+    try {
+      const response = await fetch(
+        `${API_URL}/main/policy_posts/${policyId}/reviews/`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("accessToken")}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Reviews", data);
+        return data;
+      } else {
+        console.error("Failed to fetch data. Status:", response.status);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      return null;
+    }
+  };
+  useEffect(() => {
+    const storedReviews = localStorage.getItem("reviews");
+    if (storedReviews) {
+      setEditedData(JSON.parse(storedReviews));
+    } else {
+      setEditedData([]); // Clear existing reviews when policyId changes
+    }
+  }, [policyId]); // Add policyId as a dependency
+
+  useEffect(() => {
+    if (policyId) {
+      // Check if policyId exists
+      const fetchData = async () => {
+        try {
+          const data = await fetchReviews();
+          if (data) {
+            setEditedData(
+              data.map((review) => ({
+                policyName: review.policyName,
+                rating: review.rating,
+                comment: review.comment,
+              }))
+            );
+            localStorage.setItem("reviews", JSON.stringify(data));
+          }
+        } catch (error) {
+          console.error("Error fetching reviews:", error);
+        }
+      };
+      fetchData();
+    }
+  }, [policyId]); // Add policyId as a dependency
+
+  const handleSubmitReviews = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${API_URL}/main/policy_posts/${policyId}/reviews/create/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("accessToken")}`,
+          },
+          body: JSON.stringify({
+            rating: editedPolicy.rating,
+            comment: editedPolicy.comment,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const reviewData = await response.json();
+        console.log("Review created:", reviewData);
+
+        setEditedData((prevData) => [
+          {
+            rating: editedPolicy.rating,
+            comment: editedPolicy.comment,
+          },
+          ...prevData,
+        ]);
+
+        Swal.fire({
+          icon: "success",
+          title: "Review Added Successfully!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        console.error("Failed to create review. Status:", response.status);
+        
+      }
+    } catch (error) {
+      console.error("Error creating review:", error);
+     
+      
+
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (policyId) {
+      handleSubmitReviews();
+    }
+  }, [policyId]);
+
   const toggleView = (type) => {
     setViewType(type);
   };
@@ -85,6 +251,7 @@ function PdfViewer() {
       setPageNumber(newPageNumber);
     }
   }
+
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
     setPageNumber(1);
@@ -130,7 +297,6 @@ function PdfViewer() {
       }
     }
   }
-  
 
   useEffect(() => {
     document.addEventListener("mouseup", handleTextSelection);
@@ -164,10 +330,6 @@ function PdfViewer() {
     setisAddModalOpen(true);
     setIsDialogOpen(true);
     setIsDialogBoxOpen(true);
-    setEditedData((prevData) => [
-      ...prevData,
-      { Name: "", Score: "", Comments: "" },
-    ]);
   };
 
   const closeAddModal = () => {
@@ -187,13 +349,11 @@ function PdfViewer() {
 
   const [editedPolicy, setEditedPolicy] = useState({
     policyName: "",
-    policyScore: "",
-    policyComments: "",
+    rating: "",
+    comment: "",
   });
 
-  const [editedData, setEditedData] = useState([
-    { Name: "Policy 1", Score: "9/10", Comments: "Good" },
-  ]);
+  const [editedData, setEditedData] = useState([]);
 
   const policyDetails = [
     { label: "Policy Title", value: "Equal Opportunity Policy" },
@@ -214,7 +374,7 @@ function PdfViewer() {
     setIsModalOpen(false);
   };
   const [isEditOpen, setIsEditOpen] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const handleSubmitClick = () => {
     const index = editedData.findIndex((policy) => policy === selectedPolicy);
 
@@ -371,7 +531,8 @@ function PdfViewer() {
               style={{ marginLeft: isExtended ? "160px" : "0px" }}
             >
               <Document
-                file="/Sample.pdf"
+                // file="/Sample.pdf"
+                file={documentPath}
                 onLoadSuccess={onDocumentLoadSuccess}
               >
                 <Page
@@ -502,7 +663,7 @@ function PdfViewer() {
                         <div className="pdf-popup-overlay">
                           <div className="pdf_edit_popup">
                             <h2 className="pdf_table_pop_heading">
-                              Add Policy
+                              Add Reviews
                             </h2>
                             <button
                               className="pdf-close-button"
@@ -511,21 +672,21 @@ function PdfViewer() {
                               <RxCross2 />
                             </button>
 
-                            <label htmlFor="editedTitle">Policy Name:</label>
+                            {/* <label htmlFor="editedTitle">Policy Name:</label>
                             <input
                               type="text"
                               id="editedTitle"
                               name="policyName"
                               value={editedPolicy.policyName}
                               onChange={handleInputChange}
-                            />
+                            /> */}
 
                             <label htmlFor="editedCompany">Score:</label>
                             <input
                               type="text"
                               id="editedCompany"
-                              name="policyScore"
-                              value={editedPolicy.policyScore}
+                              name="rating"
+                              value={editedPolicy.rating}
                               onChange={handleInputChange}
                             />
 
@@ -533,13 +694,16 @@ function PdfViewer() {
                             <input
                               type="text"
                               id="editedVersion"
-                              name="policyComments"
-                              value={editedPolicy.policyComments}
+                              name="comment"
+                              value={editedPolicy.comment}
                               onChange={handleInputChange}
                             />
                             <div className="company-profile-rating-popup__buttons">
-                              <button type="submit" onClick={handleSubmitClick}>
-                                Add Policy
+                              <button
+                                type="submit"
+                                onClick={handleSubmitReviews}
+                              >
+                                Submit
                               </button>
                             </div>
                           </div>
@@ -573,14 +737,14 @@ function PdfViewer() {
                               <RxCross2 />
                             </button>
 
-                            <label htmlFor="editedTitle">Policy Name:</label>
+                            {/* <label htmlFor="editedTitle">Policy Name:</label>
                             <input
                               type="text"
                               id="editedTitle"
                               name="policyName"
                               value={editedPolicy.policyName}
                               onChange={handleInputChange}
-                            />
+                            /> */}
 
                             <label htmlFor="editedCompany">Score:</label>
                             <input
@@ -613,7 +777,7 @@ function PdfViewer() {
               </div>
             )}
 
-            <table>
+            {/* <table>
               <thead>
                 <tr>
                   <th>Policy Scope</th>
@@ -625,9 +789,53 @@ function PdfViewer() {
               <tbody>
                 {editedData.map((policy, index) => (
                   <tr key={index}>
-                    <td>{policy.Name}</td>
-                    <td>{policy.Score}</td>
-                    <td>{policy.Comments}</td>
+                    <td>{policy.policyName}</td>
+                    <td>{policy.rating}</td>
+                    <td>{policy.comment}</td>
+                    <td>
+                      <BiSolidPencil
+                        onClick={() => handleEditClick(policy)}
+                        style={{
+                          marginRight: "5px",
+                          cursor: "pointer",
+                        }}
+                      />
+                      <AiFillDelete
+                        onClick={() => onClickDeleteRow(index)}
+                        style={{ cursor: "pointer" }}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table> */}
+            <table>
+              <thead>
+                <tr>
+                  <th>Score</th>
+                  <th>Comments</th>
+                  <th>Edit</th>
+                </tr>
+              </thead>
+              <tbody>
+                {editedData.map((policy, index) => (
+                  <tr key={index}>
+                    <td
+                      style={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                        textAlign: "center",
+                      }}
+                    >
+                      {policy.rating}
+                    </td>
+                    <td
+                    style={{
+                      alignItems: "center",
+                      justifyContent: "center",
+                      textAlign: "center",
+                    }}
+                    >{policy.comment}</td>
                     <td>
                       <BiSolidPencil
                         onClick={() => handleEditClick(policy)}

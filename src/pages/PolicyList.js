@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import PolicyCard from ".././components/PolicyCard";
+
 import Nav from ".././components/Nav";
 import "./CompanyList.css";
 import { BsGrid } from "react-icons/bs";
@@ -28,6 +28,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { RxCross2 } from "react-icons/rx";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import { useDebounceCallback } from "@react-pdf-viewer/core";
+import PdfViewer from "../components/PdfViewer";
 
 function PolicyList() {
   const loggedInUserId = useSelector((state) => state.user.userData.user_id);
@@ -70,6 +72,7 @@ function PolicyList() {
   const handleChangePageSize = (current, size) => {
     setPageSize(size);
   };
+  const navigate = useNavigate();
 
   const [reportName, setReportName] = useState("");
   const [newReportName, setNewReportName] = useState("");
@@ -526,23 +529,22 @@ function PolicyList() {
     updated_at: "",
     average_rating: "",
     total_ratings: "",
-    // document: null,
+    document: null,
     assigned_to: [],
-    
   });
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file && file.type === 'application/pdf') {
-        setFormData(prevData => ({
-            ...prevData,
-            document: file
-        }));
+    if (file && file.type === "application/pdf") {
+      setFormData((prevData) => ({
+        ...prevData,
+        document: file,
+      }));
     } else {
-        // Handle invalid file type
-        alert('Please select a PDF file.');
+      // Handle invalid file type
+      alert("Please select a PDF file.");
     }
-};
+  };
 
   const [editformData, setEditFormData] = useState({
     jobtitle: "",
@@ -569,7 +571,6 @@ function PolicyList() {
     (e) => {
       const { name, value, type, selectedOptions } = e.target;
 
-      // Check if it's a multi-select field
       const updatedValue =
         type === "select-multiple"
           ? Array.from(selectedOptions, (option) => option.value)
@@ -596,12 +597,12 @@ function PolicyList() {
 
       setEditFormData((prevData) => ({
         ...prevData,
-        [name]: updatedValue,
+        [name]:
+          name === "assigned_to" ? updatedValue.map(Number) : updatedValue,
       }));
     },
     [setEditFormData]
   );
-
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const id = params.get("projectId");
@@ -682,26 +683,44 @@ function PolicyList() {
       return;
     }
 
+    const formDataWithFile = new FormData();
+    for (const key in formData) {
+      formDataWithFile.append(key, formData[key]);
+    }
+    formDataWithFile.append("document", formData.document);
+
     try {
       const response = await fetch(
         `${API_URL}/main/projects/${projectId}/policy_posts/`,
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${Cookies.get("accessToken")}`,
           },
-          body: JSON.stringify(formData),
+          body: formDataWithFile,
         }
       );
 
       if (response.ok) {
-        console.log("Policy created successfully!");
+        const contentType = response.headers.get("content-type");
 
-        setFormData({});
-
-        const newPolicy = await response.json();
-        setPolicies((prevPolicies) => [...prevPolicies, newPolicy]);
+        if (contentType && contentType.includes("application/json")) {
+          const newPolicy = await response.json();
+          console.log("Policy created successfully!", newPolicy);
+          setPolicies((prevPolicies) => [...prevPolicies, newPolicy]);
+        } else {
+          console.log("Policy created successfully!");
+          // Handle the response based on the content type
+          // For example, if it's a PDF, you can download it using response.blob()
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "policy.pdf";
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+        }
 
         Swal.fire({
           icon: "success",
@@ -735,6 +754,14 @@ function PolicyList() {
   };
 
   const [editedPolicy, setEditedPolicy] = useState(null);
+  useEffect(() => {
+    if (editedPolicy) {
+      setEditFormData((prevData) => ({
+        ...prevData,
+        assigned_to: editedPolicy.assigned_to,
+      }));
+    }
+  }, [editedPolicy]);
 
   const handleDelete = async (policyId) => {
     try {
@@ -800,44 +827,38 @@ function PolicyList() {
         return;
       }
 
-      const updatedFields = {};
-
+      const formDataWithFile = new FormData();
       for (const key in editformData) {
-        if (editformData[key] !== originalPolicy[key]) {
-          updatedFields[key] = editformData[key];
+        if (key === "document" && editformData[key] instanceof File) {
+          formDataWithFile.append(key, editformData[key]);
+        } else {
+          formDataWithFile.append(key, editformData[key]);
         }
       }
-
-      console.log("editedPolicyId:", editedPolicyId);
-      console.log("editformData:", editformData);
 
       const response = await fetch(
         `${API_URL}/main/projects/${projectId}/policy_posts/${editedPolicyId}/`,
         {
           method: "PATCH",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${Cookies.get("accessToken")}`,
           },
-          body: JSON.stringify(updatedFields),
+          body: formDataWithFile,
         }
       );
 
       if (response.ok) {
         console.log("Policy updated successfully!");
 
-        const updatedPolicies = [...policies];
+        // Retrieve the updated policy from the response
+        const updatedPolicy = await response.json();
 
-        const editedPolicyIndex = updatedPolicies.findIndex(
-          (policy) => policy.id === editedPolicyId
+        // Update the state with the updated policy
+        setPolicies((prevPolicies) =>
+          prevPolicies.map((policy) =>
+            policy.id === editedPolicyId ? updatedPolicy : policy
+          )
         );
-
-        updatedPolicies[editedPolicyIndex] = {
-          ...originalPolicy,
-          ...updatedFields,
-        };
-
-        setPolicies(updatedPolicies);
 
         setisEditPolicyOpen(false);
 
@@ -862,6 +883,19 @@ function PolicyList() {
         title: "Error",
         text: "An error occurred. Please try again.",
       });
+    }
+  };
+
+  const handleEditFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type === "application/pdf") {
+      setEditFormData((prevData) => ({
+        ...prevData,
+        document: file,
+      }));
+    } else {
+      
+      alert("Please select a PDF file.");
     }
   };
 
@@ -904,6 +938,8 @@ function PolicyList() {
     }
     setDropdownOpen(false);
   };
+
+  const urlParams = new URLSearchParams(window.location.search);
 
   return (
     <>
@@ -1292,8 +1328,6 @@ function PolicyList() {
               </div>
             )}
 
-            
-
             {userRole === "Company" && (
               <div className="company-list-heading">
                 <h1>
@@ -1344,7 +1378,6 @@ function PolicyList() {
                       <input
                         type="file"
                         name="document"
-                        
                         accept=".pdf"
                         onChange={handleFileChange}
                       />
@@ -1459,17 +1492,6 @@ function PolicyList() {
                         onChange={handleInputChange}
                       />
                     </label>
-
-                    <label>
-                      Description
-                      <textarea
-                        name="description"
-                        value={formData.description}
-                        onChange={handleInputChange}
-                        style={{ height: "40px", marginTop: "0px" }}
-                      />
-                    </label>
-
                     <label>
                       Assigned To
                       <div className="custom-dropdown">
@@ -1506,13 +1528,21 @@ function PolicyList() {
                         )}
                       </div>
                     </label>
+
+                    <label>
+                      Description
+                      <textarea
+                        name="description"
+                        value={formData.description}
+                        onChange={handleInputChange}
+                        style={{ height: "40px", marginTop: "0px" }}
+                      />
+                    </label>
                   </form>
                   <div className="company-profile-rating-popup__buttons">
                     <button onClick={() => handleAddPolicy(projectId)}>
                       Submit
                     </button>
-
-                    {/* <button onClick={handleCancelClick}>Cancel</button> */}
                   </div>
                 </div>
               </div>
@@ -1529,13 +1559,12 @@ function PolicyList() {
                     <RxCross2 />
                   </button>
                   <form encType="multipart/form-data">
-
                     <label>
                       Policy Type
                       <input
                         type="text"
                         name="policytype"
-                        // value={editformData.policytype}
+                        
                         value={editedPolicy?.policytype || ""}
                         onChange={handleEditInputChange}
                       />
@@ -1549,6 +1578,19 @@ function PolicyList() {
                         value={editformData.contactinfo}
                         onChange={handleEditInputChange}
                       />
+                    </label>
+
+                    <label>
+                      Document
+                      <input
+                        type="file"
+                        name="document"
+                        accept=".pdf"
+                        onChange={(e) => handleEditFileChange(e)}
+                      />
+                      {editformData && editformData.document && (
+                        <span>{editformData.document.name}</span>
+                      )}
                     </label>
 
                     <label>
@@ -1678,9 +1720,8 @@ function PolicyList() {
                           className="selected-consultants"
                           onClick={() => setDropdownOpen(!isDropdownOpen)}
                         >
-                          {Array.isArray(formData.assigned_to) &&
-                          formData.assigned_to.length > 0
-                            ? formData.assigned_to.map((consultantId) => {
+                          {editformData.assigned_to.length > 0
+                            ? editformData.assigned_to.map((consultantId) => {
                                 const consultant = consultants.find(
                                   (c) => c.id === consultantId
                                 );
@@ -1690,7 +1731,6 @@ function PolicyList() {
                               })
                             : "Select Consultants"}
                         </div>
-
                         {isDropdownOpen && (
                           <div className="dropdown-list">
                             {consultants.map((consultant) => (
@@ -1729,6 +1769,7 @@ function PolicyList() {
                       projectId={projectId}
                       policyId={policyIds}
                       editFormData={editformData}
+                      userRole={userRole}
                       editedPolicyId={editedPolicyId}
                     />
                   ) : (
@@ -1743,18 +1784,18 @@ function PolicyList() {
                 <div className="company_lists_cards">
                   {policies &&
                     policies.map((policy, index) => (
-                      <PolicyPdfCard
-                        policy={policy}
-                        userRole={userRole}
-                        key={index}
-                        handleDelete={() => handleDelete(policy.id)}
-                        handleEdit={handleEdit}
-                        openEditForm={openEditForm}
-                        fetchPolicies={fetchPolicies}
-                        projectId={projectId}
-                        policyId={policyIds}
-                        style={{ textDecoration: "none" }}
-                      />
+                      <div key={index} style={{ textDecoration: "none" }}>
+                        <PolicyPdfCard
+                          policy={policy}
+                          projectId={projectId}
+                          policyId={policyIds}
+                          userRole={userRole}
+                          handleDelete={() => handleDelete(policy.id)}
+                          handleEdit={handleEdit}
+                          openEditForm={openEditForm}
+                          fetchPolicies={fetchPolicies}
+                        />
+                      </div>
                     ))}
                 </div>
               )}

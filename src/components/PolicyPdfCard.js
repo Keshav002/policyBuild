@@ -10,6 +10,7 @@ function PolicyPdfCard({
   userRole,
   handleDelete,
   openEditForm,
+  policyId
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -19,20 +20,22 @@ function PolicyPdfCard({
       month: "long",
       day: "numeric",
     };
-
     const dateTime = new Date(dateTimeString);
     return dateTime.toLocaleDateString(undefined, options);
   }
   const navigate = useNavigate();
   const cardRef = useRef(null);
 
-  const handleCardClick = (event) => {
-    if (event.target.closest(".consultant_profile_edit_popup")) {
-      return;
-    }
+  console.log("Policy id", policyId);
 
-    // navigate("/policy-list");
-  };
+  
+
+
+
+  const handleCardClick = (policyId) => {
+    setIsMenuOpen(false);
+    navigate(`/pdf?document=http%3A%2F%2Flocalhost%3A8000%2Fpolicy_documents%2FSamplee.pdf&policyId=${policy.id}`);
+};
 
   const handleMenuToggle = (event) => {
     event.stopPropagation();
@@ -46,10 +49,18 @@ function PolicyPdfCard({
     display: isMenuOpen ? "block" : "none",
   };
   
+  
+
   const handleEditClick = (event) => {
     event.stopPropagation();
     setIsMenuOpen(false); 
     openEditForm(policy.id);
+  };
+
+  const handleDeleteClick = (event) => {
+    event.stopPropagation();
+    setIsMenuOpen(false);
+    handleDelete(policy.id);
   };
 
   const isCompanyRole = userRole === 'Company';
@@ -94,7 +105,11 @@ function PolicyPdfCard({
             />
             Edit
           </div>
-          <div onClick={handleDelete}>
+          <div
+            onClick={(event) => {
+              handleDeleteClick(event);
+            }}
+          >
             <AiFillDelete
               style={{
                 marginRight: "10px",

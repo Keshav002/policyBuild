@@ -176,9 +176,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  font-size: calc(10px + 2vmin);
   text-align: center;
+  font-size: calc(10px + 2vmin);
+  
   width: 99%;
 
   transition: margin-left 0.3s ease;
@@ -439,6 +439,9 @@ td {
   border-top: none;
   border-bottom: none;
   white-space: nowrap;
+  /* align-items: center;
+  justify-content: center;
+  text-align: center; */
 }
 .policy-title-cell {
   white-space: normal;
@@ -479,7 +482,8 @@ strong {
 
 .pdf_table th,
 .pdf_table td {
-  text-align: left;
+
+  text-align: center;
   padding: 8px;
   border-bottom: 1px solid #ddd;
   color: #636262;

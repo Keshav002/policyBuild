@@ -5,9 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { BiSolidEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 
-export const DataTable = ({ data, handleDelete, openEditForm }) => {
+export const DataTable = ({ data, handleDelete, openEditForm, userRole }) => {
   const navigate = useNavigate();
-
+  const isCompanyRole = userRole === 'Company';
   const columns = useMemo(
     () => [
       {
@@ -31,8 +31,8 @@ export const DataTable = ({ data, handleDelete, openEditForm }) => {
         accessor: "average_rating",
       },
       {
-        Header: "Score",
-        accessor: "score",
+        Header: "Document",
+        accessor: "document",
       },
       {
         Header: "Created",
@@ -50,6 +50,11 @@ export const DataTable = ({ data, handleDelete, openEditForm }) => {
           return date.toLocaleDateString(); 
         },
       },
+      
+      
+    
+      
+      
       {
         Header: "Actions",
         accessor: "policy_posts_id",
