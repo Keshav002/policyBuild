@@ -2,6 +2,49 @@
   margin: 0;
   padding: 0;
 }
+.company-list-heading{
+  color: #565656;
+  margin-left: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  font-weight: 200px;
+}
+
+.company_project_add_edit_button {
+  margin-left: 140vh;
+  cursor: pointer;
+  /* background: rgba(40, 71, 228, 0.533);  */
+  background: #4d4d4d;
+  outline: none;
+  border: none;
+  border-radius: 25px; /* Equal border-radius for a capsule shape */
+  padding: 10px 15px; /* Adjust padding for a comfortable size */
+  font-size: 15px;
+  color: #fff; /* White font color */
+  margin-top: 20px;
+}
+
+.company_project_add_edit_button:hover {
+  transform: scale(1.1);
+}
+.form-select {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  height: 30px; /* You can adjust the height as needed */
+}
+
+
+
+
+
+
 
 .company-list-page{
     background-color: #ddd;
@@ -43,8 +86,29 @@
     align-items: center;
     margin-bottom: 5px;
   }
+
+  .project-close-button {
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0;
+    position: absolute;
+    top: 20px;
+    right: 10px;
+    font-weight: bold;
+    font-size: 20px;
+  }
   
-  
+  .project_table_pop_heading {
+    color: #636262;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    margin-top: 20px;
+  }
 
 .cp_search_container input {
     padding: 8px;
@@ -569,6 +633,43 @@
 
 .view-section-active{
   color: #0d0d0d !important;
+}
+
+.custom-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.selected-consultants {
+  border: 1px solid #ccc;
+  padding: 10px;
+  cursor: pointer;
+}
+
+
+
+.dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 150px; /* Set the maximum height for the dropdown list */
+  overflow-y: auto; /* Add a scrollbar if the content exceeds the max height */
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-list div {
+  padding: 10px;
+  cursor: default;
+}
+
+.dropdown-list div:hover {
+  background-color: #f0f0f0;
+  cursor: default;
 }
 
 

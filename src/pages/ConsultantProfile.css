@@ -1,9 +1,9 @@
 /* ConsultantProfile.css */
 
-.consultant_profile_page{
+.consultant_profile_page {
   background-color: #ddd;
-    min-height: 100vh;
-    padding-bottom: 20px;
+  min-height: 100vh;
+  padding-bottom: 20px;
 }
 
 .consultant_profile_banner {
@@ -140,9 +140,9 @@
 .update_button:hover {
   background-color: #4d4d4d;
   color: white;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 4px 6px -1px, rgba(255, 255, 255, 0.3) 0px 3px 5px -1px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 4px 6px -1px,
+    rgba(255, 255, 255, 0.3) 0px 3px 5px -1px;
 }
-
 
 /* Add these styles to ConsultantProfile.css */
 
@@ -169,7 +169,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-
 }
 
 .consultant_profile_key_skill_tag {
@@ -206,8 +205,6 @@
   background-color: #f0f0f0; /* Change background color on hover */
   transform: scale(1.1); /* Add a slight scale effect on hover */
 }
-
-
 
 .consultant_profile_picture {
   display: inline-block;
@@ -258,15 +255,21 @@
   width: 100%;
   height: 100%;
   cursor: pointer;
-  
 }
 
 /* Add these styles to ConsultantProfile.css */
+
+.consultant_profile_edit_popup form {
+  max-height: 400px; 
+  overflow: auto;
+  overflow-x: hidden;
+}
 .consultant_profile_edit_popup {
   background-color: #fff;
   width: 500px;
   max-height: 500px;
-  overflow-y: scroll;
+
+  overflow: auto;
   border-radius: 20px;
   padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -307,7 +310,7 @@
   border-radius: 5px;
 }
 
-.tags-container{
+.tags-container {
   display: flex;
   flex-wrap: wrap;
 }
@@ -328,7 +331,3 @@
   font-size: 16px;
   line-height: 1.5;
 }
-
-
-
-

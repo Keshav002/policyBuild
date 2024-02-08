@@ -211,7 +211,7 @@ function Meetings() {
 
   const fetchAllUsers = async () => {
     try {
-      const response = await fetch(`${API_URL}/users/users`, {
+      const response = await fetch(`${API_URL}/api/chat/list-users-by-latest-message/`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${Cookies.get("accessToken")}`,
@@ -511,6 +511,14 @@ function Meetings() {
     fetchAllUsers();
     fetchAllMeetings();
   }, []);
+  
+  useEffect(() => {
+    if(selectedUser){
+
+      fetchConversation(selectedUser.id);
+    }
+  }, [selectedUser]);
+  
 
   const [userScrolledManually, setUserScrolledManually] = useState(false);
 

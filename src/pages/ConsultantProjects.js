@@ -9,7 +9,7 @@ import { FaCaretUp, FaCaretDown } from "react-icons/fa";
 import { FaSave, FaEye } from "react-icons/fa";
 import { PiClipboardTextDuotone } from "react-icons/pi";
 import { MdDelete } from "react-icons/md";
-import { DataTable } from "../components/PolicyDataTable";
+import { DataTable } from "../components/ConsultantProjectsDataTable";
 import { Pagination } from "antd";
 import { HiTableCells } from "react-icons/hi2";
 import { FaTableList } from "react-icons/fa6";
@@ -23,8 +23,12 @@ import { API_URL } from "../ConfigApi";
 import { useSelector } from "react-redux";
 import { VscKebabVertical } from "react-icons/vsc";
 import { Link } from "react-router-dom";
+import ConsultantPolicyCard from "../components/ConsultantProjectCard";
+import { useParams } from "react-router-dom";
+
 function ConsultantProjects() {
   const loggedInUserId = useSelector((state) => state.user.userData.user_id);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [tags, setTags] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -406,7 +410,7 @@ function ConsultantProjects() {
     console.log("Constructed URL:", url);
 
     try {
-      const response = []
+      const response = [];
       // await fetch(url, {
       //   headers: {
       //     Authorization: `Bearer ${Cookies.get("accessToken")}`,
@@ -462,6 +466,73 @@ function ConsultantProjects() {
     );
   };
 
+  
+  const [projects, setProjects] = useState([]);
+  const [policies, setPolicies] = useState([]);
+  const { project_id } = useParams();
+
+  const fetchProjects = async () => {
+    try {
+      const response = await fetch(`${API_URL}/main/projects/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("accessToken")}`,
+        },
+      });
+
+      if (response.ok) {
+        const fetchedProjects = await response.json();
+        console.log("Fetched Projects:", fetchedProjects);
+        setProjects(fetchedProjects);
+
+        // Fetch policies for the specific project
+        if (project_id) {
+          fetchPolicies(project_id);
+        }
+      } else {
+        console.error("Failed to fetch projects. Status:", response.status);
+        // Handle the error
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+      // Handle unexpected errors
+    }
+  };
+
+  const fetchPolicies = async (projectId) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/main/projects/${projectId}/policy_posts/`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("accessToken")}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const fetchedPolicies = await response.json();
+        console.log("Fetched Policies:", fetchedPolicies);
+        console.log(`Policies for Project ${projectId}:`, fetchedPolicies);
+        setPolicies(fetchedPolicies);
+      } else {
+        console.error("Failed to fetch policies. Status:", response.status);
+        // Handle the error
+      }
+    } catch (error) {
+      console.error("Error fetching policies:", error);
+      // Handle unexpected errors
+    }
+  };
+
+  useEffect(() => {
+    // Fetch projects when the component mounts
+    fetchProjects();
+  }, [project_id]);
+
   return (
     <>
       <div className="company-list-page">
@@ -471,8 +542,8 @@ function ConsultantProjects() {
             className={`cp_filter_icon ${isSidebarOpen ? "active" : ""}`}
             // onClick={toggleSidebar}
           >
-              <CustomTooltip tooltipText="Will Update Soon..">
-            <AiOutlineFilter className="cp_icon" />
+            <CustomTooltip tooltipText="Will Update Soon..">
+              <AiOutlineFilter className="cp_icon" />
             </CustomTooltip>
           </div>
 
@@ -852,37 +923,25 @@ function ConsultantProjects() {
             <div className="company-list-container">
               {viewType === "table" && (
                 <div className="table-container">
-                  <DataTable data={
-                    // companies?.paginated_results ||
-                     []} />
+                  <DataTable data={projects} />
                 </div>
               )}
+
               {viewType !== "table" && (
                 <div className="company_lists_cards">
-                  {/* {companies &&
-                    companies.paginated_results?.map((company, index) => (
-                      <CompanyCard key={index} company={company} />
-                    ))} */}
-                   <Link to="/policy-list" style={{ textDecoration: "none" }}>
-                    <PolicyCard />
-                  </Link>
-                  <Link to="/policy-list" style={{ textDecoration: "none" }}>
-                    <PolicyCard />
-                  </Link>
-                  <Link to="/policy-list"style={{ textDecoration: "none" }}>
-                    <PolicyCard />
-                  </Link>
-                  <Link to="/policy-list"style={{ textDecoration: "none" }}>
-                    <PolicyCard />
-                  </Link>
-                  <Link to="/policy-list"style={{ textDecoration: "none" }}>
-                    <PolicyCard />
-                  </Link> 
-                  <Link to="/policy-list"style={{ textDecoration: "none" }}>
-                    <PolicyCard />
-                  </Link>
+                  {projects.map((project, index) => (
+                    <Link
+                      to={`/policy-list?projectId=${project.id}`}
+                      key={index}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <ConsultantPolicyCard project={project} />
+                    </Link>
+                  ))}
                 </div>
               )}
+
+              
               <hr />
               <div className="company_list_pagination_container">
                 <>

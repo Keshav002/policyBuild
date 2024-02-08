@@ -1,26 +1,134 @@
-import React from 'react';
-import { AiOutlineFileText } from 'react-icons/ai';
+import React, { useState, useRef } from "react";
+import { BsFileEarmarkTextFill, BsThreeDotsVertical } from "react-icons/bs";
 import "./PolicyPdfCard.css";
-import { MdPolicy } from "react-icons/md";
-import { BsFileEarmarkTextFill } from "react-icons/bs";
-function PolicyPdfCard() {
+
+import { AiFillDelete } from "react-icons/ai";
+import { BiSolidEdit } from "react-icons/bi";
+import { useNavigate } from "react-router-dom";
+function PolicyPdfCard({
+  policy,
+  userRole,
+  handleDelete,
+  openEditForm,
+}) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  function formatDateTime(dateTimeString) {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    const dateTime = new Date(dateTimeString);
+    return dateTime.toLocaleDateString(undefined, options);
+  }
+  const navigate = useNavigate();
+  const cardRef = useRef(null);
+
+  const handleCardClick = (event) => {
+    if (event.target.closest(".consultant_profile_edit_popup")) {
+      return;
+    }
+
+    // navigate("/policy-list");
+  };
+
+  const handleMenuToggle = (event) => {
+    event.stopPropagation();
+    setIsMenuOpen((prev) => !prev);
+  };
+
+  const menuStyle = {
+    position: "absolute",
+    top: cardRef.current?.offsetTop - 10,
+    left: cardRef.current?.offsetLeft + (cardRef.current?.clientWidth || 0),
+    display: isMenuOpen ? "block" : "none",
+  };
+  
+  const handleEditClick = (event) => {
+    event.stopPropagation();
+    setIsMenuOpen(false); 
+    openEditForm(policy.id);
+  };
+
+  const isCompanyRole = userRole === 'Company';
+
   return (
-    <div className="ppc_policy-card">
+    <div className="ppc_policy-card" onClick={handleCardClick} ref={cardRef}>
       <div className="ppc_header">
         <div className="ppc_icon">
           <BsFileEarmarkTextFill size={24} />
         </div>
-        <div className="ppc_policy-name">Equal Opportunity Policy</div>
+
+        <div className="ppc_policy-name">
+          {policy && (
+            <>
+              {policy.policytype}
+             
+              {isCompanyRole && (
+                <BsThreeDotsVertical
+                  style={{
+                    cursor: "pointer",
+                    marginLeft: "150px",
+                  }}
+                  onClick={handleMenuToggle}
+                />
+              )}
+            </>
+          )}
+        </div>
       </div>
+
+      {isMenuOpen && (
+        <div className="pc_menu" style={menuStyle}>
+          <div
+            onClick={(event) => {
+              handleEditClick(event);
+            }}
+          >
+            <BiSolidEdit
+              style={{
+                marginRight: "10px",
+              }}
+            />
+            Edit
+          </div>
+          <div onClick={handleDelete}>
+            <AiFillDelete
+              style={{
+                marginRight: "10px",
+              }}
+            />
+            Delete
+          </div>
+        </div>
+      )}
+
       <div className="ppc_info">
-        <div className="ppc_detail">Status  : Active</div>
-        <div className="ppc_detail">Scope: IT Sector</div>
-        <div className="ppc_detail">Score: 8 out of 10</div>
-        <div className="ppc_detail">Version: 1</div>
+        {policy && (
+          <>
+            <div className="ppc_detail">Contact: {policy.contactinfo}</div>
+            <div className="ppc_detail">Location: {policy.location}</div>
+            <div className="ppc_detail">Website: {policy.website}</div>
+            <div className="ppc_detail">
+              Score: {policy.average_rating} out of {policy.total_ratings}
+            </div>
+          </>
+        )}
       </div>
+
       <div className="ppc_timestamps">
-        <div className="ppc_created-at">Created At: 2023-01-01</div>
-        <div className="ppc_updated-at">Updated At: 2023-01-02</div>
+        {policy && (
+          <>
+            <div className="ppc_created-at">
+              Created At: {formatDateTime(policy.created_at)}
+            </div>
+            <div className="ppc_updated-at">
+              Updated At: {formatDateTime(policy.updated_at)}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

@@ -31,7 +31,7 @@ export const ConsultantDataTable = ({ data }) => {
     ],
     []
   );
-  // const data = useMemo(() => MOCK_DATA, []);
+  
 
   const {
     getTableProps,

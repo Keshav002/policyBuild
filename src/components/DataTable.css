@@ -28,7 +28,7 @@ th {
 
 th:nth-child(1),
 td:nth-child(1) {
-  width: 100px; 
+  width: 150px; 
 }
 
 th:nth-child(2),
@@ -77,6 +77,11 @@ tr:nth-child(odd) {
 tr:hover {
   background-color: #9e9b9b;
   cursor: pointer;
+}
+
+.selected-row {
+  background-color: skyblue; 
+  
 }
 
 @media screen and (max-width: 600px) {

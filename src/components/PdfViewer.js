@@ -13,6 +13,7 @@ import "./PdfViewer.css";
 import NoteDialog from "./NoteDialog";
 import { PiNoteThin } from "react-icons/pi";
 import { FaRegFilePdf } from "react-icons/fa6";
+
 import { MdOutlinePictureAsPdf, MdOutlineDelete } from "react-icons/md";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
@@ -129,6 +130,7 @@ function PdfViewer() {
       }
     }
   }
+  
 
   useEffect(() => {
     document.addEventListener("mouseup", handleTextSelection);
@@ -403,7 +405,7 @@ function PdfViewer() {
             </>
           )}
 
-          {viewType === "scrollbar" && (
+          {/* {viewType === "scrollbar" && (
             <div
               className="pdfview_scrollbar"
               style={{ marginLeft: isExtended ? "160px" : "0px" }}
@@ -423,7 +425,7 @@ function PdfViewer() {
                 ))}
               </Document>
             </div>
-          )}
+          )} */}
         </div>
 
         <div className={`pdf_sidebar${isDialogOpen ? " dialog-open" : ""}`}>
@@ -614,7 +616,7 @@ function PdfViewer() {
             <table>
               <thead>
                 <tr>
-                  <th>Policy Name</th>
+                  <th>Policy Scope</th>
                   <th>Score</th>
                   <th>Comments</th>
                   <th>Edit</th>
