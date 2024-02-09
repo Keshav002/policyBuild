@@ -533,6 +533,29 @@ function PolicyList() {
     assigned_to: [],
   });
 
+  const clearFormData = () => {
+    setFormData({
+      jobtitle: "",
+      policytype: "",
+      description: "",
+      website: "",
+      expertiesreq: "",
+      banner: "",
+      salaryrange: "",
+      location: "",
+      emploeType: "",
+      policydeadline: "",
+      contactinfo: "",
+      companyregyear: "",
+      created_at: "",
+      updated_at: "",
+      average_rating: "",
+      total_ratings: "",
+      document: null,
+      assigned_to: [],
+    });
+  };
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
@@ -703,25 +726,26 @@ function PolicyList() {
 
       if (response.ok) {
         const contentType = response.headers.get("content-type");
-
-        if (contentType && contentType.includes("application/json")) {
-          const newPolicy = await response.json();
-          console.log("Policy created successfully!", newPolicy);
-          setPolicies((prevPolicies) => [...prevPolicies, newPolicy]);
-        } else {
-          console.log("Policy created successfully!");
-          // Handle the response based on the content type
-          // For example, if it's a PDF, you can download it using response.blob()
-          const blob = await response.blob();
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "policy.pdf";
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-        }
-
+        clearFormData();
+        // if (contentType && contentType.includes("application/json")) {
+        //   const newPolicy = await response.json();
+        //   console.log("Policy created successfully!", newPolicy);
+        //   setPolicies((prevPolicies) => [...prevPolicies, newPolicy]);
+        // } else {
+        //   console.log("Policy created successfully!");
+        //   // Handle the response based on the content type
+        //   // For example, if it's a PDF, you can download it using response.blob()
+        //   const blob = await response.blob();
+        //   const url = window.URL.createObjectURL(blob);
+        //   const a = document.createElement("a");
+        //   a.href = url;
+        //   a.download = "policy.pdf";
+        //   document.body.appendChild(a);
+        //   a.click();
+        //   window.URL.revokeObjectURL(url);
+        // }
+        fetchPolicies(projectId);
+        handleCancelClick();
         Swal.fire({
           icon: "success",
           title: "Policy Created Successfully!",
@@ -810,32 +834,34 @@ function PolicyList() {
       });
     }
   };
-
   const handleEdit = async () => {
     try {
       if (!editedPolicyId) {
         console.error("Invalid editedPolicyId");
         return;
       }
-
+  
       const originalPolicy = policies.find(
         (policy) => policy.id === editedPolicyId
       );
-
+  
       if (!originalPolicy) {
         console.error("Original policy not found");
         return;
       }
-
+  
       const formDataWithFile = new FormData();
+  
       for (const key in editformData) {
+        // Check if the field is 'document' and if it's a File
         if (key === "document" && editformData[key] instanceof File) {
           formDataWithFile.append(key, editformData[key]);
-        } else {
+        } else if (originalPolicy[key] !== editformData[key]) {
+          // Check if the field value has changed
           formDataWithFile.append(key, editformData[key]);
         }
       }
-
+  
       const response = await fetch(
         `${API_URL}/main/projects/${projectId}/policy_posts/${editedPolicyId}/`,
         {
@@ -846,22 +872,22 @@ function PolicyList() {
           body: formDataWithFile,
         }
       );
-
+  
       if (response.ok) {
         console.log("Policy updated successfully!");
-
+  
         // Retrieve the updated policy from the response
         const updatedPolicy = await response.json();
-
+  
         // Update the state with the updated policy
         setPolicies((prevPolicies) =>
           prevPolicies.map((policy) =>
             policy.id === editedPolicyId ? updatedPolicy : policy
           )
         );
-
+  
         setisEditPolicyOpen(false);
-
+  
         Swal.fire({
           icon: "success",
           title: "Policy Updated Successfully!",
@@ -885,7 +911,7 @@ function PolicyList() {
       });
     }
   };
-
+  
   const handleEditFileChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
@@ -894,7 +920,6 @@ function PolicyList() {
         document: file,
       }));
     } else {
-      
       alert("Please select a PDF file.");
     }
   };
@@ -1564,8 +1589,7 @@ function PolicyList() {
                       <input
                         type="text"
                         name="policytype"
-                        
-                        value={editedPolicy?.policytype || ""}
+                        value={editformData.policytype}
                         onChange={handleEditInputChange}
                       />
                     </label>
@@ -1580,17 +1604,26 @@ function PolicyList() {
                       />
                     </label>
 
-                    <label>
-                      Document
+                    <label className="custom-file-input">
+                      <span>Document</span>
+                      <br />
                       <input
                         type="file"
                         name="document"
                         accept=".pdf"
                         onChange={(e) => handleEditFileChange(e)}
+                        style={{ display: "none" }}
                       />
-                      {editformData && editformData.document && (
-                        <span>{editformData.document.name}</span>
-                      )}
+                      <div className="pl_file_edit">
+                        <span className="change-file-button">Change File</span>
+                        <span className="file-name">
+                          {editformData.document
+                            ? typeof editformData.document === "object"
+                              ? editformData.document.name // Access the 'name' property of the File object
+                              : editformData.document.split("/").pop() // Extract the file name from the URL
+                            : "No file chosen"}
+                        </span>
+                      </div>
                     </label>
 
                     <label>
