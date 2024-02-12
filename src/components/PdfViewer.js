@@ -19,6 +19,9 @@ import Cookies from "js-cookie";
 import { API_URL } from "../ConfigApi";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import { Viewer } from "@react-pdf-viewer/core";
+import "@react-pdf-viewer/core/lib/styles/index.css";
+import { useSelector } from "react-redux";
 
 import { MdOutlinePictureAsPdf, MdOutlineDelete } from "react-icons/md";
 
@@ -74,51 +77,81 @@ function PdfViewer() {
   const [pageNumber, setPageNumber] = useState(1);
   const [viewType, setViewType] = useState("pagination");
   const [scale, setScale] = useState(1.0);
-
-  async function repairPDF(documentParam) {
-    try {
-      const response = await fetch(documentParam);
-      if (!response.ok) {
-        throw new Error("Failed to fetch PDF document");
-      }
-      const pdfBuffer = await response.arrayBuffer();
-      const pdfDoc = await PDFDocument.load(pdfBuffer);
-      // Save the repaired PDF document
-      const repairedPdfBytes = await pdfDoc.save();
-      // Optionally, you can update the PDF file on the server with the repaired version
-      return repairedPdfBytes;
-    } catch (error) {
-      console.error("Failed to repair PDF:", error);
-      throw error;
-    }
-  }
-
-  const [policyId, setPolicyId] = useState(null); // State to store policyId
-  const [documentPath, setDocumentPath] = useState("");
-  const location = useLocation();
+  const userData = useSelector((state) => state.user.userData);
+  const userRole = userData?.role;
+  console.log(userRole);
+  const companyId = userData?.company?.id;
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const documentParam = params.get("document");
-    const extractedPolicyId = params.get("policyId");
-    console.log("Policy ID:", extractedPolicyId);
+    // Your effect code goes here
+    console.log(companyId);
 
-    // Extract only the path part of the URL
-    const path = new URL(documentParam).pathname;
-    setDocumentPath(path);
+    // Make sure to return a cleanup function if necessary
+    return () => {
+      // Cleanup code goes here
+    };
+  }, [companyId]);
 
-    // Set the policyId state
-    setPolicyId(extractedPolicyId);
+  // async function repairPDF(documentParam) {
+  //   try {
+  //     const response = await fetch(documentParam);
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch PDF document");
+  //     }
+  //     const pdfBuffer = await response.arrayBuffer();
+  //     const pdfDoc = await PDFDocument.load(pdfBuffer);
+  //     // Save the repaired PDF document
+  //     const repairedPdfBytes = await pdfDoc.save();
+  //     // Optionally, you can update the PDF file on the server with the repaired version
+  //     return repairedPdfBytes;
+  //   } catch (error) {
+  //     console.error("Failed to repair PDF:", error);
+  //     throw error;
+  //   }
+  // }
 
-    // Attempt to repair the PDF document
-    repairPDF(documentParam)
-      .then(() => {
-        console.log("PDF repaired successfully");
-      })
-      .catch((error) => {
-        console.error("Failed to repair PDF:", error);
-      });
-  }, [location]);
+  // const [policyId, setPolicyId] = useState(null); // State to store policyId
+  // const [documentPath, setDocumentPath] = useState("");
+  // const location = useLocation();
+
+  // useEffect(() => {
+  //   const params = new URLSearchParams(location.search);
+  //   const documentParam = params.get("document");
+  //   const extractedPolicyId = params.get("policyId");
+  //   console.log("Policy ID:", extractedPolicyId);
+
+  //   // Extract only the path part of the URL
+  //   const path = new URL(documentParam).pathname;
+  //   setDocumentPath(path);
+
+  //   // Set the policyId state
+  //   setPolicyId(extractedPolicyId);
+
+  //   // Attempt to repair the PDF document
+  //   repairPDF(documentParam)
+  //     .then(() => {
+  //       console.log("PDF repaired successfully");
+  //     })
+  //     .catch((error) => {
+  //       console.error("Failed to repair PDF:", error);
+  //     });
+  // }, [location]);
+
+  // const [policyId, setPolicyId] = useState(null);
+  // const location = useLocation();
+
+  // useEffect(() => {
+  //   const params = new URLSearchParams(location.search);
+  //   const extractedPolicyId = params.get("policyId");
+  //   console.log("Policy ID:", extractedPolicyId);
+  //   setPolicyId(extractedPolicyId);
+  // }, [location.search]);
+  const { policyId } = useParams();
+
+  useEffect(() => {
+    console.log("Policy ID:", policyId);
+    // Call your functions or perform actions that depend on the policyId
+  }, [policyId]);
 
   const fetchReviews = async () => {
     try {
@@ -136,6 +169,11 @@ function PdfViewer() {
       if (response.ok) {
         const data = await response.json();
         console.log("Reviews", data);
+
+        const reviewIds = data.map((review) => review.id);
+
+        console.log("Review IDs", reviewIds);
+
         return data;
       } else {
         console.error("Failed to fetch data. Status:", response.status);
@@ -146,6 +184,64 @@ function PdfViewer() {
       return null;
     }
   };
+
+  const handleEditReviews = async (policyId, reviewId) => {
+    try {
+      const updatedFields = {};
+      const response = await fetch(
+        `${API_URL}/main/policy_posts/${policyId}/reviews/${reviewId}/`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("accessToken")}`,
+          },
+          body: JSON.stringify(updatedFields),
+        }
+      );
+
+      if (response.ok) {
+        console.log(
+          `Review with policyId ${policyId} and reviewId ${reviewId} has been updated`
+        );
+        if (response.ok) {
+          fetchReviews();
+          setIsEditOpen(false);
+        }
+      } else {
+        console.error("Failed to update review. Status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  const deleteReview = async (policyId, reviewId) => {
+    console.log("Delte icon clicked");
+    try {
+      const response = await fetch(
+        `${API_URL}/main/policy_posts/${policyId}/reviews/${reviewId}/`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("accessToken")}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        console.log(
+          `Review with policyId ${policyId} and reviewId ${reviewId} has been deleted`
+        );
+        // Optionally, you can perform some action after successful deletion
+      } else {
+        console.error("Failed to delete review. Status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   useEffect(() => {
     const storedReviews = localStorage.getItem("reviews");
     if (storedReviews) {
@@ -178,7 +274,7 @@ function PdfViewer() {
       fetchData();
     }
   }, [policyId]); // Add policyId as a dependency
-
+  
   const handleSubmitReviews = async () => {
     setLoading(true);
     try {
@@ -215,15 +311,13 @@ function PdfViewer() {
           showConfirmButton: false,
           timer: 1500,
         });
+
+        setisAddModalOpen(false);
       } else {
         console.error("Failed to create review. Status:", response.status);
-        
       }
     } catch (error) {
       console.error("Error creating review:", error);
-     
-      
-
     } finally {
       setLoading(false);
     }
@@ -365,6 +459,8 @@ function PdfViewer() {
     { label: "Policy Consulted by", value: "Consultant 1" },
   ];
 
+
+
   const onClickDeleteRow = (index) => {
     const updatedData = editedData.filter((policy, idx) => idx !== index);
     setEditedData(updatedData);
@@ -412,6 +508,28 @@ function PdfViewer() {
     setUserNotesList(updatedNotesList);
   };
 
+  const { documentUrl } = useParams();
+  const location = useLocation();
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const decodedDocumentUrl = searchParams.get("document");
+    console.log("Doc Url:", decodedDocumentUrl);
+  }, [location.search]);
+
+  console.log("Location search:", location.search);
+
+  const onDocumentLoadError = (error) => {
+    console.error("Error loading document:", error.message);
+  };
+
+  // useEffect(() => {
+  //   // Decode the documentUrl parameter from URL
+  //   const decodedDocumentUrl = decodeURIComponent(documentUrl);
+  //   console.log("Decoded Doc Url:", decodedDocumentUrl);
+  // }, [documentUrl]);
+
+  const userType = "consultant";
   return (
     <>
       <Nav />
@@ -525,15 +643,32 @@ function PdfViewer() {
         </div>
 
         <div className="pdfview_content_container">
-          {viewType === "pagination" && (
+          {/* {viewType === "pagination" && (
             <div
               className="pdfview_pagination"
               style={{ marginLeft: isExtended ? "160px" : "0px" }}
             >
+              {documentUrl && (
+              <Document file={decodeURIComponent(documentUrl)}
+              onLoadSuccess={onDocumentLoadSuccess} >
+                <Page
+                  pageNumber={pageNumber}
+                  height={0}
+                  width={919}
+                  scale={scale}
+                />
+                // file={"/Sample.pdf"}
+              </Document>
+              )}
+            </div>
+          )} */}
+
+          {viewType === "pagination" && (
+            <div className="pdfview_pagination">
               <Document
-                // file="/Sample.pdf"
-                file={documentPath}
+                file={documentUrl}
                 onLoadSuccess={onDocumentLoadSuccess}
+                onLoadError={onDocumentLoadError}
               >
                 <Page
                   pageNumber={pageNumber}
@@ -600,6 +735,47 @@ function PdfViewer() {
             </p>
           </div>
           <div className="pdf_sidebar_content">
+            {/* <h2
+              style={{
+                position: "relative",
+                top: 80,
+                fontWeight: "normal",
+                marginBottom: "10px",
+                alignItems: "center",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <BiDetail
+                className="pdf_sidebar_heading_icon"
+                style={{
+                  marginRight: "10px",
+                  color: "black",
+                  fontSize: "20px",
+                }}
+              />
+              Policy Details
+            </h2>
+            <div className="policy-details-container">
+              <table className="policy-details-container-table">
+                <tbody>
+                  {policyDetails.map((detail, index) => (
+                    <tr key={index}>
+                      <td
+                        className={
+                          detail.label === "Policy Title"
+                            ? "policy-title-cell"
+                            : ""
+                        }
+                      >
+                        <strong>{detail.label}:</strong>
+                      </td>
+                      <td>{detail.value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div> */}
             <h2
               style={{
                 position: "relative",
@@ -645,9 +821,11 @@ function PdfViewer() {
             <div className="pdf_table">
               <h2>
                 Policy Fulfillment
-                <button className="pdf_edit_button" onClick={openAddModal}>
-                  <FiPlus />
-                </button>
+                {userRole !== "Company" && (
+                  <button className="pdf_edit_button" onClick={openAddModal}>
+                    <FiPlus />
+                  </button>
+                )}
               </h2>
             </div>
 
@@ -671,15 +849,6 @@ function PdfViewer() {
                             >
                               <RxCross2 />
                             </button>
-
-                            {/* <label htmlFor="editedTitle">Policy Name:</label>
-                            <input
-                              type="text"
-                              id="editedTitle"
-                              name="policyName"
-                              value={editedPolicy.policyName}
-                              onChange={handleInputChange}
-                            /> */}
 
                             <label htmlFor="editedCompany">Score:</label>
                             <input
@@ -777,44 +946,12 @@ function PdfViewer() {
               </div>
             )}
 
-            {/* <table>
-              <thead>
-                <tr>
-                  <th>Policy Scope</th>
-                  <th>Score</th>
-                  <th>Comments</th>
-                  <th>Edit</th>
-                </tr>
-              </thead>
-              <tbody>
-                {editedData.map((policy, index) => (
-                  <tr key={index}>
-                    <td>{policy.policyName}</td>
-                    <td>{policy.rating}</td>
-                    <td>{policy.comment}</td>
-                    <td>
-                      <BiSolidPencil
-                        onClick={() => handleEditClick(policy)}
-                        style={{
-                          marginRight: "5px",
-                          cursor: "pointer",
-                        }}
-                      />
-                      <AiFillDelete
-                        onClick={() => onClickDeleteRow(index)}
-                        style={{ cursor: "pointer" }}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table> */}
             <table>
               <thead>
                 <tr>
                   <th>Score</th>
                   <th>Comments</th>
-                  <th>Edit</th>
+                  {userRole !== "Company" && <th>Edit</th>}
                 </tr>
               </thead>
               <tbody>
@@ -830,25 +967,29 @@ function PdfViewer() {
                       {policy.rating}
                     </td>
                     <td
-                    style={{
-                      alignItems: "center",
-                      justifyContent: "center",
-                      textAlign: "center",
-                    }}
-                    >{policy.comment}</td>
-                    <td>
-                      <BiSolidPencil
-                        onClick={() => handleEditClick(policy)}
-                        style={{
-                          marginRight: "5px",
-                          cursor: "pointer",
-                        }}
-                      />
-                      <AiFillDelete
-                        onClick={() => onClickDeleteRow(index)}
-                        style={{ cursor: "pointer" }}
-                      />
+                      style={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                        textAlign: "center",
+                      }}
+                    >
+                      {policy.comment}
                     </td>
+                    {userRole !== "Company" && (
+                      <td>
+                        <BiSolidPencil
+                          onClick={() => handleEditReviews(policy)}
+                          style={{
+                            marginRight: "5px",
+                            cursor: "pointer",
+                          }}
+                        />
+                        <AiFillDelete
+                          onClick={() => deleteReview(index)}
+                          style={{ cursor: "pointer" }}
+                        />
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

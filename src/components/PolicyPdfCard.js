@@ -1,7 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { BsFileEarmarkTextFill, BsThreeDotsVertical } from "react-icons/bs";
 import "./PolicyPdfCard.css";
-
 import { AiFillDelete } from "react-icons/ai";
 import { BiSolidEdit } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
@@ -10,8 +9,26 @@ function PolicyPdfCard({
   userRole,
   handleDelete,
   openEditForm,
-  policyId
+  policyId,
+  documentUrl,
+  projectId,
 }) {
+  const handleCardClick = () => {
+    console.log("Handling card click...");
+    setIsMenuOpen(false);
+    console.log("After clicking on card url", documentUrl);
+    navigate(
+      `/company-projects/${projectId}/policy-list/${
+        policy.id
+      }/pdf?document/${encodeURIComponent(documentUrl)}`
+    );
+  };
+
+  useEffect(() => {
+    console.log("Setting documentUrl in localStorage:", documentUrl);
+    localStorage.setItem("documentUrls", documentUrl);
+  }, [documentUrl]);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   function formatDateTime(dateTimeString) {
@@ -28,15 +45,6 @@ function PolicyPdfCard({
 
   console.log("Policy id", policyId);
 
-  
-
-
-
-  const handleCardClick = (policyId) => {
-    setIsMenuOpen(false);
-    navigate(`/pdf?document=http%3A%2F%2Flocalhost%3A8000%2Fpolicy_documents%2FSamplee.pdf&policyId=${policy.id}`);
-};
-
   const handleMenuToggle = (event) => {
     event.stopPropagation();
     setIsMenuOpen((prev) => !prev);
@@ -48,12 +56,10 @@ function PolicyPdfCard({
     left: cardRef.current?.offsetLeft + (cardRef.current?.clientWidth || 0),
     display: isMenuOpen ? "block" : "none",
   };
-  
-  
 
   const handleEditClick = (event) => {
     event.stopPropagation();
-    setIsMenuOpen(false); 
+    setIsMenuOpen(false);
     openEditForm(policy.id);
   };
 
@@ -63,7 +69,7 @@ function PolicyPdfCard({
     handleDelete(policy.id);
   };
 
-  const isCompanyRole = userRole === 'Company';
+  const isCompanyRole = userRole === "Company";
 
   return (
     <div className="ppc_policy-card" onClick={handleCardClick} ref={cardRef}>
@@ -76,7 +82,7 @@ function PolicyPdfCard({
           {policy && (
             <>
               {policy.policytype}
-             
+
               {isCompanyRole && (
                 <BsThreeDotsVertical
                   style={{

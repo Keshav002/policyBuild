@@ -56,6 +56,9 @@ function App() {
             <Route path= "/datatable" element={<DataTable />} />
             <Route path= "/pdf" element={<PdfViewer />} />
             <Route path= "/policy-list" element={<PolicyList />} />
+            <Route path="/consultant-projects/:projectId/policy-list" element={<PolicyList />} />
+            <Route path="/company-projects/:projectId/policy-list/:policyId/pdf" element={<PdfViewer />} />
+            <Route path= "/company-projects/:projectId/policy-list" element={<PolicyList />} />
           </Routes>
         </Router>
       </Provider>

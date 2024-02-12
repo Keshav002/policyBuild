@@ -19,7 +19,6 @@ function PolicyCard({
   isEditFormOpen,
   projectId,
   handleDeleteProjectClick,
-
   openEditForm,
 }) {
   const navigate = useNavigate();
@@ -40,7 +39,7 @@ function PolicyCard({
       return;
     }
 
-    navigate(`/policy-list?projectId=${projectId}`);
+    navigate(`/company-projects/projectId=${projectId}/policy-list`);
   };
 
   const menuStyle = {

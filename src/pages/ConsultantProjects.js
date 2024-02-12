@@ -990,7 +990,7 @@ function ConsultantProjects() {
                 <div className="company_lists_cards">
                   {projects.map((project, index) => (
                     <Link
-                      to={`/policy-list?projectId=${project.id}`}
+                      to={`/consultant-projects/${project.id}/policy-list`}
                       key={index}
                       style={{ textDecoration: "none" }}
                     >
