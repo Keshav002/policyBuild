@@ -12,6 +12,7 @@ import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
 import "./PdfViewer.css";
 import NoteDialog from "./NoteDialog";
 import { PiNoteThin } from "react-icons/pi";
+import { FaArrowLeft } from "react-icons/fa";
 import { FaRegFilePdf } from "react-icons/fa6";
 import { useLocation } from "react-router-dom";
 import { PDFDocument, MissingPDFHeaderError } from "pdf-lib";
@@ -19,7 +20,8 @@ import Cookies from "js-cookie";
 import { API_URL } from "../ConfigApi";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-
+import Breadcrumbs from "./Breadcrumbs";
+import { useNavigate } from "react-router-dom";
 import { MdOutlinePictureAsPdf, MdOutlineDelete } from "react-icons/md";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
@@ -74,7 +76,7 @@ function PdfViewer() {
   const [pageNumber, setPageNumber] = useState(1);
   const [viewType, setViewType] = useState("pagination");
   const [scale, setScale] = useState(1.0);
-
+  const navigate = useNavigate();
   async function repairPDF(documentParam) {
     try {
       const response = await fetch(documentParam);
@@ -217,13 +219,9 @@ function PdfViewer() {
         });
       } else {
         console.error("Failed to create review. Status:", response.status);
-        
       }
     } catch (error) {
       console.error("Error creating review:", error);
-     
-      
-
     } finally {
       setLoading(false);
     }
@@ -411,6 +409,9 @@ function PdfViewer() {
     updatedNotesList.splice(index, 1);
     setUserNotesList(updatedNotesList);
   };
+  const handleGoBack = () => {
+    navigate(-1); // Navigate back in the history
+  };
 
   return (
     <>
@@ -429,8 +430,8 @@ function PdfViewer() {
           />
         )}
         <div className="pdfview-toolbar">
-          <div className="pdfview_toggler">
-            <label
+          {/* <div className="pdfview_toggler"> */}
+          {/* <label
               className="pdfview_icon_label"
               onClick={() => toggleView("pagination")}
             >
@@ -439,8 +440,8 @@ function PdfViewer() {
                   viewType === "pagination" ? "pdfview_selected_icon" : ""
                 }`}
               />
-            </label>
-            {/* <label
+            </label> */}
+          {/* <label
               className="pdfview_icon_label"
               onClick={() => toggleView("scrollbar")}
             >
@@ -450,8 +451,10 @@ function PdfViewer() {
                 }`}
               />
             </label> */}
-          </div>
-
+          {/* </div> */}
+          <button className="pdf-viewer-back-button" onClick={handleGoBack}>
+            <FaArrowLeft className="arrow-icon" />
+          </button>
           <div class="pdf_zoom_buttons_container">
             <button
               className={`pdf_zoom_icon ${
@@ -830,12 +833,14 @@ function PdfViewer() {
                       {policy.rating}
                     </td>
                     <td
-                    style={{
-                      alignItems: "center",
-                      justifyContent: "center",
-                      textAlign: "center",
-                    }}
-                    >{policy.comment}</td>
+                      style={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                        textAlign: "center",
+                      }}
+                    >
+                      {policy.comment}
+                    </td>
                     <td>
                       <BiSolidPencil
                         onClick={() => handleEditClick(policy)}

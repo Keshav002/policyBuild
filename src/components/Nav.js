@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { FaUser } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import Breadcrumbs from './Breadcrumbs';
 function Nav() {
   const userState = useSelector((state) => state.user);
   console.log("userstate", userState);
