@@ -957,7 +957,7 @@ function ConsultantProjects() {
                                       deletePersonalReport(report.id)
                                     }
                                   >
-                                    Delete
+                                    Deletee
                                   </div>
                                   <div
                                     className="company_list_options_dropdown_opt"

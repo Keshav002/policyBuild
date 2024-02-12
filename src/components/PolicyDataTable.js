@@ -26,14 +26,13 @@ export const DataTable = ({ data, handleDeleteProjectClick, openEditForm }) => {
       {
         Header: "Start date",
         accessor: "start_date",
-        
       },
       {
         Header: "End Date",
         accessor: "end_date",
       },
       {
-        Header: "Actions",
+        Header: "Action",
         accessor: "policy_posts_id",
         Cell: ({ row }) => (
           <td>
@@ -81,7 +80,7 @@ export const DataTable = ({ data, handleDeleteProjectClick, openEditForm }) => {
             return (
               <tr
                 {...row.getRowProps()}
-                onClick={() => navigate("/policy-list")}
+                onClick={() => navigate(`/policy-list/${row.original.id}`)}
                 style={{ cursor: "pointer" }}
               >
                 {row.cells.map((cell) => (

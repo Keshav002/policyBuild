@@ -14,9 +14,7 @@ function PolicyPdfCard({
   projectId,
 }) {
   const handleCardClick = () => {
-    console.log("Handling card click...");
     setIsMenuOpen(false);
-    console.log("After clicking on card url", documentUrl);
     navigate(
       `/company-projects/${projectId}/policy-list/${
         policy.id

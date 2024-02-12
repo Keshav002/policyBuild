@@ -523,11 +523,7 @@ function PdfViewer() {
     console.error("Error loading document:", error.message);
   };
 
-  // useEffect(() => {
-  //   // Decode the documentUrl parameter from URL
-  //   const decodedDocumentUrl = decodeURIComponent(documentUrl);
-  //   console.log("Decoded Doc Url:", decodedDocumentUrl);
-  // }, [documentUrl]);
+
 
   const userType = "consultant";
   return (

@@ -3,11 +3,8 @@ import { MdPolicy } from "react-icons/md";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import "./PolicyCard.css";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
-import { API_URL } from "../ConfigApi";
 import { AiFillDelete } from "react-icons/ai";
 import { BiSolidEdit } from "react-icons/bi";
-import Swal from "sweetalert2";
 
 function PolicyCard({
   name,
@@ -15,7 +12,7 @@ function PolicyCard({
   description,
   start_date,
   end_date,
-  company,
+
   isEditFormOpen,
   projectId,
   handleDeleteProjectClick,
@@ -49,21 +46,19 @@ function PolicyCard({
     display: isMenuOpen ? "block" : "none",
   };
 
-  
   const handleEditClick = (event) => {
     event.stopPropagation();
-  
+
     setIsMenuOpen(false);
-  
-    console.log("projectId before openEditForm:", projectId); 
+
+    console.log("projectId before openEditForm:", projectId);
     openEditForm(projectId);
-  }; 
+  };
   const handleDeleteProject = (event) => {
     event.stopPropagation();
     setIsMenuOpen(false);
     handleDeleteProjectClick();
   };
-  
 
   return (
     <div className="pc_policy-card" onClick={handleCardClick} ref={cardRef}>
@@ -98,7 +93,7 @@ function PolicyCard({
             />
             Edit
           </div>
-          <div onClick={(event)=>handleDeleteProject(event)}>
+          <div onClick={(event) => handleDeleteProject(event)}>
             <AiFillDelete
               style={{
                 marginRight: "10px",

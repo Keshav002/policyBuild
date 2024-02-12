@@ -1044,7 +1044,6 @@ function PolicyList() {
         <div className="cp_company_top_bar">
           <div
             className={`cp_filter_icon ${isSidebarOpen ? "active" : ""}`}
-            // onClick={toggleSidebar}
           >
             <CustomTooltip tooltipText="Will Update Soon..">
               <AiOutlineFilter className="cp_icon" />
