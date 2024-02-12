@@ -584,7 +584,7 @@ function ConsultantProjects() {
       }
     } catch (error) {
       console.error("Error fetching policies:", error);
-      // Handle unexpected errors
+     
     }
   };
 

@@ -1035,7 +1035,7 @@ function PolicyList() {
     setDropdownOpen(false);
   };
 
-  const urlParams = new URLSearchParams(window.location.search);
+  // const urlParams = new URLSearchParams(window.location.search);
 
   return (
     <>

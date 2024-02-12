@@ -467,7 +467,7 @@ function ConsultantProfile() {
                 </div>
               ) : (
                 <div>
-                  {/* Render text and default image */}
+                 
                   <h4 style={{ fontSize: "20px", marginTop: "14px" }}>
                     Elevate your presence with a polished profile picture.
                   </h4>

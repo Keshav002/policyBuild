@@ -130,9 +130,9 @@ function PolicyPdfCard({
             <div className="ppc_detail">Contact: {policy.contactinfo}</div>
             <div className="ppc_detail">Location: {policy.location}</div>
             <div className="ppc_detail">Website: {policy.website}</div>
-            <div className="ppc_detail">
+            {/* <div className="ppc_detail">
               Score: {policy.average_rating} out of {policy.total_ratings}
-            </div>
+            </div> */}
           </>
         )}
       </div>

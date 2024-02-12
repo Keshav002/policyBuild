@@ -86,71 +86,18 @@ function PdfViewer() {
     // Your effect code goes here
     console.log(companyId);
 
-    // Make sure to return a cleanup function if necessary
+   
     return () => {
-      // Cleanup code goes here
+      
     };
   }, [companyId]);
 
-  // async function repairPDF(documentParam) {
-  //   try {
-  //     const response = await fetch(documentParam);
-  //     if (!response.ok) {
-  //       throw new Error("Failed to fetch PDF document");
-  //     }
-  //     const pdfBuffer = await response.arrayBuffer();
-  //     const pdfDoc = await PDFDocument.load(pdfBuffer);
-  //     // Save the repaired PDF document
-  //     const repairedPdfBytes = await pdfDoc.save();
-  //     // Optionally, you can update the PDF file on the server with the repaired version
-  //     return repairedPdfBytes;
-  //   } catch (error) {
-  //     console.error("Failed to repair PDF:", error);
-  //     throw error;
-  //   }
-  // }
 
-  // const [policyId, setPolicyId] = useState(null); // State to store policyId
-  // const [documentPath, setDocumentPath] = useState("");
-  // const location = useLocation();
-
-  // useEffect(() => {
-  //   const params = new URLSearchParams(location.search);
-  //   const documentParam = params.get("document");
-  //   const extractedPolicyId = params.get("policyId");
-  //   console.log("Policy ID:", extractedPolicyId);
-
-  //   // Extract only the path part of the URL
-  //   const path = new URL(documentParam).pathname;
-  //   setDocumentPath(path);
-
-  //   // Set the policyId state
-  //   setPolicyId(extractedPolicyId);
-
-  //   // Attempt to repair the PDF document
-  //   repairPDF(documentParam)
-  //     .then(() => {
-  //       console.log("PDF repaired successfully");
-  //     })
-  //     .catch((error) => {
-  //       console.error("Failed to repair PDF:", error);
-  //     });
-  // }, [location]);
-
-  // const [policyId, setPolicyId] = useState(null);
-  // const location = useLocation();
-
-  // useEffect(() => {
-  //   const params = new URLSearchParams(location.search);
-  //   const extractedPolicyId = params.get("policyId");
-  //   console.log("Policy ID:", extractedPolicyId);
-  //   setPolicyId(extractedPolicyId);
-  // }, [location.search]);
   const { policyId } = useParams();
 
   useEffect(() => {
     console.log("Policy ID:", policyId);
-    // Call your functions or perform actions that depend on the policyId
+   
   }, [policyId]);
 
   const fetchReviews = async () => {
@@ -523,9 +470,6 @@ function PdfViewer() {
     console.error("Error loading document:", error.message);
   };
 
-
-
-  const userType = "consultant";
   return (
     <>
       <Nav />

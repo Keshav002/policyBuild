@@ -555,11 +555,11 @@ function CompanyProjects() {
         });
       }
     } catch (error) {
-      // Swal.fire({
-      //   icon: "error",
-      //   title: "Error",
-      //   text: "An error occurred. Please try again.",
-      // });
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An error occurred. Please try again.",
+      });
       console.error("Error during handleAddProject:", error);
     }
   };

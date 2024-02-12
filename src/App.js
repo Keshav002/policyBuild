@@ -5,7 +5,7 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
-//import Consultant from "./pages/Consultant"; 
+//import Consultant from "./pages/Consultant"; // Import your Home component
 import SignUp from "./pages/Signup";
 import Consultant from "./pages/Consultant";
 import CompanyList from "./pages/CompanyList";

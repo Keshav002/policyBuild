@@ -40,7 +40,7 @@ export const DataTable = ({ data, handleDeleteProjectClick, openEditForm }) => {
               className="project-table-edit-button"
               style={{ cursor: "pointer", marginRight: "10px" }}
               onClick={(e) => {
-                e.stopPropagation(); // Prevents the row click event from triggering
+                e.stopPropagation();
                 openEditForm(row.original.id);
               }}
             />
@@ -48,7 +48,7 @@ export const DataTable = ({ data, handleDeleteProjectClick, openEditForm }) => {
               className="project-table-delete-button"
               style={{ cursor: "pointer" }}
               onClick={(e) => {
-                e.stopPropagation(); // Prevents the row click event from triggering
+                e.stopPropagation(); 
                 handleDeleteProjectClick(row.original.id);
               }}
             />

@@ -51,9 +51,9 @@ export const DataTable = ({ data, handleDelete, openEditForm, userRole }) => {
           return date.toLocaleDateString(); 
         },
       },
-      isCompanyRole && { // Conditionally include the "Actions" column if user is a company
+      isCompanyRole && { 
         Header: "Actions",
-        id: "actions", // Add an id property to the column object
+        id: "actions", 
         accessor: "policy_posts_id",
         Cell: ({ row }) => (
           <td>

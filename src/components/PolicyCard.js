@@ -103,7 +103,7 @@ function PolicyCard({
           </div>
         </div>
       )}
-
+      {/* Details */}
       <div className="pc_info">
         <div className="pc_detail">Assigned To: {assigned_to.join(", ")}</div>
         <div className="pc_detail">Description: {description}</div>
