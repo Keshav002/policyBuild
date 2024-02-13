@@ -5,8 +5,6 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
-//import Nav from "./components/Nav"
-
 //import Consultant from "./pages/Consultant"; // Import your Home component
 import SignUp from "./pages/Signup";
 import Consultant from "./pages/Consultant";
@@ -56,6 +54,9 @@ function App() {
             <Route path= "/datatable" element={<DataTable />} />
             <Route path= "/pdf" element={<PdfViewer />} />
             <Route path= "/policy-list" element={<PolicyList />} />
+            <Route path="/consultant-projects/:projectId/policy-list" element={<PolicyList />} />
+            <Route path="/company-projects/:projectId/policy-list/:policyId/pdf" element={<PdfViewer />} />
+            <Route path= "/company-projects/:projectId/policy-list" element={<PolicyList />} />
           </Routes>
         </Router>
       </Provider>

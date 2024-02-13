@@ -7,7 +7,8 @@ import { AiFillDelete } from "react-icons/ai";
 
 export const DataTable = ({ data, handleDelete, openEditForm, userRole }) => {
   const navigate = useNavigate();
-  const isCompanyRole = userRole === 'Company';
+  const isCompanyRole = userRole === "Company";
+
   const columns = useMemo(
     () => [
       {
@@ -50,13 +51,9 @@ export const DataTable = ({ data, handleDelete, openEditForm, userRole }) => {
           return date.toLocaleDateString(); 
         },
       },
-      
-      
-    
-      
-      
-      {
+      isCompanyRole && { 
         Header: "Actions",
+        id: "actions", 
         accessor: "policy_posts_id",
         Cell: ({ row }) => (
           <td>
@@ -79,9 +76,10 @@ export const DataTable = ({ data, handleDelete, openEditForm, userRole }) => {
           </td>
         ),
       },
-    ],
-    [handleDelete, openEditForm]
+    ].filter(Boolean), // Filter out undefined elements
+    [isCompanyRole, handleDelete, openEditForm]
   );
+  
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data });

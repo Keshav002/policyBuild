@@ -584,7 +584,7 @@ function ConsultantProjects() {
       }
     } catch (error) {
       console.error("Error fetching policies:", error);
-      // Handle unexpected errors
+     
     }
   };
 
@@ -957,7 +957,7 @@ function ConsultantProjects() {
                                       deletePersonalReport(report.id)
                                     }
                                   >
-                                    Delete
+                                    Deletee
                                   </div>
                                   <div
                                     className="company_list_options_dropdown_opt"
@@ -990,7 +990,7 @@ function ConsultantProjects() {
                 <div className="company_lists_cards">
                   {projects.map((project, index) => (
                     <Link
-                      to={`/policy-list?projectId=${project.id}`}
+                      to={`/consultant-projects/${project.id}/policy-list`}
                       key={index}
                       style={{ textDecoration: "none" }}
                     >

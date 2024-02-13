@@ -1,7 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { BsFileEarmarkTextFill, BsThreeDotsVertical } from "react-icons/bs";
 import "./PolicyPdfCard.css";
-
 import { AiFillDelete } from "react-icons/ai";
 import { BiSolidEdit } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
@@ -10,8 +9,24 @@ function PolicyPdfCard({
   userRole,
   handleDelete,
   openEditForm,
-  policyId
+  policyId,
+  documentUrl,
+  projectId,
 }) {
+  const handleCardClick = () => {
+    setIsMenuOpen(false);
+    navigate(
+      `/company-projects/${projectId}/policy-list/${
+        policy.id
+      }/pdf?document/${encodeURIComponent(documentUrl)}`
+    );
+  };
+
+  useEffect(() => {
+    console.log("Setting documentUrl in localStorage:", documentUrl);
+    localStorage.setItem("documentUrls", documentUrl);
+  }, [documentUrl]);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   function formatDateTime(dateTimeString) {
@@ -28,15 +43,6 @@ function PolicyPdfCard({
 
   console.log("Policy id", policyId);
 
-  
-
-
-
-  const handleCardClick = (policyId) => {
-    setIsMenuOpen(false);
-    navigate(`/pdf?document=http%3A%2F%2Flocalhost%3A8000%2Fpolicy_documents%2FSamplee.pdf&policyId=${policy.id}`);
-};
-
   const handleMenuToggle = (event) => {
     event.stopPropagation();
     setIsMenuOpen((prev) => !prev);
@@ -48,12 +54,10 @@ function PolicyPdfCard({
     left: cardRef.current?.offsetLeft + (cardRef.current?.clientWidth || 0),
     display: isMenuOpen ? "block" : "none",
   };
-  
-  
 
   const handleEditClick = (event) => {
     event.stopPropagation();
-    setIsMenuOpen(false); 
+    setIsMenuOpen(false);
     openEditForm(policy.id);
   };
 
@@ -63,7 +67,7 @@ function PolicyPdfCard({
     handleDelete(policy.id);
   };
 
-  const isCompanyRole = userRole === 'Company';
+  const isCompanyRole = userRole === "Company";
 
   return (
     <div className="ppc_policy-card" onClick={handleCardClick} ref={cardRef}>
@@ -76,7 +80,7 @@ function PolicyPdfCard({
           {policy && (
             <>
               {policy.policytype}
-             
+
               {isCompanyRole && (
                 <BsThreeDotsVertical
                   style={{
@@ -126,9 +130,9 @@ function PolicyPdfCard({
             <div className="ppc_detail">Contact: {policy.contactinfo}</div>
             <div className="ppc_detail">Location: {policy.location}</div>
             <div className="ppc_detail">Website: {policy.website}</div>
-            <div className="ppc_detail">
+            {/* <div className="ppc_detail">
               Score: {policy.average_rating} out of {policy.total_ratings}
-            </div>
+            </div> */}
           </>
         )}
       </div>

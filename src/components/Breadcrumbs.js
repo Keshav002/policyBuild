@@ -10,9 +10,16 @@ const Breadcrumbs = () => {
   return (
     <Breadcrumb>
       <Breadcrumb.Item>
-        {/* <Link to="/">Home</Link> */}
+        <Link to="/company-projects">projects</Link>
       </Breadcrumb.Item>
-      {pathnames.map((name, index) => {
+      <Breadcrumb.Item>
+        <Link to="/company-projects/${id}">policy-list</Link>
+      </Breadcrumb.Item>
+       <Breadcrumb.Item>
+        <Link to="/company-projects/${id}">policy-view</Link>
+      </Breadcrumb.Item>
+      
+      {/* {pathnames.map((name, index) => {
         const routeTo = `/${pathnames.slice(0, index + 1).join('/')}`;
         const isLast = index === pathnames.length - 1;
         return (
@@ -20,7 +27,7 @@ const Breadcrumbs = () => {
             {isLast ? name : <Link to={routeTo}>{name}</Link>}
           </Breadcrumb.Item>
         );
-      })}
+      })} */}
     </Breadcrumb>
   );
 };

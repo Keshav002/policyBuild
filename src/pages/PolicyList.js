@@ -647,6 +647,10 @@ function PolicyList() {
     }
   }, [projectId]);
 
+  const [documentUrls, setDocumentUrls] = useState([]);
+
+  
+
   const fetchPolicies = async (projectId) => {
     try {
       const response = await fetch(
@@ -664,15 +668,22 @@ function PolicyList() {
         const data = await response.json();
         setPolicies(data);
         localStorage.setItem("policies", JSON.stringify(data));
+        const urls = data.map((policy) => policy.document);
+        setDocumentUrls(urls);
+        localStorage.setItem("documentUrls", JSON.stringify(urls));
+        
+
       } else {
         console.error("Failed to fetch policies. Status:", response.status);
         setPolicies([]);
         localStorage.setItem("policies", "[]");
+        localStorage.setItem("documentUrls", "[]");
       }
     } catch (error) {
       console.error("Error fetching policies:", error);
       setPolicies([]);
       localStorage.setItem("policies", "[]");
+      localStorage.setItem("documentUrls", "[]");
     }
   };
 
@@ -699,19 +710,113 @@ function PolicyList() {
     }
   }, []);
 
+  // const handleAddPolicy = async () => {
+  //   console.log("Current projectId in handleAddPolicy:", projectId);
+  //   if (!projectId) {
+  //     console.error("Project ID is missing.");
+  //     return;
+  //   }
+
+  //   const formDataWithFile = new FormData();
+  //   for (const key in formData) {
+  //     formDataWithFile.append(key, formData[key]);
+  //   }
+  //   formDataWithFile.append("document", formData.document);
+
+  //   try {
+  //     const response = await fetch(
+  //       `${API_URL}/main/projects/${projectId}/policy_posts/`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           Authorization: `Bearer ${Cookies.get("accessToken")}`,
+  //         },
+  //         body: formDataWithFile,
+  //       }
+  //     );
+
+  //     if (response.ok) {
+  //       const contentType = response.headers.get("content-type");
+  //       clearFormData();
+  //       // if (contentType && contentType.includes("application/json")) {
+  //       //   const newPolicy = await response.json();
+  //       //   console.log("Policy created successfully!", newPolicy);
+  //       //   setPolicies((prevPolicies) => [...prevPolicies, newPolicy]);
+  //       // } else {
+  //       //   console.log("Policy created successfully!");
+  //       //   // Handle the response based on the content type
+  //       //   // For example, if it's a PDF, you can download it using response.blob()
+  //       //   const blob = await response.blob();
+  //       //   const url = window.URL.createObjectURL(blob);
+  //       //   const a = document.createElement("a");
+  //       //   a.href = url;
+  //       //   a.download = "policy.pdf";
+  //       //   document.body.appendChild(a);
+  //       //   a.click();
+  //       //   window.URL.revokeObjectURL(url);
+  //       // }
+  //       fetchPolicies(projectId);
+  //       handleCancelClick();
+  //       Swal.fire({
+  //         icon: "success",
+  //         title: "Policy Created Successfully!",
+  //         showConfirmButton: false,
+  //         timer: 1500,
+  //       });
+  //     } else {
+  //       console.error("Failed to create policy. Status:", response.status);
+
+  //       Swal.fire({
+  //         icon: "error",
+  //         title: "Error",
+  //         text: "Failed to create policy. Please try again.",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error creating policy:", error);
+
+  //     Swal.fire({
+  //       icon: "error",
+  //       title: "Error",
+  //       text: "An error occurred. Please try again.",
+  //     });
+  //   }
+  // };
+
+  const extractProjectIdFromURL = () => {
+    // Get the current URL
+    const url = window.location.href;
+    
+    // Extract projectId from the URL
+    const match = url.match(/projectId=(\d+)/);
+    if (match && match[1]) {
+      const projectId = match[1];
+      
+      // Store projectId in localStorage
+      localStorage.setItem('projectId', projectId);
+      
+      return projectId;
+    }
+    
+    return null;
+  };
+  
   const handleAddPolicy = async () => {
+    // Retrieve projectId from localStorage
+    const projectId = localStorage.getItem('projectId');
+    
     console.log("Current projectId in handleAddPolicy:", projectId);
     if (!projectId) {
       console.error("Project ID is missing.");
       return;
     }
-
+  
     const formDataWithFile = new FormData();
     for (const key in formData) {
       formDataWithFile.append(key, formData[key]);
     }
     formDataWithFile.append("document", formData.document);
-
+  
     try {
       const response = await fetch(
         `${API_URL}/main/projects/${projectId}/policy_posts/`,
@@ -723,55 +828,21 @@ function PolicyList() {
           body: formDataWithFile,
         }
       );
-
       if (response.ok) {
         const contentType = response.headers.get("content-type");
         clearFormData();
-        // if (contentType && contentType.includes("application/json")) {
-        //   const newPolicy = await response.json();
-        //   console.log("Policy created successfully!", newPolicy);
-        //   setPolicies((prevPolicies) => [...prevPolicies, newPolicy]);
-        // } else {
-        //   console.log("Policy created successfully!");
-        //   // Handle the response based on the content type
-        //   // For example, if it's a PDF, you can download it using response.blob()
-        //   const blob = await response.blob();
-        //   const url = window.URL.createObjectURL(blob);
-        //   const a = document.createElement("a");
-        //   a.href = url;
-        //   a.download = "policy.pdf";
-        //   document.body.appendChild(a);
-        //   a.click();
-        //   window.URL.revokeObjectURL(url);
-        // }
         fetchPolicies(projectId);
         handleCancelClick();
-        Swal.fire({
-          icon: "success",
-          title: "Policy Created Successfully!",
-          showConfirmButton: false,
-          timer: 1500,
-        });
       } else {
         console.error("Failed to create policy. Status:", response.status);
-
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Failed to create policy. Please try again.",
-        });
       }
     } catch (error) {
       console.error("Error creating policy:", error);
-
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "An error occurred. Please try again.",
-      });
     }
   };
-
+  
+  
+  extractProjectIdFromURL();
   const handleCancelClick = () => {
     setisAddPolicyOpen(false);
     setisEditPolicyOpen(false);
@@ -964,7 +1035,7 @@ function PolicyList() {
     setDropdownOpen(false);
   };
 
-  const urlParams = new URLSearchParams(window.location.search);
+  // const urlParams = new URLSearchParams(window.location.search);
 
   return (
     <>
@@ -973,7 +1044,6 @@ function PolicyList() {
         <div className="cp_company_top_bar">
           <div
             className={`cp_filter_icon ${isSidebarOpen ? "active" : ""}`}
-            // onClick={toggleSidebar}
           >
             <CustomTooltip tooltipText="Will Update Soon..">
               <AiOutlineFilter className="cp_icon" />
@@ -1827,6 +1897,7 @@ function PolicyList() {
                           handleEdit={handleEdit}
                           openEditForm={openEditForm}
                           fetchPolicies={fetchPolicies}
+                          documentUrl={policy.document}
                         />
                       </div>
                     ))}

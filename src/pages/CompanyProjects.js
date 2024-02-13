@@ -539,27 +539,27 @@ function CompanyProjects() {
           end_date: "",
           assigned_to: [],
         });
-        // Swal.fire({
-        //   icon: "success",
-        //   title: "Project Created Successfully!",
-        //   showConfirmButton: false,
-        //   timer: 1500,
-        // });
+        Swal.fire({
+          icon: "success",
+          title: "Project Created Successfully!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
         setisAddProjectOpen(false);
       } else {
         console.error("Failed to add project. Status:", response.status);
-        // Swal.fire({
-        //   icon: "error",
-        //   title: "Error",
-        //   text: "Failed to add project. Please try again.",
-        // });
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to add project. Please try again.",
+        });
       }
     } catch (error) {
-      // Swal.fire({
-      //   icon: "error",
-      //   title: "Error",
-      //   text: "An error occurred. Please try again.",
-      // });
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An error occurred. Please try again.",
+      });
       console.error("Error during handleAddProject:", error);
     }
   };

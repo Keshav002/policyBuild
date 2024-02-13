@@ -26,14 +26,13 @@ export const DataTable = ({ data, handleDeleteProjectClick, openEditForm }) => {
       {
         Header: "Start date",
         accessor: "start_date",
-        
       },
       {
         Header: "End Date",
         accessor: "end_date",
       },
       {
-        Header: "Actions",
+        Header: "Action",
         accessor: "policy_posts_id",
         Cell: ({ row }) => (
           <td>
@@ -41,7 +40,7 @@ export const DataTable = ({ data, handleDeleteProjectClick, openEditForm }) => {
               className="project-table-edit-button"
               style={{ cursor: "pointer", marginRight: "10px" }}
               onClick={(e) => {
-                e.stopPropagation(); // Prevents the row click event from triggering
+                e.stopPropagation();
                 openEditForm(row.original.id);
               }}
             />
@@ -49,7 +48,7 @@ export const DataTable = ({ data, handleDeleteProjectClick, openEditForm }) => {
               className="project-table-delete-button"
               style={{ cursor: "pointer" }}
               onClick={(e) => {
-                e.stopPropagation(); // Prevents the row click event from triggering
+                e.stopPropagation(); 
                 handleDeleteProjectClick(row.original.id);
               }}
             />
@@ -81,7 +80,7 @@ export const DataTable = ({ data, handleDeleteProjectClick, openEditForm }) => {
             return (
               <tr
                 {...row.getRowProps()}
-                onClick={() => navigate("/policy-list")}
+                onClick={() => navigate(`/policy-list/${row.original.id}`)}
                 style={{ cursor: "pointer" }}
               >
                 {row.cells.map((cell) => (
