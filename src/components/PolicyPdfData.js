@@ -102,7 +102,7 @@ export const DataTable = ({ data, handleDelete, openEditForm, userRole }) => {
             return (
               <tr
                 {...row.getRowProps()}
-                onClick={() => navigate("/pdf")}
+                onClick={() => navigate(`${row.original.id}/pdf`)}
                 style={{ cursor: "pointer" }}
               >
                 {row.cells.map((cell) => (

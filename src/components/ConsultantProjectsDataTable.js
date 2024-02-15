@@ -58,7 +58,7 @@ export const DataTable = ({ data }) => {
             prepareRow(row);
             return (
               <tr {...row.getRowProps()}
-              onClick={() => navigate(`/policy-list/${row.original.id}`)}
+              onClick={() => navigate(`${row.original.id}/policy-list`)}
               >
                 {row.cells.map((cell) => (
                   <td {...cell.getCellProps()}>{cell.render("Cell")}</td>

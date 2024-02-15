@@ -80,7 +80,7 @@ export const DataTable = ({ data, handleDeleteProjectClick, openEditForm }) => {
             return (
               <tr
                 {...row.getRowProps()}
-                onClick={() => navigate(`/policy-list/${row.original.id}`)}
+                onClick={() => navigate(`${row.original.id}/policy-list`)}
                 style={{ cursor: "pointer" }}
               >
                 {row.cells.map((cell) => (

@@ -296,8 +296,8 @@
 
 .pdf_zoom_buttons_container {
   display: flex;
-  margin-left: 90vh;
-  
+  /* margin-left: 90vh; */
+  margin-left: auto;  
 }
 
 .pdf_zoom_icon,

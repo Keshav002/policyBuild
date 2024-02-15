@@ -530,7 +530,10 @@ function PdfViewer() {
             selectedText={selectedText}
           />
         )}
+
         <div className="pdfview-toolbar">
+         
+
           {/* <div className="pdfview_toggler"> */}
           {/* <label
               className="pdfview_icon_label"
@@ -552,10 +555,16 @@ function PdfViewer() {
                 }`}
               />
             </label> */}
+
           {/* </div> */}
-          <button className="pdf-viewer-back-button" onClick={handleGoBack}>
+          
+          {/* <button className="pdf-viewer-back-button" onClick={handleGoBack}>
             <FaArrowLeft className="arrow-icon" />
-          </button>
+          </button> */}
+
+     <div style = {{display:"flex", alignItems:"center"}}>
+        <Breadcrumbs/>
+        </div>
           <div class="pdf_zoom_buttons_container">
             <button
               className={`pdf_zoom_icon ${
@@ -629,7 +638,6 @@ function PdfViewer() {
         </div>
 
         <div className="pdfview_content_container">
-          <Breadcrumbs/>
           {/* {viewType === "pagination" && (
             <div
               className="pdfview_pagination"

@@ -36,7 +36,7 @@ function PolicyCard({
       return;
     }
 
-    navigate(`/company-projects/projectId=${projectId}/policy-list`);
+    navigate(`/company-projects/${projectId}/policy-list`);
   };
 
   const menuStyle = {

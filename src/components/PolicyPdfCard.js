@@ -15,17 +15,22 @@ function PolicyPdfCard({
 }) {
   const handleCardClick = () => {
     setIsMenuOpen(false);
-    navigate(
-      `/company-projects/${projectId}/policy-list/${
-        policy.id
-      }/pdf?document/${encodeURIComponent(documentUrl)}`
-    );
+    if(userRole === 'Company'){
+      navigate(
+        `/company-projects/${projectId}/policy-list/${policy.id}/pdf`
+      );
+    }
+    else if(userRole === 'Consultant'){
+      navigate(
+        `/consultant-projects/${projectId}/policy-list/${policy.id}/pdf`
+      );
+    }
   };
 
-  useEffect(() => {
-    console.log("Setting documentUrl in localStorage:", documentUrl);
-    localStorage.setItem("documentUrls", documentUrl);
-  }, [documentUrl]);
+  // useEffect(() => {
+  //   console.log("Setting documentUrl in localStorage:", documentUrl);
+  //   localStorage.setItem("documentUrls", documentUrl);
+  // }, [documentUrl]);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 

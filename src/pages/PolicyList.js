@@ -626,20 +626,20 @@ function PolicyList() {
     },
     [setEditFormData]
   );
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const id = params.get("projectId");
-    if (!id) {
-      const storedProjectId = localStorage.getItem("projectId");
-      if (storedProjectId) {
-        setProjectId(storedProjectId);
-      } else {
-        console.error("Project ID is missing.");
-      }
-    } else {
-      setProjectId(id);
-    }
-  }, [location.search]);
+  // useEffect(() => {
+  //   const params = new URLSearchParams(location.search);
+  //   const id = params.get("projectId");
+  //   if (!id) {
+  //     const storedProjectId = localStorage.getItem("projectId");
+  //     if (storedProjectId) {
+  //       setProjectId(storedProjectId);
+  //     } else {
+  //       console.error("Project ID is missing.");
+  //     }
+  //   } else {
+  //     setProjectId(id);
+  //   }
+  // }, [location.search]);
 
   useEffect(() => {
     if (projectId) {
