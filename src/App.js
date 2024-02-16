@@ -28,6 +28,7 @@ import store from "./store/store";
 import { DataTable } from "./components/DataTable";
 import UserDataPersistence from "./components/UserDataPersistence";
 import PdfViewer from "./components/PdfViewer";
+import CompanyPdfViewer from "./components/CompanyPdfViewer";
 function App() {
   return (
     <>
@@ -55,7 +56,8 @@ function App() {
             <Route path= "/pdf" element={<PdfViewer />} />
             <Route path= "/policy-list" element={<PolicyList />} />
             <Route path="/consultant-projects/:projectId/policy-list" element={<PolicyList />} />
-            <Route path="/company-projects/:projectId/policy-list/:policyId/pdf" element={<PdfViewer />} />
+            <Route path="/company-projects/:projectId/policy-list/:policyId/pdf" element={<CompanyPdfViewer />} />
+            <Route path="/consultant-projects/:projectId/policy-list/:policyId/pdf" element={<PdfViewer />} />
             <Route path= "/company-projects/:projectId/policy-list" element={<PolicyList />} />
           </Routes>
         </Router>

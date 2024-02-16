@@ -25,7 +25,7 @@ import { useNavigate } from "react-router-dom";
 import { Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import { useSelector } from "react-redux";
-import { DataTable } from "./ReviewPolicyDataTable";
+import { DataTable } from "./ReviewData";
 
 import { MdOutlinePictureAsPdf, MdOutlineDelete } from "react-icons/md";
 import { Breadcrumb } from "antd";
@@ -77,7 +77,7 @@ const DialogBox = ({ onClose, onAddNote }) => {
     </div>
   );
 };
-function PdfViewer() {
+function CompanyPdfViewer() {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [viewType, setViewType] = useState("pagination");
@@ -839,52 +839,12 @@ function PdfViewer() {
               className="pdf_sidebar_heading_icon"
               style={{ marginRight: "5px" }}
             />
-            <p className="pdf_sidebar_heading" style={{ marginRight: "175px" }}>
-              Consultant Workspace
+            <p className="pdf_sidebar_heading" style={{ marginRight: "240px" }}>
+              Policy Reviews
             </p>
           </div>
           <div className="pdf_sidebar_content">
-            {/* <h2
-              style={{
-                position: "relative",
-                top: 80,
-                fontWeight: "normal",
-                marginBottom: "10px",
-                alignItems: "center",
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <BiDetail
-                className="pdf_sidebar_heading_icon"
-                style={{
-                  marginRight: "10px",
-                  color: "black",
-                  fontSize: "20px",
-                }}
-              />
-              Policy Details
-            </h2>
-            <div className="policy-details-container">
-              <table className="policy-details-container-table">
-                <tbody>
-                  {policyDetails.map((detail, index) => (
-                    <tr key={index}>
-                      <td
-                        className={
-                          detail.label === "Policy Title"
-                            ? "policy-title-cell"
-                            : ""
-                        }
-                      >
-                        <strong>{detail.label}:</strong>
-                      </td>
-                      <td>{detail.value}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div> */}
+            
             <h2
               style={{
                 position: "relative",
@@ -938,7 +898,7 @@ function PdfViewer() {
               </h2>
             </div>
 
-            {isAddModalOpen && (
+            {/* {isAddModalOpen && (
               <div className="pdf-popup-table-overlay">
                 <div className="pdf_edit_table_popup">
                   <div className="custom-modal-overlay" onClick={closeModal}>
@@ -1062,7 +1022,7 @@ function PdfViewer() {
                 </div>
               </div>
             )}
-
+ */}
 
             <div>
               {addedData.length > 0 ? (
@@ -1084,4 +1044,4 @@ function PdfViewer() {
   );
 }
 
-export default PdfViewer;
+export default CompanyPdfViewer;

@@ -513,18 +513,9 @@ function PolicyList() {
   };
 
   const [formData, setFormData] = useState({
-    jobtitle: "",
+    policy_name: "",
     policytype: "",
     description: "",
-    website: "",
-    expertiesreq: "",
-    banner: "",
-    salaryrange: "",
-    location: "",
-    emploeType: "",
-    policydeadline: "",
-    contactinfo: "",
-    companyregyear: "",
     created_at: "",
     updated_at: "",
     average_rating: "",
@@ -535,18 +526,9 @@ function PolicyList() {
 
   const clearFormData = () => {
     setFormData({
-      jobtitle: "",
+      policy_name: "",
       policytype: "",
       description: "",
-      website: "",
-      expertiesreq: "",
-      banner: "",
-      salaryrange: "",
-      location: "",
-      emploeType: "",
-      policydeadline: "",
-      contactinfo: "",
-      companyregyear: "",
       created_at: "",
       updated_at: "",
       average_rating: "",
@@ -570,18 +552,9 @@ function PolicyList() {
   };
 
   const [editformData, setEditFormData] = useState({
-    jobtitle: "",
+    policy_name: "",
     policytype: "",
     description: "",
-    website: "",
-    expertiesreq: "",
-    banner: "",
-    salaryrange: "",
-    location: "",
-    emploeType: "",
-    policydeadline: "",
-    contactinfo: "",
-    companyregyear: "",
     created_at: "",
     updated_at: "",
     average_rating: "",
@@ -626,20 +599,21 @@ function PolicyList() {
     },
     [setEditFormData]
   );
-  // useEffect(() => {
-  //   const params = new URLSearchParams(location.search);
-  //   const id = params.get("projectId");
-  //   if (!id) {
-  //     const storedProjectId = localStorage.getItem("projectId");
-  //     if (storedProjectId) {
-  //       setProjectId(storedProjectId);
-  //     } else {
-  //       console.error("Project ID is missing.");
-  //     }
-  //   } else {
-  //     setProjectId(id);
-  //   }
-  // }, [location.search]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const id = params.get("projectId");
+    if (!id) {
+      const storedProjectId = localStorage.getItem("projectId");
+      if (storedProjectId) {
+        setProjectId(storedProjectId);
+      } else {
+        console.error("Project ID is missing.");
+      }
+    } else {
+      setProjectId(id);
+    }
+  }, [location.search]);
 
   useEffect(() => {
     if (projectId) {
@@ -648,8 +622,6 @@ function PolicyList() {
   }, [projectId]);
 
   const [documentUrls, setDocumentUrls] = useState([]);
-
-  
 
   const fetchPolicies = async (projectId) => {
     try {
@@ -671,8 +643,6 @@ function PolicyList() {
         const urls = data.map((policy) => policy.document);
         setDocumentUrls(urls);
         localStorage.setItem("documentUrls", JSON.stringify(urls));
-        
-
       } else {
         console.error("Failed to fetch policies. Status:", response.status);
         setPolicies([]);
@@ -710,113 +680,37 @@ function PolicyList() {
     }
   }, []);
 
-  // const handleAddPolicy = async () => {
-  //   console.log("Current projectId in handleAddPolicy:", projectId);
-  //   if (!projectId) {
-  //     console.error("Project ID is missing.");
-  //     return;
-  //   }
-
-  //   const formDataWithFile = new FormData();
-  //   for (const key in formData) {
-  //     formDataWithFile.append(key, formData[key]);
-  //   }
-  //   formDataWithFile.append("document", formData.document);
-
-  //   try {
-  //     const response = await fetch(
-  //       `${API_URL}/main/projects/${projectId}/policy_posts/`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           Authorization: `Bearer ${Cookies.get("accessToken")}`,
-  //         },
-  //         body: formDataWithFile,
-  //       }
-  //     );
-
-  //     if (response.ok) {
-  //       const contentType = response.headers.get("content-type");
-  //       clearFormData();
-  //       // if (contentType && contentType.includes("application/json")) {
-  //       //   const newPolicy = await response.json();
-  //       //   console.log("Policy created successfully!", newPolicy);
-  //       //   setPolicies((prevPolicies) => [...prevPolicies, newPolicy]);
-  //       // } else {
-  //       //   console.log("Policy created successfully!");
-  //       //   // Handle the response based on the content type
-  //       //   // For example, if it's a PDF, you can download it using response.blob()
-  //       //   const blob = await response.blob();
-  //       //   const url = window.URL.createObjectURL(blob);
-  //       //   const a = document.createElement("a");
-  //       //   a.href = url;
-  //       //   a.download = "policy.pdf";
-  //       //   document.body.appendChild(a);
-  //       //   a.click();
-  //       //   window.URL.revokeObjectURL(url);
-  //       // }
-  //       fetchPolicies(projectId);
-  //       handleCancelClick();
-  //       Swal.fire({
-  //         icon: "success",
-  //         title: "Policy Created Successfully!",
-  //         showConfirmButton: false,
-  //         timer: 1500,
-  //       });
-  //     } else {
-  //       console.error("Failed to create policy. Status:", response.status);
-
-  //       Swal.fire({
-  //         icon: "error",
-  //         title: "Error",
-  //         text: "Failed to create policy. Please try again.",
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error creating policy:", error);
-
-  //     Swal.fire({
-  //       icon: "error",
-  //       title: "Error",
-  //       text: "An error occurred. Please try again.",
-  //     });
-  //   }
-  // };
-
   const extractProjectIdFromURL = () => {
-    // Get the current URL
     const url = window.location.href;
-    
-    // Extract projectId from the URL
+
     const match = url.match(/projectId=(\d+)/);
     if (match && match[1]) {
       const projectId = match[1];
-      
-      // Store projectId in localStorage
-      localStorage.setItem('projectId', projectId);
-      
+
+      localStorage.setItem("projectId", projectId);
+
       return projectId;
     }
-    
+
     return null;
   };
-  
+
   const handleAddPolicy = async () => {
     // Retrieve projectId from localStorage
-    const projectId = localStorage.getItem('projectId');
-    
+    const projectId = localStorage.getItem("projectId");
+
     console.log("Current projectId in handleAddPolicy:", projectId);
     if (!projectId) {
       console.error("Project ID is missing.");
       return;
     }
-  
+
     const formDataWithFile = new FormData();
     for (const key in formData) {
       formDataWithFile.append(key, formData[key]);
     }
     formDataWithFile.append("document", formData.document);
-  
+
     try {
       const response = await fetch(
         `${API_URL}/main/projects/${projectId}/policy_posts/`,
@@ -840,13 +734,8 @@ function PolicyList() {
       console.error("Error creating policy:", error);
     }
   };
-  
-  
+
   extractProjectIdFromURL();
-  const handleCancelClick = () => {
-    setisAddPolicyOpen(false);
-    setisEditPolicyOpen(false);
-  };
 
   const [editedPolicy, setEditedPolicy] = useState(null);
   useEffect(() => {
@@ -861,7 +750,7 @@ function PolicyList() {
   const handleDelete = async (policyId) => {
     try {
       const response = await fetch(
-        `${API_URL}/main/projects/${projectId}/policy_posts/${policyId}`,
+        `${API_URL}/main/projects/${projectId}/policy_posts/${policyId}/`,
         {
           method: "DELETE",
           headers: {
@@ -911,18 +800,18 @@ function PolicyList() {
         console.error("Invalid editedPolicyId");
         return;
       }
-  
+
       const originalPolicy = policies.find(
         (policy) => policy.id === editedPolicyId
       );
-  
+
       if (!originalPolicy) {
         console.error("Original policy not found");
         return;
       }
-  
+
       const formDataWithFile = new FormData();
-  
+
       for (const key in editformData) {
         // Check if the field is 'document' and if it's a File
         if (key === "document" && editformData[key] instanceof File) {
@@ -932,7 +821,7 @@ function PolicyList() {
           formDataWithFile.append(key, editformData[key]);
         }
       }
-  
+
       const response = await fetch(
         `${API_URL}/main/projects/${projectId}/policy_posts/${editedPolicyId}/`,
         {
@@ -943,22 +832,20 @@ function PolicyList() {
           body: formDataWithFile,
         }
       );
-  
+
       if (response.ok) {
         console.log("Policy updated successfully!");
-  
-        // Retrieve the updated policy from the response
+
         const updatedPolicy = await response.json();
-  
-        // Update the state with the updated policy
+
         setPolicies((prevPolicies) =>
           prevPolicies.map((policy) =>
             policy.id === editedPolicyId ? updatedPolicy : policy
           )
         );
-  
+
         setisEditPolicyOpen(false);
-  
+
         Swal.fire({
           icon: "success",
           title: "Policy Updated Successfully!",
@@ -982,7 +869,7 @@ function PolicyList() {
       });
     }
   };
-  
+
   const handleEditFileChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
@@ -994,6 +881,12 @@ function PolicyList() {
       alert("Please select a PDF file.");
     }
   };
+
+  const handleCancelClick = () => {
+    setisAddPolicyOpen(false);
+    setisEditPolicyOpen(false);
+  };
+
 
   const [consultants, setConsultants] = useState([]);
   const fetchConsultants = async () => {
@@ -1042,9 +935,7 @@ function PolicyList() {
       <div className="company-list-page">
         <Nav />
         <div className="cp_company_top_bar">
-          <div
-            className={`cp_filter_icon ${isSidebarOpen ? "active" : ""}`}
-          >
+          <div className={`cp_filter_icon ${isSidebarOpen ? "active" : ""}`}>
             <CustomTooltip tooltipText="Will Update Soon..">
               <AiOutlineFilter className="cp_icon" />
             </CustomTooltip>
@@ -1449,21 +1340,20 @@ function PolicyList() {
                   </button>
                   <form encType="multipart/form-data">
                     <label>
+                      Policy Name
+                      <input
+                        type="text"
+                        name="policy_name"
+                        value={formData.policy_name}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+                    <label>
                       Policy Type
                       <input
                         type="text"
                         name="policytype"
                         value={formData.policytype}
-                        onChange={handleInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Contact
-                      <input
-                        type="text"
-                        name="contactinfo"
-                        value={formData.contactinfo}
                         onChange={handleInputChange}
                       />
                     </label>
@@ -1478,115 +1368,6 @@ function PolicyList() {
                       />
                     </label>
 
-                    <label>
-                      Registered Date
-                      <input
-                        type="text"
-                        name="companyregyear"
-                        value={formData.companyregyear}
-                        onChange={handleInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Location
-                      <input
-                        type="text"
-                        name="location"
-                        value={formData.location}
-                        onChange={handleInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Website
-                      <input
-                        type="text"
-                        name="website"
-                        value={formData.website}
-                        onChange={handleInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Job Title
-                      <input
-                        type="text"
-                        name="jobtitle"
-                        value={formData.jobtitle}
-                        onChange={handleInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Banner
-                      <input
-                        type="text"
-                        name="banner"
-                        value={formData.banner}
-                        onChange={handleInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Salary Range
-                      <input
-                        type="text"
-                        name="salaryrange"
-                        value={formData.salaryrange}
-                        onChange={handleInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Average Rating
-                      <input
-                        type="number"
-                        name="average_rating"
-                        value={formData.average_rating}
-                        onChange={handleInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Total Ratings
-                      <input
-                        type="number"
-                        name="total_ratings"
-                        value={formData.total_ratings}
-                        onChange={handleInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Experties Required
-                      <input
-                        type="text"
-                        name="expertiesreq"
-                        value={formData.expertiesreq}
-                        onChange={handleInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Employee Type
-                      <input
-                        type="text"
-                        name="emploeType"
-                        value={formData.emploeType}
-                        onChange={handleInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Policy Deadline
-                      <input
-                        type="text"
-                        name="policydeadline"
-                        value={formData.policydeadline}
-                        onChange={handleInputChange}
-                      />
-                    </label>
                     <label>
                       Assigned To
                       <div className="custom-dropdown">
@@ -1655,21 +1436,20 @@ function PolicyList() {
                   </button>
                   <form encType="multipart/form-data">
                     <label>
+                      Policy Name
+                      <input
+                        type="text"
+                        name="policy_name"
+                        value={editformData.policy_name}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+                    <label>
                       Policy Type
                       <input
                         type="text"
                         name="policytype"
                         value={editformData.policytype}
-                        onChange={handleEditInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Contact
-                      <input
-                        type="text"
-                        name="contactinfo"
-                        value={editformData.contactinfo}
                         onChange={handleEditInputChange}
                       />
                     </label>
@@ -1689,121 +1469,11 @@ function PolicyList() {
                         <span className="file-name">
                           {editformData.document
                             ? typeof editformData.document === "object"
-                              ? editformData.document.name // Access the 'name' property of the File object
-                              : editformData.document.split("/").pop() // Extract the file name from the URL
+                              ? editformData.document.name
+                              : editformData.document.split("/").pop()
                             : "No file chosen"}
                         </span>
                       </div>
-                    </label>
-
-                    <label>
-                      Registered Date
-                      <input
-                        type="text"
-                        name="companyregyear"
-                        value={editformData.companyregyear}
-                        onChange={handleEditInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Location
-                      <input
-                        type="text"
-                        name="location"
-                        value={editformData.location}
-                        onChange={handleEditInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Website
-                      <input
-                        type="text"
-                        name="website"
-                        value={editformData.website}
-                        onChange={handleEditInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Job Title
-                      <input
-                        type="text"
-                        name="jobtitle"
-                        value={editformData.jobtitle}
-                        onChange={handleEditInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Banner
-                      <input
-                        type="text"
-                        name="banner"
-                        value={editformData.banner}
-                        onChange={handleEditInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Salary Range
-                      <input
-                        type="text"
-                        name="salaryrange"
-                        value={editformData.salaryrange}
-                        onChange={handleEditInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Average Rating
-                      <input
-                        type="number"
-                        name="average_rating"
-                        value={editformData.average_rating}
-                        onChange={handleEditInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Total Ratings
-                      <input
-                        type="number"
-                        name="total_ratings"
-                        value={editformData.total_ratings}
-                        onChange={handleEditInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Experties Required
-                      <input
-                        type="text"
-                        name="expertiesreq"
-                        value={editformData.expertiesreq}
-                        onChange={handleEditInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Employee Type
-                      <input
-                        type="text"
-                        name="emploeType"
-                        value={editformData.emploeType}
-                        onChange={handleEditInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Policy Deadline
-                      <input
-                        type="text"
-                        name="policydeadline"
-                        value={editformData.policydeadline}
-                        onChange={handleEditInputChange}
-                      />
                     </label>
 
                     <label>
@@ -1859,7 +1529,6 @@ function PolicyList() {
                 </div>
               </div>
             )}
-
             <div className="company-list-container">
               {viewType === "table" && (
                 <div className="table-container">

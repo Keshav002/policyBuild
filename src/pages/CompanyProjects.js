@@ -640,7 +640,7 @@ function CompanyProjects() {
 
   const handleDeleteProjectClick = async (projectId) => {
     try {
-      const response = await fetch(`${API_URL}/main/projects/${projectId}`, {
+      const response = await fetch(`${API_URL}/main/projects/${projectId}/`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${Cookies.get("accessToken")}`,

@@ -26,11 +26,8 @@ function PolicyPdfCard({
       );
     }
   };
-
-  // useEffect(() => {
-  //   console.log("Setting documentUrl in localStorage:", documentUrl);
-  //   localStorage.setItem("documentUrls", documentUrl);
-  // }, [documentUrl]);
+  
+  
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -84,7 +81,7 @@ function PolicyPdfCard({
         <div className="ppc_policy-name">
           {policy && (
             <>
-              {policy.policytype}
+              {policy.policy_name}
 
               {isCompanyRole && (
                 <BsThreeDotsVertical
@@ -132,9 +129,9 @@ function PolicyPdfCard({
       <div className="ppc_info">
         {policy && (
           <>
-            <div className="ppc_detail">Contact: {policy.contactinfo}</div>
-            <div className="ppc_detail">Location: {policy.location}</div>
-            <div className="ppc_detail">Website: {policy.website}</div>
+             <div className="ppc_detail">Policy Type: {policy.policytype}</div>
+            <div className="ppc_detail">Description: {policy.description}</div>
+            <div className="ppc_detail">Assigned To: {policy.assigned_to}</div>
             {/* <div className="ppc_detail">
               Score: {policy.average_rating} out of {policy.total_ratings}
             </div> */}

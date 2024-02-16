@@ -13,23 +13,11 @@ export const DataTable = ({ data, handleDelete, openEditForm, userRole }) => {
     () => [
       {
         Header: "Policy Name",
+        accessor: "policy_name",
+      },
+      {
+        Header: "Policy Type",
         accessor: "policytype",
-      },
-      {
-        Header: "Contact",
-        accessor: "contactinfo",
-      },
-      {
-        Header: "Location",
-        accessor: "location",
-      },
-      {
-        Header: "Website",
-        accessor: "website",
-      },
-      {
-        Header: "Score",
-        accessor: "average_rating",
       },
       {
         Header: "Document",
