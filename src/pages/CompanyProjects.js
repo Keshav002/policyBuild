@@ -34,12 +34,7 @@ function CompanyProjects() {
   const loggedInUserId = useSelector((state) => state.user.userData.user_id);
   const userData = useSelector((state) => state.user.userData);
   const companyId = userData?.company?.id;
-  // useEffect(() => {
-  //   setFormData({
-  //     ...formData,
-  //     company: companyId,
-  //   });
-  // }, [companyId]);
+  
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -488,6 +483,15 @@ function CompanyProjects() {
 
   const [formData, setFormData] = useState({
     company: "",
+    project_type: "",
+    website: "",
+    banner: "",
+    employee_type: "",
+    salaryrange: "",
+    location: "",
+    contactinfo: "",
+    companyregyear: "",
+    tags: "",
     name: "",
     description: "",
     start_date: "",
@@ -515,7 +519,6 @@ function CompanyProjects() {
     setisAddProjectOpen(true);
   };
 
-
   const handleAddProject = async () => {
     try {
       const response = await fetch(`${API_URL}/main/projects/`, {
@@ -531,8 +534,18 @@ function CompanyProjects() {
       });
 
       if (response.ok) {
-        fetchProjects()
+        fetchProjects();
         setFormData({
+          company: "",
+          project_type: "",
+          website: "",
+          banner: "",
+          employee_type: "",
+          salaryrange: "",
+          location: "",
+          contactinfo: "",
+          companyregyear: "",
+          tags: "",
           name: "",
           description: "",
           start_date: "",
@@ -594,7 +607,7 @@ function CompanyProjects() {
           Authorization: `Bearer ${Cookies.get("accessToken")}`,
         },
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         setProjects(data);
@@ -605,11 +618,6 @@ function CompanyProjects() {
       console.error("Error:", error);
     }
   };
-  
-  
-
-  
-
 
   useEffect(() => {
     fetchConsultants();
@@ -618,25 +626,20 @@ function CompanyProjects() {
 
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const handleConsultantSelect = (consultantId) => {
-    
     if (formData.assigned_to.includes(consultantId)) {
-      
       setFormData((prevData) => ({
         ...prevData,
         assigned_to: prevData.assigned_to.filter((id) => id !== consultantId),
       }));
     } else {
-      
       setFormData((prevData) => ({
         ...prevData,
         assigned_to: [...prevData.assigned_to, consultantId],
       }));
     }
-   
-    // setDropdownOpen(false);
-  };
 
- 
+    setDropdownOpen(false);
+  };
 
   const handleDeleteProjectClick = async (projectId) => {
     try {
@@ -649,36 +652,43 @@ function CompanyProjects() {
       if (response.ok) {
         console.log("Project deleted successfully!");
         fetchProjects();
-        // Swal.fire({
-        //   icon: "success",
-        //   title: "Project Deleted Successfully!",
-        //   showConfirmButton: false,
-        //   timer: 1500,
-        // });
+        Swal.fire({
+          icon: "success",
+          title: "Project Deleted Successfully!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
       } else {
         console.error("Failed to delete project. Status:", response.status);
-  
-        // Swal.fire({
-        //   icon: "error",
-        //   title: "Error",
-        //   text: "Failed to delete project. Please try again.",
-        // });
+
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to delete project. Please try again.",
+        });
       }
     } catch (error) {
       console.error("Error:", error);
-  
-      // Swal.fire({
-      //   icon: "error",
-      //   title: "Error",
-      //   text: "An error occurred. Please try again.",
-      // });
+
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An error occurred. Please try again.",
+      });
     }
   };
-  
-
 
   const [editformData, setEditFormData] = useState({
     company: "",
+    project_type: "",
+    website: "",
+    banner: "",
+    employee_type: "",
+    salaryrange: "",
+    location: "",
+    contactinfo: "",
+    companyregyear: "",
+    tags: "",
     name: "",
     description: "",
     start_date: "",
@@ -687,8 +697,6 @@ function CompanyProjects() {
   });
 
   const [editedProjectId, setEditedProjectId] = useState(null);
-
-  
 
   const handleEditInputChange = (e) => {
     const { name, value, type } = e.target;
@@ -706,7 +714,6 @@ function CompanyProjects() {
 
   const [isEditProjectOpen, setisEditProjectOpen] = useState(false);
 
- 
   const handleEditFormClick = async () => {
     try {
       if (!editedProjectId) {
@@ -714,7 +721,6 @@ function CompanyProjects() {
         return;
       }
 
-      
       const originalProject = projects.find(
         (project) => project.id === editedProjectId
       );
@@ -724,20 +730,17 @@ function CompanyProjects() {
         return;
       }
 
-      
       const updatedFields = {};
 
-     
       for (const key in editformData) {
         if (editformData[key] !== originalProject[key]) {
           updatedFields[key] = editformData[key];
         }
       }
 
-      console.log("editedProjectId:", editedProjectId);
-      console.log("editformData:", editformData);
+      // console.log("editedProjectId:", editedProjectId);
+      // console.log("editformData:", editformData);
 
-      
       const response = await fetch(
         `${API_URL}/main/projects/${editedProjectId}/`,
         {
@@ -749,27 +752,24 @@ function CompanyProjects() {
           body: JSON.stringify(updatedFields),
         }
       );
-      if(response.ok){
+      if (response.ok) {
         fetchProjects();
         setisEditProjectOpen(false);
-      }
-      else {
+      } else {
         console.error("Failed to update project. Status:", response.status);
-        // Swal.fire({
-        //   icon: "error",
-        //   title: "Error",
-        //   text: "Failed to update project. Please try again.",
-        // });
-        
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to update project. Please try again.",
+        });
       }
     } catch (error) {
       console.error("Error updating project:", error);
-      // Swal.fire({
-      //   icon: "error",
-      //   title: "Error",
-      //   text: "An error occurred. Please try again.",
-      // });
-      
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An error occurred. Please try again.",
+      });
     }
   };
 
@@ -786,7 +786,6 @@ function CompanyProjects() {
     }
   };
 
-  
   return (
     <>
       <div className="company-list-page">
@@ -1196,13 +1195,22 @@ function CompanyProjects() {
                   >
                     <RxCross2 />
                   </button>
-
+                  <div style={{ maxHeight: '400px', overflowY: 'auto', overflowX: 'hidden' }}>
                   <label>
                     Project Name
                     <input
                       type="text"
                       name="name"
                       value={formData.name}
+                      onChange={handleInputChange}
+                    />
+                  </label>
+                  <label>
+                    Project Type
+                    <input
+                      type="text"
+                      name="project_type"
+                      value={formData.project_type}
                       onChange={handleInputChange}
                     />
                   </label>
@@ -1252,6 +1260,103 @@ function CompanyProjects() {
                   </label>
 
                   <label>
+                      Contact
+                      <input
+                        type="text"
+                        name="contactinfo"
+                        value={formData.contactinfo}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Registered Date
+                      <input
+                        type="text"
+                        name="companyregyear"
+                        value={formData.companyregyear}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+
+                    <label>
+                      Location
+                      <input
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+
+                    <label>
+                      Website
+                      <input
+                        type="text"
+                        name="website"
+                        value={formData.website}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+
+                    <label>
+                      Job Title
+                      <input
+                        type="text"
+                        name="jobtitle"
+                        value={formData.jobtitle}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+
+                    <label>
+                      Banner
+                      <input
+                        type="text"
+                        name="banner"
+                        value={formData.banner}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+
+                    <label>
+                      Salary Range
+                      <input
+                        type="text"
+                        name="salaryrange"
+                        value={formData.salaryrange}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Experties Required
+                      <input
+                        type="text"
+                        name="expertiesreq"
+                        value={formData.expertiesreq}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+
+                    <label>
+                      Employee Type
+                      <input
+                        type="text"
+                        name="employee_type"
+                        value={formData.employee_type}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+
+                  <label>
                     Start Date
                     <input
                       type="date"
@@ -1276,6 +1381,7 @@ function CompanyProjects() {
                   </div>
                 </div>
               </div>
+              </div>
             )}
 
             {isEditProjectOpen && (
@@ -1288,13 +1394,23 @@ function CompanyProjects() {
                   >
                     <RxCross2 />
                   </button>
-
+                  <div style={{ maxHeight: '400px', overflowY: 'auto', overflowX: 'hidden' }}>
                   <label>
                     Project Name
                     <input
                       type="text"
                       name="name"
                       value={editformData.name}
+                      onChange={handleEditInputChange}
+                    />
+                  </label>
+
+                  <label>
+                    Project Type
+                    <input
+                      type="text"
+                      name="project_type"
+                      value={editformData.project_type}
                       onChange={handleEditInputChange}
                     />
                   </label>
@@ -1344,6 +1460,103 @@ function CompanyProjects() {
                   </label>
 
                   <label>
+                      Contact
+                      <input
+                        type="text"
+                        name="contactinfo"
+                        value={editformData.contactinfo}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Registered Date
+                      <input
+                        type="text"
+                        name="companyregyear"
+                        value={editformData.companyregyear}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+
+                    <label>
+                      Location
+                      <input
+                        type="text"
+                        name="location"
+                        value={editformData.location}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+
+                    <label>
+                      Website
+                      <input
+                        type="text"
+                        name="website"
+                        value={formData.website}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+
+
+                    <label>
+                      Job Title
+                      <input
+                        type="text"
+                        name="jobtitle"
+                        value={editformData.jobtitle}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+
+                    <label>
+                      Banner
+                      <input
+                        type="text"
+                        name="banner"
+                        value={editformData.banner}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+
+                    <label>
+                      Salary Range
+                      <input
+                        type="text"
+                        name="salaryrange"
+                        value={editformData.salaryrange}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Experties Required
+                      <input
+                        type="text"
+                        name="expertiesreq"
+                        value={editformData.expertiesreq}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+
+                    <label>
+                      Employee Type
+                      <input
+                        type="text"
+                        name="employee_type"
+                        value={editformData.employee_type}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+
+                  <label>
                     Start Date
                     <input
                       type="date"
@@ -1368,13 +1581,13 @@ function CompanyProjects() {
                   </div>
                 </div>
               </div>
+              </div>
             )}
 
             <div className="company-list-container">
               {viewType === "table" && (
                 <div className="table-container">
                   {projects && projects.length > 0 ? (
-                    
                     <DataTable
                       data={projects}
                       handleDeleteProjectClick={handleDeleteProjectClick}
@@ -1396,10 +1609,9 @@ function CompanyProjects() {
                         projectId={project.id}
                         handleEditFormClick={handleEditFormClick}
                         openEditForm={openEditForm}
-                        handleDeleteProjectClick={() =>{
-                          handleDeleteProjectClick(project.id)
-                        }
-                        }
+                        handleDeleteProjectClick={() => {
+                          handleDeleteProjectClick(project.id);
+                        }}
                         isEditFormOpen={isEditFormOpen}
                       />
                     ))}
@@ -1408,7 +1620,6 @@ function CompanyProjects() {
                     companies.paginated_results?.map((company, index) => (
                       <CompanyCard key={index} company={company} />
                     ))} */}
-                  
                 </div>
               )}
               <hr />

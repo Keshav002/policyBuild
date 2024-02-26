@@ -7,11 +7,21 @@ import { AiFillDelete } from "react-icons/ai";
 import { BiSolidEdit } from "react-icons/bi";
 
 function PolicyCard({
+  company,
+  project_type,
+  website,
+  banner,
+  employee_type,
+  salaryrange,
+  location,
+  contactinfo,
+  companyregyear,
+  tags,
   name,
-  assigned_to,
   description,
   start_date,
   end_date,
+  assigned_to,
 
   isEditFormOpen,
   projectId,
@@ -105,6 +115,7 @@ function PolicyCard({
       )}
       {/* Details */}
       <div className="pc_info">
+      {/* <div className="pc_detail">Project Type: {project_type}</div> */}
         <div className="pc_detail">Assigned To: {assigned_to.join(", ")}</div>
         <div className="pc_detail">Description: {description}</div>
         <div className="pc_detail">Start Date: {start_date}</div>

@@ -28,8 +28,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { RxCross2 } from "react-icons/rx";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import { useDebounceCallback } from "@react-pdf-viewer/core";
-import PdfViewer from "../components/PdfViewer";
+import Breadcrumbs from "../components/Breadcrumbs"; 
 
 function PolicyList() {
   const loggedInUserId = useSelector((state) => state.user.userData.user_id);
@@ -487,7 +486,7 @@ function PolicyList() {
     );
   };
 
-  const [projectId, setProjectId] = useState(null);
+  const {projectId} = useParams();
   const location = useLocation();
   const [isEditPolicyOpen, setisEditPolicyOpen] = useState(false);
   const [editedPolicyId, setEditedPolicyId] = useState(null);
@@ -600,20 +599,20 @@ function PolicyList() {
     [setEditFormData]
   );
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const id = params.get("projectId");
-    if (!id) {
-      const storedProjectId = localStorage.getItem("projectId");
-      if (storedProjectId) {
-        setProjectId(storedProjectId);
-      } else {
-        console.error("Project ID is missing.");
-      }
-    } else {
-      setProjectId(id);
-    }
-  }, [location.search]);
+  // useEffect(() => {
+  //   const params = new URLSearchParams(location.search);
+  //   const id = params.get("projectId");
+  //   if (!id) {
+  //     const storedProjectId = localStorage.getItem("projectId");
+  //     if (storedProjectId) {
+  //       setProjectId(storedProjectId);
+  //     } else {
+  //       console.error("Project ID is missing.");
+  //     }
+  //   } else {
+  //     setProjectId(id);
+  //   }
+  // }, [location.search]);
 
   useEffect(() => {
     if (projectId) {
@@ -943,6 +942,9 @@ function PolicyList() {
 
           {/* <div className="cp_current_report_name">{currentReportName}</div> */}
           <div className="cp_search_container">
+          <div style={{ marginRight: "10px" }}>
+              <Breadcrumbs />
+            </div>
             <input
               type="text"
               placeholder="Search by tags..."

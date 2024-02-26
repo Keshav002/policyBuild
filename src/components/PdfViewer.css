@@ -370,6 +370,7 @@
 .pdf_sidebar {
   width: 25%;
   padding: 20px;
+  padding-top: 0px;
   max-height: 100vh;
   background-color: #f6f5f5;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
@@ -669,4 +670,42 @@ strong {
 
 .pdf-viewer-back-button:hover {
   background-color: #333333;
+}
+
+
+.pdf-viewer-tabs-container {
+  display: flex;
+  justify-content: space-evenly; 
+  align-items: center; 
+  border-bottom: 1px solid #ccc; 
+  padding: 10px;
+  background-color: #dddddd;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+}
+
+.pdf-view-tab {
+  cursor: pointer;
+  padding: 10px;
+  margin-right: 20px;
+  font-size: 16px;
+  color: #949494; 
+  transition: color 0.3s ease-in-out; 
+}
+
+.pdf-view-tab:hover {
+  color: #424242;
+}
+
+.pdf-view-tab.active {
+  border-bottom: 2px solid #393939; 
+  color: #484848;
+}
+
+.pdf-viewer-logs-container{
+  position: relative;
+  top: 80px;
+  padding: 0px;
 }

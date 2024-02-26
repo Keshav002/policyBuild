@@ -27,7 +27,11 @@ import "@react-pdf-viewer/core/lib/styles/index.css";
 import { useSelector } from "react-redux";
 import { DataTable } from "./ReviewData";
 
-import { MdOutlinePictureAsPdf, MdOutlineDelete } from "react-icons/md";
+import {
+  MdOutlinePictureAsPdf,
+  MdOutlineDelete,
+  MdReviews,
+} from "react-icons/md";
 import { Breadcrumb } from "antd";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
@@ -77,7 +81,7 @@ const DialogBox = ({ onClose, onAddNote }) => {
     </div>
   );
 };
-function CompanyPdfViewer() {
+function PdfViewer() {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [viewType, setViewType] = useState("pagination");
@@ -96,12 +100,14 @@ function CompanyPdfViewer() {
 
   const { policyId, projectId } = useParams();
   const [policy, setPolicy] = useState(null);
+  const [policyLogs, setPolicyLogs] = useState(null);
   const [policyDetails, setPolicyDetails] = useState([]);
 
   useEffect(() => {
     if (policyId && projectId) {
       fetchPolicy(policyId, projectId);
       fetchPolicyDetails(policyId, projectId);
+      fetchPolicyLogs(policyId);
     }
   }, [policyId, projectId]);
 
@@ -117,7 +123,7 @@ function CompanyPdfViewer() {
           },
         }
       );
-  
+
       if (response.ok) {
         const policyData = await response.json();
         setPolicy(policyData);
@@ -128,8 +134,38 @@ function CompanyPdfViewer() {
       console.error("Error:", error);
     }
   };
-  
-  
+  const fetchPolicyLogs = async (policyId) => {
+    console.log("fetchpolicyLogs");
+    try {
+      const response = await fetch(
+        `${API_URL}/main/policies/${policyId}/logs/`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("accessToken")}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const policyLogData = await response.json();
+        console.log("Policy Log Data", policyLogData);
+        const formattedJson = JSON.stringify(policyLogData, null, 3);
+        setPolicyLogs(formattedJson);
+
+        return policyLogData;
+      } else {
+        console.error("Failed to fetch policy data. Status:", response.status);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      return null;
+    }
+  };
+
+
   const fetchPolicyDetails = async (policyId, projectId) => {
     try {
       const response = await fetch(
@@ -185,19 +221,7 @@ function CompanyPdfViewer() {
         const data = await response.json();
         console.log("Reviews", data);
 
-        const storedReviews = JSON.parse(localStorage.getItem("reviews")) || [];
-        const formattedReviews = data.map((review) => ({
-          id: review.id,
-          source: review.source,
-          rating: review.rating,
-          comment: review.comment,
-        }));
-
-        setAddedData([...storedReviews, ...formattedReviews]);
-
-        return {
-          fetchedReviews: formattedReviews,
-        };
+        setReviews(data);
       } else {
         console.error("Failed to fetch data. Status:", response.status);
         return null;
@@ -221,11 +245,7 @@ function CompanyPdfViewer() {
       );
 
       if (response.ok) {
-        const updatedData = addedData.filter(
-          (review) => review.id !== reviewId
-        );
-        setAddedData(updatedData);
-
+        fetchReviews();
         Swal.fire({
           icon: "success",
           title: "Review Deleted Successfully!",
@@ -240,13 +260,12 @@ function CompanyPdfViewer() {
     }
   };
 
-
   const handleEditReviews = async (editedreviewId) => {
     // setLoading(true);
     try {
       const editedFields = {};
 
-      const originalReview = addedData.find(
+      const originalReview = reviews.find(
         (review) => review.id === editedreviewId
       );
 
@@ -277,20 +296,7 @@ function CompanyPdfViewer() {
           const updatedReviewData = await response.json();
           console.log("Review updated:", updatedReviewData);
 
-          setAddedData((prevData) => {
-            return prevData.map((review) => {
-              if (review.id === editedreviewId) {
-                return {
-                  id: review.id,
-                  source: editedFields.source || review.source,
-                  rating: editedFields.rating || review.rating,
-                  comment: editedFields.comment || review.comment,
-                };
-              } else {
-                return review;
-              }
-            });
-          });
+          fetchReviews();
 
           Swal.fire({
             icon: "success",
@@ -309,7 +315,6 @@ function CompanyPdfViewer() {
     } catch (error) {
       console.error("Error updating review:", error);
     } finally {
-      // setLoading(false);
     }
   };
   const [editedData, setEditedData] = useState([]);
@@ -325,6 +330,7 @@ function CompanyPdfViewer() {
   }
 
   const [editedreviewId, seteditedreviewId] = useState(null);
+
   const handleEditInputChange = (e) => {
     const { name, value } = e.target;
     setEditedPolicy((prevEditedPolicy) => ({
@@ -350,7 +356,7 @@ function CompanyPdfViewer() {
     seteditedreviewId(reviewId);
     console.log("Review ID selected for editing:", editedreviewId);
 
-    const selectedReview = addedData.find((review) => review.id === reviewId);
+    const selectedReview = reviews.find((review) => review.id === reviewId);
 
     setEditedPolicy({
       source: selectedReview.source,
@@ -361,37 +367,14 @@ function CompanyPdfViewer() {
     setIsModalOpen(true);
   };
 
-  useEffect(() => {
-    if (policyId) {
-      const fetchData = async () => {
-        try {
-          const { fetchedReviews } = await fetchReviews();
-          if (Array.isArray(fetchedReviews)) {
-            setEditedData(
-              fetchedReviews.map((review) => ({
-                policyName: review.policyName,
-                rating: review.rating,
-                comment: review.comment,
-              }))
-            );
-            localStorage.setItem("reviews", JSON.stringify(fetchedReviews));
-          } else {
-            console.error("Error fetching reviews: Data is not an array");
-          }
-        } catch (error) {
-          console.error("Error fetching reviews:", error);
-        }
-      };
-      fetchData();
-    }
-  }, [policyId]);
-
   const [addedData, setAddedData] = useState([]);
   const [addedReview, setAddedReview] = useState({
     source: "",
     rating: "",
     comment: "",
   });
+  const [reviews, setReviews] = useState({});
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setAddedReview((prevPolicy) => ({
@@ -421,29 +404,7 @@ function CompanyPdfViewer() {
       if (response.ok) {
         const responseData = await response.json();
         console.log("Review created:", responseData);
-
-        const reviewData = responseData.data;
-
-        if (
-          reviewData &&
-          !addedData.some((review) => review.id === reviewData.id)
-        ) {
-          setAddedData((prevData) => [
-            ...prevData,
-            {
-              id: reviewData.id,
-              source: reviewData.source,
-              rating: reviewData.rating,
-              comment: reviewData.comment,
-            },
-          ]);
-        }
-
-        setAddedReview({
-          source: "",
-          rating: "",
-          comment: "",
-        });
+        fetchReviews();
 
         Swal.fire({
           icon: "success",
@@ -460,7 +421,6 @@ function CompanyPdfViewer() {
       console.error("Error creating review:", error);
     }
   };
-
 
   const toggleView = (type) => {
     setViewType(type);
@@ -574,18 +534,7 @@ function CompanyPdfViewer() {
     }
   }, [selectedPolicy]);
 
-  // const [editedPolicy, setEditedPolicy] = useState({
-  //   policyName: "",
-  //   rating: "",
-  //   comment: "",
-  // });
-
-  // const [editedData, setEditedData] = useState([]);
-
   
-
-  
-
   const closeModal = () => {
     setIsModalOpen(false);
   };
@@ -603,15 +552,13 @@ function CompanyPdfViewer() {
     }
   };
 
- 
-
   const handleDeleteNote = (index) => {
     const updatedNotesList = [...userNotesList];
     updatedNotesList.splice(index, 1);
     setUserNotesList(updatedNotesList);
   };
   const handleGoBack = () => {
-    navigate(-1); // Navigate back in the history
+    navigate(-1); 
   };
 
   const { documentUrl } = useParams();
@@ -627,6 +574,12 @@ function CompanyPdfViewer() {
 
   const onDocumentLoadError = (error) => {
     console.error("Error loading document:", error.message);
+  };
+
+  const [activeTab, setActiveTab] = useState('workspace');
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
   };
 
   return (
@@ -751,31 +704,15 @@ function CompanyPdfViewer() {
         </div>
 
         <div className="pdfview_content_container">
-          {/* {viewType === "pagination" && (
-            <div
-              className="pdfview_pagination"
-              style={{ marginLeft: isExtended ? "160px" : "0px" }}
-            >
-              {documentUrl && (
-              <Document file={decodeURIComponent(documentUrl)}
-              onLoadSuccess={onDocumentLoadSuccess} >
-                <Page
-                  pageNumber={pageNumber}
-                  height={0}
-                  width={919}
-                  scale={scale}
-                />
-                // file={"/Sample.pdf"}
-              </Document>
-              )}
-            </div>
-          )} */}
+          
 
           {viewType === "pagination" && (
-            <div className="pdfview_pagination">
+            <div className="pdfview_pagination"
+            style={{ marginLeft: isExtended ? "160px" : "0px" }}
+            >
               <Document
                 file={policy && policy.document}
-                // file={'http://localhost:8000/policy_documents/Final_Report.pdf'}
+                
                 onLoadSuccess={onDocumentLoadSuccess}
                 onLoadError={onDocumentLoadError}
               >
@@ -810,41 +747,28 @@ function CompanyPdfViewer() {
             </>
           )}
 
-          {/* {viewType === "scrollbar" && (
-            <div
-              className="pdfview_scrollbar"
-              style={{ marginLeft: isExtended ? "160px" : "0px" }}
-            >
-              <Document
-                file="/Sample.pdf"
-                onLoadSuccess={onDocumentLoadSuccess}
-              >
-                {Array.from(new Array(numPages), (el, index) => (
-                  <Page
-                    key={`page_${index + 1}`}
-                    pageNumber={index + 1}
-                    height={800}
-                    width={925}
-                    scale={scale}
-                  />
-                ))}
-              </Document>
-            </div>
-          )} */}
         </div>
 
         <div className={`pdf_sidebar${isDialogOpen ? " dialog-open" : ""}`}>
-          <div className="pdf-content-container">
-            <FaUserLarge
-              className="pdf_sidebar_heading_icon"
-              style={{ marginRight: "5px" }}
-            />
-            <p className="pdf_sidebar_heading" style={{ marginRight: "240px" }}>
-              Policy Reviews
-            </p>
-          </div>
+          {/* <div className="pdf-content-container"> */}
+          <div className="pdf-viewer-tabs-container">
+              <div
+                className={`pdf-view-tab ${activeTab === "workspace" ? "active" : ""}`}
+                onClick={() => handleTabClick("workspace")}
+              >
+                Workspace
+              </div>
+              <div
+                className={`pdf-view-tab ${activeTab === "logs" ? "active" : ""}`}
+                onClick={() => handleTabClick("logs")}
+              >
+                Logs
+              </div>
+            </div>
+          {/* </div> */}
+          {activeTab === 'workspace' ? (
           <div className="pdf_sidebar_content">
-            
+           
             <h2
               style={{
                 position: "relative",
@@ -869,7 +793,7 @@ function CompanyPdfViewer() {
             <div className="policy-details-container">
               <table className="policy-details-container-table">
                 <tbody>
-                  {policyDetails.map((detail, index) => (
+                  { policyDetails.map((detail, index) => (
                     <tr key={index}>
                       <td
                         className={
@@ -898,7 +822,7 @@ function CompanyPdfViewer() {
               </h2>
             </div>
 
-            {/* {isAddModalOpen && (
+            {isAddModalOpen && (
               <div className="pdf-popup-table-overlay">
                 <div className="pdf_edit_table_popup">
                   <div className="custom-modal-overlay" onClick={closeModal}>
@@ -1022,12 +946,11 @@ function CompanyPdfViewer() {
                 </div>
               </div>
             )}
- */}
 
             <div>
-              {addedData.length > 0 ? (
+              {reviews.length > 0 ? (
                 <DataTable
-                  data={addedData}
+                  data={reviews}
                   handleDeleteReview={handleDeleteReview}
                   handleEditButtonClick={handleEditButtonClick}
                 />
@@ -1038,10 +961,11 @@ function CompanyPdfViewer() {
               )}
             </div>
           </div>
+           ) : (<div className="pdf-viewer-logs-container"><pre>{policyLogs}</pre></div>)}
         </div>
       </div>
     </>
   );
 }
 
-export default CompanyPdfViewer;
+export default PdfViewer;
