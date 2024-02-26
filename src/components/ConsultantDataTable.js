@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useTable } from "react-table";
-import MOCK_DATA from "../assets/MOCK_DATAA.json";
+
 import "./DataTable.css"; // Import the CSS file
 import { Link, useNavigate } from "react-router-dom";
 

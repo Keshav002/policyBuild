@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { MdPolicy } from 'react-icons/md';
 import './PolicyCard.css';

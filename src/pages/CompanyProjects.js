@@ -1545,7 +1545,7 @@ function CompanyProjects() {
                     </label>
 
 
-                    <label>
+                    {/* <label>
                       Employee Type
                       <input
                         type="text"
@@ -1553,7 +1553,7 @@ function CompanyProjects() {
                         value={editformData.employee_type}
                         onChange={handleEditInputChange}
                       />
-                    </label>
+                    </label> */}
 
 
                   <label>

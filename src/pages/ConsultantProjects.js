@@ -552,7 +552,7 @@ function ConsultantProjects() {
         // Here, you can handle the policy posts IDs as needed, such as storing them in state or processing them further
       } else {
         console.error("Failed to fetch projects. Status:", response.status);
-        // Handle the error
+        
       }
     } catch (error) {
       console.error("Error fetching projects:", error);

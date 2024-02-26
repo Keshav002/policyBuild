@@ -31,6 +31,7 @@ export const DataTable = ({ data, handleDeleteProjectClick, openEditForm }) => {
         Header: "End Date",
         accessor: "end_date",
       },
+      
       {
         Header: "Action",
         accessor: "policy_posts_id",

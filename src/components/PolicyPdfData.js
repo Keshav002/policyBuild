@@ -39,6 +39,7 @@ export const DataTable = ({ data, handleDelete, openEditForm, userRole }) => {
           return date.toLocaleDateString(); 
         },
       },
+      
       isCompanyRole && { 
         Header: "Actions",
         id: "actions", 

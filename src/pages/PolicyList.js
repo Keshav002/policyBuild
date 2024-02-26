@@ -940,7 +940,7 @@ function PolicyList() {
             </CustomTooltip>
           </div>
 
-          {/* <div className="cp_current_report_name">{currentReportName}</div> */}
+          
           <div className="cp_search_container">
           <div style={{ marginRight: "10px" }}>
               <Breadcrumbs />

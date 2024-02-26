@@ -624,9 +624,7 @@ function PdfViewer() {
 
           {/* </div> */}
 
-          {/* <button className="pdf-viewer-back-button" onClick={handleGoBack}>
-            <FaArrowLeft className="arrow-icon" />
-          </button> */}
+          
 
           <div style={{ display: "flex", alignItems: "center" }}>
             <Breadcrumbs />
