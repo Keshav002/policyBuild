@@ -956,8 +956,8 @@ function CompanyList() {
                 </div>
               )}
 
-              <hr />
-              <div className="company_list_pagination_container">
+              {/* <hr /> */}
+              {/* <div className="company_list_pagination_container">
                 <>
                   <Pagination
                     total={companies.company_total_hits}
@@ -972,7 +972,7 @@ function CompanyList() {
                     pageSizeOptions={[2, 4, 6, 8]}
                   />
                 </>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

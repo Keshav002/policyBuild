@@ -266,12 +266,11 @@
 }
 .consultant_profile_edit_popup {
   background-color: #fff;
-  width: 500px;
-  max-height: 500px;
-
+  width: 585px;
+  max-height: 700px;
   overflow: auto;
-  border-radius: 20px;
-  padding: 20px;
+  border-radius: 16px;
+  padding: 12px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   position: absolute;
   top: 50%;
@@ -284,15 +283,19 @@
   background: transparent; /* Optional: just make scrollbar invisible */
 }
 
-.company-profile-rating-popup {
-  position: relative;
+.consultant_profile_edit_popup {
   background-color: #fff;
-  padding: 20px;
-  border: 1px solid #ccc;
+  width: 585px;
+  max-height: 700px;
+  overflow: auto;
+  border-radius: 16px;
+  padding: 12px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 1000;
-  width: 300px;
-  border-radius: 10px;
 }
 
 .consultant_profile_edit_popup label {

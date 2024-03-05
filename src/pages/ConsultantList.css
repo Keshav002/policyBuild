@@ -12,11 +12,10 @@
 .company_lists_cards {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: space-evenly;
     position: relative;
     flex: 1;
     margin-bottom: 20px;
-
   }
   .company_lists.with-sidebar {
     margin-left: 300px; 

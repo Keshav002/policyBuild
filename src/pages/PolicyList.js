@@ -28,7 +28,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { RxCross2 } from "react-icons/rx";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import Breadcrumbs from "../components/Breadcrumbs"; 
+import Breadcrumbs from "../components/Breadcrumbs";
 
 function PolicyList() {
   const loggedInUserId = useSelector((state) => state.user.userData.user_id);
@@ -486,7 +486,7 @@ function PolicyList() {
     );
   };
 
-  const {projectId} = useParams();
+  const { projectId } = useParams();
   const location = useLocation();
   const [isEditPolicyOpen, setisEditPolicyOpen] = useState(false);
   const [editedPolicyId, setEditedPolicyId] = useState(null);
@@ -598,31 +598,15 @@ function PolicyList() {
     },
     [setEditFormData]
   );
-
-  // useEffect(() => {
-  //   const params = new URLSearchParams(location.search);
-  //   const id = params.get("projectId");
-  //   if (!id) {
-  //     const storedProjectId = localStorage.getItem("projectId");
-  //     if (storedProjectId) {
-  //       setProjectId(storedProjectId);
-  //     } else {
-  //       console.error("Project ID is missing.");
-  //     }
-  //   } else {
-  //     setProjectId(id);
-  //   }
-  // }, [location.search]);
-
   useEffect(() => {
     if (projectId) {
-      fetchPolicies(projectId);
+      fetchPolicies();
     }
   }, [projectId]);
 
   const [documentUrls, setDocumentUrls] = useState([]);
 
-  const fetchPolicies = async (projectId) => {
+  const fetchPolicies = async () => {
     try {
       const response = await fetch(
         `${API_URL}/main/projects/${projectId}/policy_posts/`,
@@ -638,78 +622,20 @@ function PolicyList() {
       if (response.ok) {
         const data = await response.json();
         setPolicies(data);
-        localStorage.setItem("policies", JSON.stringify(data));
-        const urls = data.map((policy) => policy.document);
-        setDocumentUrls(urls);
-        localStorage.setItem("documentUrls", JSON.stringify(urls));
       } else {
         console.error("Failed to fetch policies. Status:", response.status);
-        setPolicies([]);
-        localStorage.setItem("policies", "[]");
-        localStorage.setItem("documentUrls", "[]");
       }
     } catch (error) {
       console.error("Error fetching policies:", error);
-      setPolicies([]);
-      localStorage.setItem("policies", "[]");
-      localStorage.setItem("documentUrls", "[]");
     }
-  };
-
-  console.log("Policies in PolicyList:", policies);
-
-  const policyIds = policies ? policies.map((policy) => policy.id) : [];
-  console.log("Policy IDs:", policyIds);
-
-  useEffect(() => {
-    localStorage.setItem("policies", JSON.stringify(policies));
-  }, [policies]);
-  useEffect(() => {
-    const storedPolicies = localStorage.getItem("policies");
-    if (storedPolicies) {
-      try {
-        const parsedPolicies = JSON.parse(storedPolicies);
-        setPolicies(parsedPolicies);
-      } catch (error) {
-        console.error("Error parsing stored policies:", error);
-        setPolicies([]);
-      }
-    } else {
-      setPolicies([]);
-    }
-  }, []);
-
-  const extractProjectIdFromURL = () => {
-    const url = window.location.href;
-
-    const match = url.match(/projectId=(\d+)/);
-    if (match && match[1]) {
-      const projectId = match[1];
-
-      localStorage.setItem("projectId", projectId);
-
-      return projectId;
-    }
-
-    return null;
   };
 
   const handleAddPolicy = async () => {
-    // Retrieve projectId from localStorage
-    const projectId = localStorage.getItem("projectId");
-
-    console.log("Current projectId in handleAddPolicy:", projectId);
-    if (!projectId) {
-      console.error("Project ID is missing.");
-      return;
-    }
-
     const formDataWithFile = new FormData();
     for (const key in formData) {
       formDataWithFile.append(key, formData[key]);
     }
     formDataWithFile.append("document", formData.document);
-
     try {
       const response = await fetch(
         `${API_URL}/main/projects/${projectId}/policy_posts/`,
@@ -724,7 +650,7 @@ function PolicyList() {
       if (response.ok) {
         const contentType = response.headers.get("content-type");
         clearFormData();
-        fetchPolicies(projectId);
+        fetchPolicies();
         handleCancelClick();
       } else {
         console.error("Failed to create policy. Status:", response.status);
@@ -734,7 +660,7 @@ function PolicyList() {
     }
   };
 
-  extractProjectIdFromURL();
+  // extractProjectIdFromURL();
 
   const [editedPolicy, setEditedPolicy] = useState(null);
   useEffect(() => {
@@ -761,13 +687,7 @@ function PolicyList() {
 
       if (response.ok) {
         console.log("Policy deleted successfully!");
-
-        const updatedPolicies = policies.filter(
-          (policy) => policy.id !== policyId
-        );
-        setPolicies(updatedPolicies);
-        localStorage.setItem("policies", JSON.stringify(updatedPolicies));
-
+        fetchPolicies();
         Swal.fire({
           icon: "success",
           title: "Policy Deleted Successfully!",
@@ -831,17 +751,9 @@ function PolicyList() {
           body: formDataWithFile,
         }
       );
-
       if (response.ok) {
         console.log("Policy updated successfully!");
-
-        const updatedPolicy = await response.json();
-
-        setPolicies((prevPolicies) =>
-          prevPolicies.map((policy) =>
-            policy.id === editedPolicyId ? updatedPolicy : policy
-          )
-        );
+        fetchPolicies();
 
         setisEditPolicyOpen(false);
 
@@ -885,7 +797,6 @@ function PolicyList() {
     setisAddPolicyOpen(false);
     setisEditPolicyOpen(false);
   };
-
 
   const [consultants, setConsultants] = useState([]);
   const fetchConsultants = async () => {
@@ -940,9 +851,8 @@ function PolicyList() {
             </CustomTooltip>
           </div>
 
-          
           <div className="cp_search_container">
-          <div style={{ marginRight: "10px" }}>
+            <div style={{ marginRight: "10px" }}>
               <Breadcrumbs />
             </div>
             <input
@@ -1316,17 +1226,15 @@ function PolicyList() {
               </div>
             )}
 
-            {userRole === "Company" && (
+            {viewType === "card" && userRole === "Company" && (
               <div className="company-list-heading">
-                <h1>
-                  Policy Lists
-                  <button
-                    className="company_project_add_edit_button"
-                    onClick={handleAddPolicyClick}
-                  >
-                    Create Policy
-                  </button>
-                </h1>
+                <h1>Policy Lists</h1>
+                <button
+                  className="company_project_add_edit_button"
+                  onClick={handleAddPolicyClick}
+                >
+                  Create Policy
+                </button>
               </div>
             )}
 
@@ -1541,7 +1449,7 @@ function PolicyList() {
                       handleEdit={handleEdit}
                       openEditForm={openEditForm}
                       projectId={projectId}
-                      policyId={policyIds}
+                      // policyId={policyIds}
                       editFormData={editformData}
                       userRole={userRole}
                       editedPolicyId={editedPolicyId}
@@ -1562,7 +1470,7 @@ function PolicyList() {
                         <PolicyPdfCard
                           policy={policy}
                           projectId={projectId}
-                          policyId={policyIds}
+                          // policyId={policyIds}
                           userRole={userRole}
                           handleDelete={() => handleDelete(policy.id)}
                           handleEdit={handleEdit}
@@ -1575,7 +1483,7 @@ function PolicyList() {
                 </div>
               )}
 
-              <hr />
+              {/* <hr /> */}
               <div className="company_list_pagination_container">
                 <>
                   {/* <Pagination

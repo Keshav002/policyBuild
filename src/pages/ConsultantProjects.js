@@ -987,21 +987,23 @@ function ConsultantProjects() {
               )}
 
               {viewType !== "table" && (
+                <div className="project-card-wrapper">
                 <div className="company_lists_cards">
                   {projects.map((project, index) => (
                     <Link
                       to={`/consultant-projects/${project.id}/policy-list`}
                       key={index}
-                      style={{ textDecoration: "none" }}
+                      style={{ textDecoration: "none", margin:'0' }}
                     >
                       <ConsultantPolicyCard project={project} />
                     </Link>
                   ))}
                 </div>
+                </div>
               )}
               
 
-              <hr />
+              {/* <hr /> */}
               <div className="company_list_pagination_container">
                 <>
                   {/* <Pagination

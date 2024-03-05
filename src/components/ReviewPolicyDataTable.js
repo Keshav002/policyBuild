@@ -68,7 +68,7 @@ export const DataTable = ({
   return (
     <div className="review-table-container">
       <table {...getTableProps()} className="custom-table">
-        <thead>
+        <thead style={{backgroundColor: "#858484"}}>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
@@ -83,7 +83,8 @@ export const DataTable = ({
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map((cell) => (
-                  <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                  <td style= {{ padding: "3px !important",
+                    fontSize: "12px"}} {...cell.getCellProps()}>{cell.render("Cell")}</td>
                 ))}
               </tr>
             );
@@ -93,12 +94,6 @@ export const DataTable = ({
     </div>
   );
 };
-
-
-
-
-
-
 
 
 

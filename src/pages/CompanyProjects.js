@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import PolicyCard from ".././components/PolicyCard";
 import Nav from ".././components/Nav";
 import "./CompanyList.css";
+import "./CompanyProjects.css";
 import { BsGrid } from "react-icons/bs";
 import { CiBoxList } from "react-icons/ci";
 import { AiOutlineFilter } from "react-icons/ai";
@@ -34,7 +35,7 @@ function CompanyProjects() {
   const loggedInUserId = useSelector((state) => state.user.userData.user_id);
   const userData = useSelector((state) => state.user.userData);
   const companyId = userData?.company?.id;
-  
+
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -491,7 +492,7 @@ function CompanyProjects() {
     location: "",
     contactinfo: "",
     companyregyear: "",
-    tags: "",
+    tags: [],
     name: "",
     description: "",
     start_date: "",
@@ -545,7 +546,7 @@ function CompanyProjects() {
           location: "",
           contactinfo: "",
           companyregyear: "",
-          tags: "",
+          tags: [],
           name: "",
           description: "",
           start_date: "",
@@ -688,7 +689,7 @@ function CompanyProjects() {
     location: "",
     contactinfo: "",
     companyregyear: "",
-    tags: "",
+    tags: [],
     name: "",
     description: "",
     start_date: "",
@@ -724,23 +725,16 @@ function CompanyProjects() {
       const originalProject = projects.find(
         (project) => project.id === editedProjectId
       );
-
       if (!originalProject) {
         console.error("Original project not found");
         return;
       }
-
       const updatedFields = {};
-
       for (const key in editformData) {
         if (editformData[key] !== originalProject[key]) {
           updatedFields[key] = editformData[key];
         }
       }
-
-      // console.log("editedProjectId:", editedProjectId);
-      // console.log("editformData:", editformData);
-
       const response = await fetch(
         `${API_URL}/main/projects/${editedProjectId}/`,
         {
@@ -779,10 +773,40 @@ function CompanyProjects() {
     );
 
     if (selectedProject) {
+      // Check if the tags field is not empty before splitting
+      const tagsArray = selectedProject.tags
+        ? selectedProject.tags.split(",").map((tag) => tag.trim())
+        : [];
+
+      // Create a new object with the tags as an array
+      const modifiedSelectedProject = {
+        ...selectedProject,
+        tags: tagsArray,
+      };
+
       setisEditProjectOpen(true);
-      setEditFormData(selectedProject);
+      setEditFormData(modifiedSelectedProject);
       setEditedProjectId(projectId);
-      setEditingProject(selectedProject);
+      setEditingProject(modifiedSelectedProject);
+    }
+  };
+
+  const handleEditProjectTagRemove = (tag) => {
+    setEditFormData((prevData) => {
+      return {
+        ...prevData,
+        tags: prevData.tags.filter((t) => t !== tag),
+      };
+    });
+  };
+
+  const handleEditProjectTagsInputChange = (e) => {
+    if (e.key === "Enter" && e.target.value.trim() !== "") {
+      setEditFormData((prevData) => ({
+        ...prevData,
+        tags: [...prevData.tags, e.target.value.trim()],
+      }));
+      e.target.value = "";
     }
   };
 
@@ -1173,16 +1197,20 @@ function CompanyProjects() {
               </div>
             )}
 
-            <div className="company-list-heading">
-              <h1>
-                Projects
-                <button
-                  className="company_project_add_edit_button"
-                  onClick={handleAddProjectClick}
-                >
-                  Create Project
-                </button>
-              </h1>
+            <div>
+              {viewType === "card" && (
+                <div className="company-list-heading">
+                  <h1>
+                    Projects
+                    </h1>
+                    <button
+                      className="company_project_add_edit_button"
+                      onClick={handleAddProjectClick}
+                    >
+                      Create Project
+                    </button>
+                </div>
+              )}
             </div>
 
             {isAddProjectOpen && (
@@ -1195,81 +1223,83 @@ function CompanyProjects() {
                   >
                     <RxCross2 />
                   </button>
-                  <div style={{ maxHeight: '400px', overflowY: 'auto', overflowX: 'hidden' }}>
-                  <label>
-                    Project Name
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                    />
-                  </label>
-                  <label>
-                    Project Type
-                    <input
-                      type="text"
-                      name="project_type"
-                      value={formData.project_type}
-                      onChange={handleInputChange}
-                    />
-                  </label>
-
-                  <label>
-                    Description
-                    <textarea
-                      name="description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      style={{ height: "30px", marginTop: "0px" }}
-                    />
-                  </label>
-                  <label>
-                    Assigned To
-                    <div className="custom-dropdown">
-                      <div
-                        className="selected-consultants"
-                        onClick={() => setDropdownOpen(!isDropdownOpen)}
-                      >
-                        {formData.assigned_to.length > 0
-                          ? formData.assigned_to.map((consultantId) => {
-                              const consultant = consultants.find(
-                                (c) => c.id === consultantId
-                              );
-                              return consultant
-                                ? consultant.user.username + ", "
-                                : "";
-                            })
-                          : "Select Consultants"}
-                      </div>
-                      {isDropdownOpen && (
-                        <div className="dropdown-list">
-                          {consultants.map((consultant) => (
-                            <div
-                              key={consultant.id}
-                              onClick={() =>
-                                handleConsultantSelect(consultant.id)
-                              }
-                            >
-                              {consultant.user.username}
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                  <div style={{ height: "600px" }}>
+                    <div className="form_under_input">
+                      <label className="form_under_input_label">
+                        Project Name
+                        <input
+                          type="text"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleInputChange}
+                        />
+                      </label>
+                      <label className="form_under_input_label">
+                        Project Type
+                        <input
+                          type="text"
+                          name="project_type"
+                          value={formData.project_type}
+                          onChange={handleInputChange}
+                        />
+                      </label>
                     </div>
-                  </label>
 
-                  <label>
-                      Contact
-                      <input
-                        type="text"
-                        name="contactinfo"
-                        value={formData.contactinfo}
+                    <label className="form_under_input_label_1">
+                      Description
+                      <textarea
+                        name="description"
+                        value={formData.description}
                         onChange={handleInputChange}
+                        style={{ height: "30px", marginTop: "0px" }}
                       />
                     </label>
+                    <label className="form_under_input_label_1">
+                      Assigned To
+                      <div className="custom-dropdown">
+                        <div
+                          className="selected-consultants"
+                          onClick={() => setDropdownOpen(!isDropdownOpen)}
+                        >
+                          {formData.assigned_to.length > 0
+                            ? formData.assigned_to.map((consultantId) => {
+                                const consultant = consultants.find(
+                                  (c) => c.id === consultantId
+                                );
+                                return consultant
+                                  ? consultant.user.username + ", "
+                                  : "";
+                              })
+                            : "Select Consultants"}
+                        </div>
+                        {isDropdownOpen && (
+                          <div className="dropdown-list">
+                            {consultants.map((consultant) => (
+                              <div
+                                key={consultant.id}
+                                onClick={() =>
+                                  handleConsultantSelect(consultant.id)
+                                }
+                              >
+                                {consultant.user.username}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </label>
+                    <div className="form_under_input">
+                      <label className="form_under_input_label">
+                        Contact
+                        <input
+                          type="text"
+                          name="contactinfo"
+                          value={formData.contactinfo}
+                          onChange={handleInputChange}
+                        />
+                      </label>
 
-                    <label>
+                      {/* <label>
                       Registered Date
                       <input
                         type="text"
@@ -1277,43 +1307,42 @@ function CompanyProjects() {
                         value={formData.companyregyear}
                         onChange={handleInputChange}
                       />
-                    </label>
+                    </label> */}
 
+                      <label className="form_under_input_label">
+                        Location
+                        <input
+                          type="text"
+                          name="location"
+                          value={formData.location}
+                          onChange={handleInputChange}
+                        />
+                      </label>
+                    </div>
 
-                    <label>
-                      Location
-                      <input
-                        type="text"
-                        name="location"
-                        value={formData.location}
-                        onChange={handleInputChange}
-                      />
-                    </label>
+                    <div className="form_under_input">
+                      <label className="form_under_input_label">
+                        Website
+                        <input
+                          type="text"
+                          name="website"
+                          value={formData.website}
+                          onChange={handleInputChange}
+                        />
+                      </label>
 
+                      <label className="form_under_input_label">
+                        Job Title
+                        <input
+                          type="text"
+                          name="jobtitle"
+                          value={formData.jobtitle}
+                          onChange={handleInputChange}
+                        />
+                      </label>
+                    </div>
 
-                    <label>
-                      Website
-                      <input
-                        type="text"
-                        name="website"
-                        value={formData.website}
-                        onChange={handleInputChange}
-                      />
-                    </label>
-
-
-                    <label>
-                      Job Title
-                      <input
-                        type="text"
-                        name="jobtitle"
-                        value={formData.jobtitle}
-                        onChange={handleInputChange}
-                      />
-                    </label>
-
-
-                    <label>
+                    {/* <label>
                       Banner
                       <input
                         type="text"
@@ -1321,31 +1350,31 @@ function CompanyProjects() {
                         value={formData.banner}
                         onChange={handleInputChange}
                       />
-                    </label>
+                    </label> */}
 
+                    <div className="form_under_input">
+                      <label className="form_under_input_label">
+                        Salary Range
+                        <input
+                          type="text"
+                          name="salaryrange"
+                          value={formData.salaryrange}
+                          onChange={handleInputChange}
+                        />
+                      </label>
 
-                    <label>
-                      Salary Range
-                      <input
-                        type="text"
-                        name="salaryrange"
-                        value={formData.salaryrange}
-                        onChange={handleInputChange}
-                      />
-                    </label>
+                      <label className="form_under_input_label">
+                        Experties Required
+                        <input
+                          type="text"
+                          name="expertiesreq"
+                          value={formData.expertiesreq}
+                          onChange={handleInputChange}
+                        />
+                      </label>
+                    </div>
 
-                    <label>
-                      Experties Required
-                      <input
-                        type="text"
-                        name="expertiesreq"
-                        value={formData.expertiesreq}
-                        onChange={handleInputChange}
-                      />
-                    </label>
-
-
-                    <label>
+                    {/* <label>
                       Employee Type
                       <input
                         type="text"
@@ -1353,34 +1382,35 @@ function CompanyProjects() {
                         value={formData.employee_type}
                         onChange={handleInputChange}
                       />
-                    </label>
+                    </label> */}
 
+                    <div className="form_under_input">
+                      <label className="form_under_input_label">
+                        Start Date
+                        <input
+                          type="date"
+                          name="start_date"
+                          value={formData.start_date}
+                          onChange={handleInputChange}
+                        />
+                      </label>
 
-                  <label>
-                    Start Date
-                    <input
-                      type="date"
-                      name="start_date"
-                      value={formData.start_date}
-                      onChange={handleInputChange}
-                    />
-                  </label>
+                      <label className="form_under_input_label">
+                        End Date
+                        <input
+                          type="date"
+                          name="end_date"
+                          value={formData.end_date}
+                          onChange={handleInputChange}
+                        />
+                      </label>
+                    </div>
 
-                  <label>
-                    End Date
-                    <input
-                      type="date"
-                      name="end_date"
-                      value={formData.end_date}
-                      onChange={handleInputChange}
-                    />
-                  </label>
-
-                  <div className="company-profile-rating-popup__buttons">
-                    <button onClick={handleAddProject}>Submit</button>
+                    <div className="company-profile-rating-popup__buttons">
+                      <button onClick={handleAddProject}>Submit</button>
+                    </div>
                   </div>
                 </div>
-              </div>
               </div>
             )}
 
@@ -1394,126 +1424,147 @@ function CompanyProjects() {
                   >
                     <RxCross2 />
                   </button>
-                  <div style={{ maxHeight: '400px', overflowY: 'auto', overflowX: 'hidden' }}>
-                  <label>
-                    Project Name
-                    <input
-                      type="text"
-                      name="name"
-                      value={editformData.name}
-                      onChange={handleEditInputChange}
-                    />
-                  </label>
+                  <div style={{ height: "600px" }}>
+                    <div className="form_under_input">
+                      <label className="form_under_input_label">
+                        Project Name
+                        <input
+                          type="text"
+                          name="name"
+                          value={editformData.name}
+                          onChange={handleEditInputChange}
+                        />
+                      </label>
 
-                  <label>
-                    Project Type
-                    <input
-                      type="text"
-                      name="project_type"
-                      value={editformData.project_type}
-                      onChange={handleEditInputChange}
-                    />
-                  </label>
-
-                  <label>
-                    Description
-                    <textarea
-                      name="description"
-                      value={editformData.description}
-                      onChange={handleEditInputChange}
-                      style={{ height: "30px", marginTop: "0px" }}
-                    />
-                  </label>
-                  <label>
-                    Assigned To
-                    <div className="custom-dropdown">
-                      <div
-                        className="selected-consultants"
-                        onClick={() => setDropdownOpen(!isDropdownOpen)}
-                      >
-                        {editformData.assigned_to.length > 0
-                          ? editformData.assigned_to.map((consultantId) => {
-                              const consultant = consultants.find(
-                                (c) => c.id === consultantId
-                              );
-                              return consultant
-                                ? consultant.user.username + ", "
-                                : "";
-                            })
-                          : "Select Consultants"}
-                      </div>
-                      {isDropdownOpen && (
-                        <div className="dropdown-list">
-                          {consultants.map((consultant) => (
-                            <div
-                              key={consultant.id}
-                              onClick={() =>
-                                handleConsultantSelect(consultant.id)
-                              }
-                            >
-                              {consultant.user.username}
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                      <label className="form_under_input_label">
+                        Project Type
+                        <input
+                          type="text"
+                          name="project_type"
+                          value={editformData.project_type}
+                          onChange={handleEditInputChange}
+                        />
+                      </label>
                     </div>
-                  </label>
 
-                  <label>
-                      Contact
-                      <input
-                        type="text"
-                        name="contactinfo"
-                        value={editformData.contactinfo}
+                    <label className="form_under_input_label_1">
+                      Description
+                      <textarea
+                        name="description"
+                        value={editformData.description}
                         onChange={handleEditInputChange}
+                        style={{ height: "30px", marginTop: "0px" }}
                       />
                     </label>
 
-                    <label>
-                      Registered Date
-                      <input
-                        type="text"
-                        name="companyregyear"
-                        value={editformData.companyregyear}
-                        onChange={handleEditInputChange}
-                      />
+                    {/* <label>Tags:</label>
+                    <div className="tags-container">
+                      {editformData.tags && editformData.tags.map((tag, index) => (
+                        <div key={index} className="cp_tag">
+                          {tag}
+                          <button
+                            onClick={() => handleEditProjectTagRemove(tag)}
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    <input
+                      type="text"
+                      id="editedTags"
+                      placeholder="Add a tag"
+                      onKeyPress={handleEditProjectTagsInputChange}
+                    /> */}
+                    <label className="form_under_input_label_1">
+                      Assigned To
+                      <div className="custom-dropdown">
+                        <div
+                          className="selected-consultants"
+                          onClick={() => setDropdownOpen(!isDropdownOpen)}
+                        >
+                          {editformData.assigned_to.length > 0
+                            ? editformData.assigned_to.map((consultantId) => {
+                                const consultant = consultants.find(
+                                  (c) => c.id === consultantId
+                                );
+                                return consultant
+                                  ? consultant.user.username + ", "
+                                  : "";
+                              })
+                            : "Select Consultants"}
+                        </div>
+                        {isDropdownOpen && (
+                          <div className="dropdown-list">
+                            {consultants.map((consultant) => (
+                              <div
+                                key={consultant.id}
+                                onClick={() =>
+                                  handleConsultantSelect(consultant.id)
+                                }
+                              >
+                                {consultant.user.username}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </label>
+                    <div className="form_under_input">
+                      <label className="form_under_input_label">
+                        Contact
+                        <input
+                          type="text"
+                          name="contactinfo"
+                          value={editformData.contactinfo}
+                          onChange={handleEditInputChange}
+                        />
+                      </label>
 
+                      {/* <label className="form_under_input_label_3">
+                        Registered Date
+                        <input
+                          type="text"
+                          name="companyregyear"
+                          value={editformData.companyregyear}
+                          onChange={handleEditInputChange}
+                        />
+                      </label> */}
 
-                    <label>
-                      Location
-                      <input
-                        type="text"
-                        name="location"
-                        value={editformData.location}
-                        onChange={handleEditInputChange}
-                      />
-                    </label>
+                      <label className="form_under_input_label">
+                        Location
+                        <input
+                          type="text"
+                          name="location"
+                          value={editformData.location}
+                          onChange={handleEditInputChange}
+                        />
+                      </label>
+                    </div>
 
+                    <div className="form_under_input">
+                      <label className="form_under_input_label">
+                        Website
+                        <input
+                          type="text"
+                          name="website"
+                          value={formData.website}
+                          onChange={handleInputChange}
+                        />
+                      </label>
 
-                    <label>
-                      Website
-                      <input
-                        type="text"
-                        name="website"
-                        value={formData.website}
-                        onChange={handleInputChange}
-                      />
-                    </label>
+                      <label className="form_under_input_label">
+                        Job Title
+                        <input
+                          type="text"
+                          name="jobtitle"
+                          value={editformData.jobtitle}
+                          onChange={handleEditInputChange}
+                        />
+                      </label>
+                    </div>
 
-
-                    <label>
-                      Job Title
-                      <input
-                        type="text"
-                        name="jobtitle"
-                        value={editformData.jobtitle}
-                        onChange={handleEditInputChange}
-                      />
-                    </label>
-
-
-                    <label>
+                    {/* <label>
                       Banner
                       <input
                         type="text"
@@ -1521,29 +1572,29 @@ function CompanyProjects() {
                         value={editformData.banner}
                         onChange={handleEditInputChange}
                       />
-                    </label>
+                    </label> */}
 
+                    <div className="form_under_input">
+                      <label className="form_under_input_label">
+                        Salary Range
+                        <input
+                          type="text"
+                          name="salaryrange"
+                          value={editformData.salaryrange}
+                          onChange={handleEditInputChange}
+                        />
+                      </label>
 
-                    <label>
-                      Salary Range
-                      <input
-                        type="text"
-                        name="salaryrange"
-                        value={editformData.salaryrange}
-                        onChange={handleEditInputChange}
-                      />
-                    </label>
-
-                    <label>
-                      Experties Required
-                      <input
-                        type="text"
-                        name="expertiesreq"
-                        value={editformData.expertiesreq}
-                        onChange={handleEditInputChange}
-                      />
-                    </label>
-
+                      <label className="form_under_input_label">
+                        Experties Required
+                        <input
+                          type="text"
+                          name="expertiesreq"
+                          value={editformData.expertiesreq}
+                          onChange={handleEditInputChange}
+                        />
+                      </label>
+                    </div>
 
                     {/* <label>
                       Employee Type
@@ -1555,35 +1606,35 @@ function CompanyProjects() {
                       />
                     </label> */}
 
+                    <div className="form_under_input">
+                      <label className="form_under_input_label">
+                        Start Date
+                        <input
+                          type="date"
+                          name="start_date"
+                          value={editformData.start_date}
+                          onChange={handleEditInputChange}
+                        />
+                      </label>
 
-                  <label>
-                    Start Date
-                    <input
-                      type="date"
-                      name="start_date"
-                      value={editformData.start_date}
-                      onChange={handleEditInputChange}
-                    />
-                  </label>
+                      <label className="form_under_input_label">
+                        End Date
+                        <input
+                          type="date"
+                          name="end_date"
+                          value={editformData.end_date}
+                          onChange={handleEditInputChange}
+                        />
+                      </label>
+                    </div>
 
-                  <label>
-                    End Date
-                    <input
-                      type="date"
-                      name="end_date"
-                      value={editformData.end_date}
-                      onChange={handleEditInputChange}
-                    />
-                  </label>
-
-                  <div className="company-profile-rating-popup__buttons">
-                    <button onClick={handleEditFormClick}>Submit</button>
+                    <div className="company-profile-rating-popup__buttons">
+                      <button onClick={handleEditFormClick}>Submit</button>
+                    </div>
                   </div>
                 </div>
               </div>
-              </div>
             )}
-
             <div className="company-list-container">
               {viewType === "table" && (
                 <div className="table-container">
@@ -1601,28 +1652,30 @@ function CompanyProjects() {
               )}
 
               {viewType !== "table" && (
-                <div className="company_lists_cards">
-                  {projects &&
-                    projects.map((project) => (
-                      <PolicyCard
-                        {...project}
-                        projectId={project.id}
-                        handleEditFormClick={handleEditFormClick}
-                        openEditForm={openEditForm}
-                        handleDeleteProjectClick={() => {
-                          handleDeleteProjectClick(project.id);
-                        }}
-                        isEditFormOpen={isEditFormOpen}
-                      />
-                    ))}
+                <div class="project-card-wrapper">
+                  <div className="company_lists_cards">
+                    {projects &&
+                      projects.map((project) => (
+                        <PolicyCard
+                          {...project}
+                          projectId={project.id}
+                          handleEditFormClick={handleEditFormClick}
+                          openEditForm={openEditForm}
+                          handleDeleteProjectClick={() => {
+                            handleDeleteProjectClick(project.id);
+                          }}
+                          isEditFormOpen={isEditFormOpen}
+                        />
+                      ))}
 
-                  {/* {companies &&
+                    {/* {companies &&
                     companies.paginated_results?.map((company, index) => (
                       <CompanyCard key={index} company={company} />
                     ))} */}
+                  </div>
                 </div>
               )}
-              <hr />
+              {/* <hr /> */}
               <div className="company_list_pagination_container">
                 <>
                   {/* <Pagination

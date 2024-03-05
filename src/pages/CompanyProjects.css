@@ -1,7 +1,50 @@
 .custom-table tbody tr:hover {
-    background-color: #e0e0e0;
-  }
-  
-  .custom-table tbody td:hover {
-    background-color: #000000;
-  }
+  background-color: #e0e0e0;
+}
+
+.custom-table tbody td:hover {
+  background-color: #000000;
+}
+
+.form_under_input {
+  display: flex;
+}
+
+.form_under_input_label {
+  margin-left: 8px;
+  margin-right: 8px;
+  margin-top: 8px;
+  width: 50%;
+
+}
+
+.form_under_input_label_1 {
+  margin-left: 8px;
+  /* margin-right: 8px; */
+  margin-top: 8px;
+}
+
+.form_under_input_label_3 {
+  margin-left: 8px;
+  margin-right: 8px;
+  margin-top: 8px;
+  width: 30%;
+
+}
+
+
+input {
+  background-color: #e0e0e0;
+}
+
+textarea {
+  background-color: #e0e0e0;
+  border-radius: 5px;
+}
+
+.selected-consultants {
+
+  background-color: #e0e0e0;
+  border-radius: 5px;
+
+}

@@ -26,6 +26,7 @@ import Meetings from "./pages/Meetings";
 import {Provider} from "react-redux";
 import store from "./store/store";
 import { DataTable } from "./components/DataTable";
+import NewCard from "./components/NewCard";
 import UserDataPersistence from "./components/UserDataPersistence";
 import PdfViewer from "./components/PdfViewer";
 import CompanyPdfViewer from "./components/CompanyPdfViewer";
@@ -55,6 +56,7 @@ function App() {
             <Route path= "/datatable" element={<DataTable />} />
             <Route path= "/pdf" element={<PdfViewer />} />
             <Route path= "/policy-list" element={<PolicyList />} />
+            <Route path= "/newcard" element={<NewCard />} />
             <Route path="/consultant-projects/:projectId/policy-list" element={<PolicyList />} />
             <Route path="/company-projects/:projectId/policy-list/:policyId/pdf" element={<CompanyPdfViewer />} />
             <Route path="/consultant-projects/:projectId/policy-list/:policyId/pdf" element={<PdfViewer />} />

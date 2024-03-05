@@ -1,30 +1,48 @@
-.table-container {
-  overflow-x: auto;
-  max-width: 100%;
-}
-
-.custom-table {
-  font-family: Arial, Helvetica, sans-serif;
-  width: max-content; 
-  border-collapse: collapse;
-  text-align: left;
-  margin: 20px 0 20px 20px; 
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  table-layout: fixed; 
-  text-align: center;
-}
-
-th,
-td {
-  padding: 8px;
-  border: 1px solid #ddd;
+.css-rorn0c-MuiTableContainer-root.table-container {
+  width: 85%;
+  border-radius: 10px;
+  border-radius: 8px;
+  margin: auto; 
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+  border-collapse:collapse;
+  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 th {
+  white-space: nowrap;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif !important;
+  font-weight: bold !important;
+  font-size: 1.1rem !important;
+  line-height: 1.5rem !important;
+  letter-spacing: 0.01071em !important;
+  display: table-cell !important;
+  vertical-align: inherit !important;
+  border-bottom: 1px solid rgba(224, 224, 224, 1) !important;
+  text-align: center !important;
+  padding: 16px !important;
+  color: rgba(255, 255, 255, 0.87) !important;
+  border-right: none !important;
   position: sticky;
   top: 0;
-  background-color: #f2f2f2;
+
 }
+
+td {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 1rem !important;
+  line-height: 1.43 !important;
+  letter-spacing: 0.01071em !important;
+  display: table-cell !important;
+  vertical-align: inherit !important;
+  border-bottom: 1px solid rgba(224, 224, 224, 1) !important;
+  text-align: center !important;
+  padding: 16px !important;
+  color: rgba(0, 0, 0, 0.87) !important;
+  border-right: none !important;
+}
+
 
 th:nth-child(1),
 td:nth-child(1) {
@@ -43,7 +61,7 @@ td:nth-child(3) {
 
 th:nth-child(4),
 td:nth-child(4) {
-  width: 200px; 
+  width: 100px; 
 }
 
 th:nth-child(5),
@@ -66,23 +84,26 @@ td:nth-child(8) {
   width: 150px; 
 }
 
+
+
 tr:nth-child(odd) {
-  background-color: #e8e8e8;
+  background-color: white;
 }
 
-/* td:hover {
-  background-color: #c0c0c0;
-} */
+
+
 
 tr:hover {
-  background-color: #9e9b9b;
+ 
   cursor: pointer;
 }
 
 .selected-row {
-  background-color: skyblue; 
+  background-color: #acaaaa; 
   
 }
+
+
 
 @media screen and (max-width: 600px) {
   th,

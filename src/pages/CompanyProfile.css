@@ -412,7 +412,9 @@ textarea.company-profile-form-control {
 .company-profile-rating-popup__buttons {
   display: flex;
   justify-content: space-around;
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
 }
 
 .company-profile-rating-popup__buttons button {
@@ -424,6 +426,8 @@ textarea.company-profile-form-control {
   margin-left: 10px;
   transition: background-color 0.3s;
   border-radius: 10px;
+  width: 264px;
+  font-size: 18px;
 }
 .company-profile-rating-popup__buttons button:hover {
   background-color: #4d4d4d;

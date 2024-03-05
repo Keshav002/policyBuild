@@ -1,8 +1,15 @@
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useTable } from "react-table";
 import "./ReviewData.css";
-
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 export const DataTable = ({
   data,
   userRole,
@@ -35,43 +42,66 @@ export const DataTable = ({
     rows,
     prepareRow,
   } = useTable({ columns, data });
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const startIndex = page * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
 
   return (
-    <div className="table-container">
-      <table {...getTableProps()} className="custom-table">
-        <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>
-                  {column.render("Header")}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {rows.map((row) => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map((cell) => (
-                  <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+    <>
+    <TableContainer className="table-container" style={{ marginTop: "20px" }}>
+        <Table {...getTableProps()} size="medium" className="table" >
+          <TableHead>
+            {headerGroups.map((headerGroup) => (
+              <TableRow {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  <TableCell
+                    {...column.getHeaderProps()}
+                    style={{
+                      backgroundColor: "rgb(115,115,115)",
+                      color: "white",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {column.render("Header")}
+                  </TableCell>
                 ))}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+              </TableRow>
+            ))}
+          </TableHead>
+          <TableBody {...getTableBodyProps()}>
+            {rows.slice(startIndex, endIndex).map((row, index) => {
+              prepareRow(row);
+              return (
+                <TableRow
+                  {...row.getRowProps()}
+                  style={{ cursor: "pointer" }}
+                  key={index}
+                >
+                  {row.cells.map((cell) => (
+                    <TableCell {...cell.getCellProps()} key={cell.column.id}>
+                      {cell.render("Cell")}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+        </TableContainer>
+    </>
   );
 };
-
-
-
-
-
-
 
 
 

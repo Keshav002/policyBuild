@@ -1,110 +1,63 @@
-/* PolicyCard.css */
-
-/* PolicyCard.css */
-
-.ppc_policy-card {
-    width: 370px;
-    height: 135px;
-    border: 1px solid #ccc;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    margin: 10px;
-    background-color: #f5f5f5; /* Light grey background color */
-    color: #333; /* Text color */
-    cursor: pointer;
-    border-radius: 10px;
-    transition: background-color 0.1s, box-shadow 0.3s;
+.ppc_card {
+  background-color: #f6f6f6;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 10px;
+  padding: 18px;
+  /* padding-bottom: 12px; */
+  width: 280px; /* Adjust width as needed */
+  cursor: pointer;
+  position: relative;
+  transition: box-shadow 0.3s ease; 
 }
-.ppc_policy-card:hover {
-  background-color: #ededed; /* Lighter grey background color on hover */
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Slightly larger box shadow on hover */
+
+.ppc_card:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Adjust shadow on hover */
 }
-  .ppc_header {
+
+.card-image {
+  width: 100%; /* Fill the entire card width */
+  height: 140px; /* Adjust height as needed */
+  object-fit: cover; /* Resize image to fit the container while maintaining aspect ratio */
+  border-radius: 10px;
+  border: 1px solid rgb(208, 208, 208);
+}
+
+.card-header {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  margin-bottom: 10px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* text-align: center; */
+}
+
+.featured {
+  padding: 6px 0px;
+  font-weight: 700;
+}
+
+.policy-card-body{
     display: flex;
-    align-items: center;
-    justify-content: center;
-    border-bottom: 1px solid #ccc; 
-  }
-  
-  .ppc_icon {
-    font-size: 20px;
-    margin-right: 10px;
-    color: #4f4f50; /* Choose a professional color for the icon */
-  }
-  
-  .ppc_policy-name {
-    font-size: 16px;
-    font-weight: 700;
-    color: #565656;
-  }
-  
- /* PolicyCard.css */
-
-/* PolicyCard.css */
-
-.ppc_info {
-    margin-top: 10px;
+    justify-content: space-between;
     font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-    flex-wrap: wrap; /* Allow flex items to wrap to the next line */
-  }
-  
-  .ppc_detail {
-    width: 50%; /* Set the width to 48% for two columns with some space in between */
-    box-sizing: border-box; /* Include padding and border in the element's total width */
-    margin-bottom: 10px; /* Add margin between details for spacing */
-    text-align: end;
-  }
-  .ppc_detail:nth-child(1) {
-    text-align: left;
-  }
-  
-  /* Align the second column to the right */
-  .ppc_detail:nth-child(2) {
-    text-align: right;
-  }
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin-bottom: 15px;
+}
 
-  .ppc_detail:nth-child(3) {
-    text-align: left;
-  }
-  
-  /* Align the second column to the right */
-  .ppc_detail:nth-child(4) {
-    text-align: right;
-  }
-  
-  
-  
-/* PolicyCard.css */
+.project-name-span{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 230px;
+  color: black;
+  font-weight: 700;
+}
 
-.ppc_timestamps {
-    font-style: italic;
-    font-size: 12px;
-    color: #565656;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-  }
-  
-  .ppc_created-at,
-  .ppc_updated-at {
-    width: 48%; /* Set the width to 48% for two columns with some space in between */
-    box-sizing: border-box; /* Include padding and border in the element's total width */
-    margin-bottom: 10px; /* Add margin between timestamps for spacing */
-  }
-  
-  /* Align the first timestamp to the left */
-  .ppc_created-at {
-    text-align: left;
-  }
-  
-  /* Align the second timestamp to the right */
-  .ppc_updated-at {
-    text-align: right;
-  }
-  
-  
+.project-name-span, .beds{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 230px;
+  color: black;
+}
