@@ -492,7 +492,7 @@ function CompanyProjects() {
     location: "",
     contactinfo: "",
     companyregyear: "",
-    tags: [],
+    // tags: [],
     name: "",
     description: "",
     start_date: "",
@@ -537,6 +537,8 @@ function CompanyProjects() {
       if (response.ok) {
         fetchProjects();
         setFormData({
+          jobtitle: "",
+          expertiesreq: "",
           company: "",
           project_type: "",
           website: "",
@@ -546,7 +548,7 @@ function CompanyProjects() {
           location: "",
           contactinfo: "",
           companyregyear: "",
-          tags: [],
+          // tags: [],
           name: "",
           description: "",
           start_date: "",
@@ -642,6 +644,21 @@ function CompanyProjects() {
     setDropdownOpen(false);
   };
 
+  const handleEditConsultantSelect = (consultantId) => {
+    if (editformData.assigned_to.includes(consultantId)) {
+      setEditFormData((prevData) => ({
+        ...prevData,
+        assigned_to: prevData.assigned_to.filter((id) => id !== consultantId),
+      }));
+    } else {
+      setEditFormData((prevData) => ({
+        ...prevData,
+        assigned_to: [...prevData.assigned_to, consultantId],
+      }));
+    }
+    setDropdownOpen(false);
+  };
+
   const handleDeleteProjectClick = async (projectId) => {
     try {
       const response = await fetch(`${API_URL}/main/projects/${projectId}/`, {
@@ -689,12 +706,14 @@ function CompanyProjects() {
     location: "",
     contactinfo: "",
     companyregyear: "",
-    tags: [],
+    // tags: [],
     name: "",
     description: "",
     start_date: "",
     end_date: "",
     assigned_to: [],
+    jobtitle: "",
+    expertiesreq: "",
   });
 
   const [editedProjectId, setEditedProjectId] = useState(null);
@@ -767,57 +786,70 @@ function CompanyProjects() {
     }
   };
 
+  // const openEditForm = (projectId) => {
+  //   const selectedProject = projects.find(
+  //     (project) => project.id === projectId
+  //   );
+
+  //   if (selectedProject) {
+  //     // Check if the tags field is not empty before splitting
+  //     const tagsArray = selectedProject.tags
+  //       ? selectedProject.tags.split(",").map((tag) => tag.trim())
+  //       : [];
+
+  //     // Create a new object with the tags as an array
+  //     const modifiedSelectedProject = {
+  //       ...selectedProject,
+  //       tags: tagsArray,
+  //     };
+
+  //     setisEditProjectOpen(true);
+  //     setEditFormData(modifiedSelectedProject);
+  //     setEditedProjectId(projectId);
+  //     setEditingProject(modifiedSelectedProject);
+  //   }
+  // };
   const openEditForm = (projectId) => {
     const selectedProject = projects.find(
       (project) => project.id === projectId
     );
 
     if (selectedProject) {
-      // Check if the tags field is not empty before splitting
-      const tagsArray = selectedProject.tags
-        ? selectedProject.tags.split(",").map((tag) => tag.trim())
-        : [];
-
-      // Create a new object with the tags as an array
-      const modifiedSelectedProject = {
-        ...selectedProject,
-        tags: tagsArray,
-      };
-
       setisEditProjectOpen(true);
-      setEditFormData(modifiedSelectedProject);
+      setEditFormData(selectedProject);
       setEditedProjectId(projectId);
-      setEditingProject(modifiedSelectedProject);
+      setEditingProject(selectedProject);
     }
   };
 
-  const handleEditProjectTagRemove = (tag) => {
-    setEditFormData((prevData) => {
-      return {
-        ...prevData,
-        tags: prevData.tags.filter((t) => t !== tag),
-      };
-    });
-  };
+  // const handleEditProjectTagRemove = (tag) => {
+  //   setEditFormData((prevData) => {
+  //     return {
+  //       ...prevData,
+  //       tags: prevData.tags.filter((t) => t !== tag),
+  //     };
+  //   });
+  // };
 
-  const handleEditProjectTagsInputChange = (e) => {
-    if (e.key === "Enter" && e.target.value.trim() !== "") {
-      setEditFormData((prevData) => ({
-        ...prevData,
-        tags: [...prevData.tags, e.target.value.trim()],
-      }));
-      e.target.value = "";
-    }
-  };
+  // const handleEditProjectTagsInputChange = (e) => {
+  //   if (e.key === "Enter" && e.target.value.trim() !== "") {
+  //     setEditFormData((prevData) => ({
+  //       ...prevData,
+  //       tags: [...prevData.tags, e.target.value.trim()],
+  //     }));
+  //     e.target.value = "";
+  //   }
+  // };
 
   return (
     <>
       <div className="company-list-page">
         <Nav />
         <div className="cp_company_top_bar">
+        {/* <AiOutlineFilter className="cp_icon" onClick={toggleSidebar}/> */}
           <div
             className={`cp_filter_icon ${isSidebarOpen ? "active" : ""}`}
-            // onClick={toggleSidebar}
+           
           >
             <CustomTooltip tooltipText="Will Update Soon..">
               <AiOutlineFilter className="cp_icon" />
@@ -869,7 +901,7 @@ function CompanyProjects() {
         </div>
         {isSaveReportPopup && saveReportPopup}
         {isRenamePopup && reportRenamePopup}
-        <div className="company-content-container">
+          <div className="company-content-container">
           {isSidebarOpen && (
             <div className="cp_sidebar_filter">
               <div className="save-view-section">
@@ -1200,15 +1232,13 @@ function CompanyProjects() {
             <div>
               {viewType === "card" && (
                 <div className="company-list-heading">
-                  <h1>
-                    Projects
-                    </h1>
-                    <button
-                      className="company_project_add_edit_button"
-                      onClick={handleAddProjectClick}
-                    >
-                      Create Project
-                    </button>
+                  <h1>Projects</h1>
+                  <button
+                    className="company_project_add_edit_button"
+                    onClick={handleAddProjectClick}
+                  >
+                    Create Project
+                  </button>
                 </div>
               )}
             </div>
@@ -1332,6 +1362,16 @@ function CompanyProjects() {
                       </label>
 
                       <label className="form_under_input_label">
+                        Salary Range
+                        <input
+                          type="text"
+                          name="salaryrange"
+                          value={formData.salaryrange}
+                          onChange={handleInputChange}
+                        />
+                      </label>
+
+                      {/* <label className="form_under_input_label">
                         Job Title
                         <input
                           type="text"
@@ -1339,7 +1379,7 @@ function CompanyProjects() {
                           value={formData.jobtitle}
                           onChange={handleInputChange}
                         />
-                      </label>
+                      </label> */}
                     </div>
 
                     {/* <label>
@@ -1352,7 +1392,7 @@ function CompanyProjects() {
                       />
                     </label> */}
 
-                    <div className="form_under_input">
+                    {/* <div className="form_under_input">
                       <label className="form_under_input_label">
                         Salary Range
                         <input
@@ -1369,6 +1409,27 @@ function CompanyProjects() {
                           type="text"
                           name="expertiesreq"
                           value={formData.expertiesreq}
+                          onChange={handleInputChange}
+                        />
+                      </label>
+                    </div> */}
+                    <div className="form_under_input">
+                      <label className="form_under_input_label">
+                        Banner
+                        <input
+                          type="text"
+                          name="banner"
+                          value={formData.banner}
+                          onChange={handleInputChange}
+                        />
+                      </label>
+
+                      <label className="form_under_input_label">
+                        Employee Type
+                        <input
+                          type="text"
+                          name="employee_type"
+                          value={formData.employee_type}
                           onChange={handleInputChange}
                         />
                       </label>
@@ -1476,7 +1537,7 @@ function CompanyProjects() {
                       placeholder="Add a tag"
                       onKeyPress={handleEditProjectTagsInputChange}
                     /> */}
-                    <label className="form_under_input_label_1">
+                    {/* <label className="form_under_input_label_1">
                       Assigned To
                       <div className="custom-dropdown">
                         <div
@@ -1509,7 +1570,79 @@ function CompanyProjects() {
                           </div>
                         )}
                       </div>
+                    </label> */}
+                    {/* </label> */}
+                    {/* <label className="form_under_input_label_1">
+              Assigned To
+              <div className="custom-dropdown">
+                <div className="selected-consultants">
+                  {editformData.assigned_to.length > 0
+                    ? editformData.assigned_to.map((consultantId) => {
+                        const consultant = consultants.find(
+                          (c) => c.id === consultantId
+                        );
+                        return consultant
+                          ? consultant.user.username + ', '
+                          : '';
+                      })
+                    : 'Select Consultants'}
+                </div>
+                <div className="dropdown-list">
+                  {consultants.map((consultant) => (
+                    <div
+                      key={consultant.id}
+                      onClick={() =>
+                        handleConsultantSelect(consultant.id)
+                      }
+                    >
+                      {consultant.user.username}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </label> */}
+                    <label className="form_under_input_label_1">
+                      Assigned To
+                      <div className="custom-dropdown">
+                        <div
+                          className="selected-consultants"
+                          onClick={() => setDropdownOpen(!isDropdownOpen)}
+                        >
+                          {editformData.assigned_to.length > 0
+                            ? editformData.assigned_to.map((consultantId) => {
+                                const consultant = consultants.find(
+                                  (c) => c.id === consultantId
+                                );
+                                return consultant
+                                  ? consultant.user.username + ", "
+                                  : "";
+                              })
+                            : "Select Consultants"}
+                        </div>
+                        {isDropdownOpen && (
+                          <div className="dropdown-list">
+                            {consultants
+                              .filter(
+                                (consultant) =>
+                                  !editformData.assigned_to.includes(
+                                    consultant.id
+                                  )
+                              )
+                              .map((consultant) => (
+                                <div
+                                  key={consultant.id}
+                                  onClick={() =>
+                                    handleEditConsultantSelect(consultant.id)
+                                  }
+                                >
+                                  {consultant.user.username}
+                                </div>
+                              ))}
+                          </div>
+                        )}
+                      </div>
                     </label>
+
                     <div className="form_under_input">
                       <label className="form_under_input_label">
                         Contact
@@ -1554,11 +1687,42 @@ function CompanyProjects() {
                       </label>
 
                       <label className="form_under_input_label">
+                        Salary Range
+                        <input
+                          type="text"
+                          name="salaryrange"
+                          value={editformData.salaryrange}
+                          onChange={handleEditInputChange}
+                        />
+                      </label>
+
+                      {/*<label className="form_under_input_label">
                         Job Title
                         <input
                           type="text"
                           name="jobtitle"
                           value={editformData.jobtitle}
+                          onChange={handleEditInputChange}
+                        />
+                    </label>*/}
+                    </div>
+                    <div className="form_under_input">
+                      <label className="form_under_input_label">
+                        Banner
+                        <input
+                          type="text"
+                          name="banner"
+                          value={editformData.banner}
+                          onChange={handleEditInputChange}
+                        />
+                      </label>
+
+                      <label className="form_under_input_label">
+                        Employee Type
+                        <input
+                          type="text"
+                          name="employee_type"
+                          value={editformData.employee_type}
                           onChange={handleEditInputChange}
                         />
                       </label>
@@ -1574,7 +1738,27 @@ function CompanyProjects() {
                       />
                     </label> */}
 
-                    <div className="form_under_input">
+                    {/* <div className="form_under_input">
+                      <label>
+                      Banner
+                      <input
+                        type="text"
+                        name="banner"
+                        value={editformData.banner}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
+                    <label>
+                      Employee Type
+                      <input
+                        type="text"
+                        name="employee_type"
+                        value={editformData.employee_type}
+                        onChange={handleEditInputChange}
+                      />
+                    </label>
+
                       <label className="form_under_input_label">
                         Salary Range
                         <input
@@ -1593,8 +1777,8 @@ function CompanyProjects() {
                           value={editformData.expertiesreq}
                           onChange={handleEditInputChange}
                         />
-                      </label>
-                    </div>
+                  </label>
+                    </div> */}
 
                     {/* <label>
                       Employee Type

@@ -517,6 +517,11 @@ function PdfViewer() {
     setisAddModalOpen(true);
     setIsDialogOpen(true);
     setIsDialogBoxOpen(true);
+    setAddedReview({
+      source: '',
+      rating: '',
+      comment: ''
+    });
   };
 
   const closeAddModal = () => {
