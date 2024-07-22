@@ -28,9 +28,19 @@ import { Button } from "@mui/material";
 import { RxCross2 } from "react-icons/rx";
 import Swal from "sweetalert2";
 
-function TableTop() {
+function TableTop({
+  handleAddProjectClick,
+  setViewType,
+  viewType,
+  isAddProjectOpen,
+  setisAddProjectOpen,
+  handleCancelClick,
+  isConsultantRole,
+  userRole,
+}) {
   const loggedInUserId = useSelector((state) => state.user.userData.user_id);
   const userData = useSelector((state) => state.user.userData);
+  
   const companyId = userData?.company?.id;
 
   const navigate = useNavigate();
@@ -66,7 +76,7 @@ function TableTop() {
   const [isRenamePopup, setIsRenamePopup] = useState(false);
   const [renameFilterId, setRenameFilterId] = useState("");
 
-  const [viewType, setViewType] = useState("card");
+  // const [viewType, setViewType] = useState("card");
 
   const [idfrom, setIdFrom] = useState("");
   const [idto, setIdTo] = useState("");
@@ -476,7 +486,7 @@ function TableTop() {
 
   const [projects, setProjects] = useState([]);
   const [consultants, setConsultants] = useState([]);
-  const [isAddProjectOpen, setisAddProjectOpen] = useState(false);
+  // const [isAddProjectOpen, setisAddProjectOpen] = useState(false);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -509,13 +519,15 @@ function TableTop() {
     }));
   };
 
-  const handleCancelClick = () => {
-    setisAddProjectOpen(false);
-    setisEditProjectOpen(false);
-  };
-  const handleAddProjectClick = async () => {
-    setisAddProjectOpen(true);
-  };
+  // const handleCancelClick = () => {
+  //   setisAddProjectOpen(false);
+  //   setisEditProjectOpen(false);
+  // };
+  // const handleAddProjectClick = async () => {
+  //   setisAddProjectOpen(true);
+  //   console.log("Button clicked");
+  //   console.log(setisAddProjectOpen);
+  // };
 
   const handleAddProject = async () => {
     try {
@@ -783,29 +795,6 @@ function TableTop() {
     }
   };
 
-  // const openEditForm = (projectId) => {
-  //   const selectedProject = projects.find(
-  //     (project) => project.id === projectId
-  //   );
-
-  //   if (selectedProject) {
-  //     // Check if the tags field is not empty before splitting
-  //     const tagsArray = selectedProject.tags
-  //       ? selectedProject.tags.split(",").map((tag) => tag.trim())
-  //       : [];
-
-  //     // Create a new object with the tags as an array
-  //     const modifiedSelectedProject = {
-  //       ...selectedProject,
-  //       tags: tagsArray,
-  //     };
-
-  //     setisEditProjectOpen(true);
-  //     setEditFormData(modifiedSelectedProject);
-  //     setEditedProjectId(projectId);
-  //     setEditingProject(modifiedSelectedProject);
-  //   }
-  // };
   const openEditForm = (projectId) => {
     const selectedProject = projects.find(
       (project) => project.id === projectId
@@ -818,25 +807,6 @@ function TableTop() {
       setEditingProject(selectedProject);
     }
   };
-
-  // const handleEditProjectTagRemove = (tag) => {
-  //   setEditFormData((prevData) => {
-  //     return {
-  //       ...prevData,
-  //       tags: prevData.tags.filter((t) => t !== tag),
-  //     };
-  //   });
-  // };
-
-  // const handleEditProjectTagsInputChange = (e) => {
-  //   if (e.key === "Enter" && e.target.value.trim() !== "") {
-  //     setEditFormData((prevData) => ({
-  //       ...prevData,
-  //       tags: [...prevData.tags, e.target.value.trim()],
-  //     }));
-  //     e.target.value = "";
-  //   }
-  // };
 
   const [selectedRows, setSelectedRows] = useState([]);
   const isAnyRowSelected = selectedRows.length > 0;
@@ -851,76 +821,49 @@ function TableTop() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  console.log("Current viewType:", viewType);
+  useEffect(() => {
+    console.log('viewType changed to:', viewType);
+  }, [viewType]);
+
+  
+
 
   return (
     <div>
       <div className="table_company_top_bar">
-        <div
-          className={`cp_filter_icon ${isSidebarOpen ? "active" : ""}`}
-          onClick={toggleSidebar}
-        ></div>
+        
 
-        {/* <div style={{ display: "flex", alignItems: "left", justifyContent: "flex-start" }} >
-          <label className="table_cp_icon_label" onClick={() => setViewType("table")}>
-            <FaTableList
-              style={{ fontSize: "23px",
-
-            }}
-              className={`table_cp_icon cp_card_icon ${
-                viewType === "table" ? "table_cp_selected_icon" : ""
-              }`}
-            />
-          </label>
-          <label className="table_cp_icon_label" onClick={() => setViewType("card")}>
-            <BsGrid
-            // style={{marginLeft: "310px"}}
-              className={`table_cp_icon cp_grid_icon ${
-                viewType === "card" ? "table_cp_selected_icon" : ""
-              }`}
-            />
-          </label>
-        </div> */}
-
-<div style={{ display: "flex", alignItems: "center" }}>
-  <div style={{ marginLeft: "-630px" }}>
-    <label className="cp_icon_label" onClick={() => setViewType("table")}>
-      <FaTableList
-        style={{ fontSize: "23px" }}
-        className={`cp_icon cp_card_icon ${
-          viewType === "table" ? "cp_selected_icon" : ""
-        }`}
-      />
-    </label>
-  </div>
-  <div style={{ marginRight: "-500px" }}>
-    <label className="cp_icon_label" onClick={() => setViewType("card")}>
-      <BsGrid
-        className={`cp_icon cp_grid_icon ${
-          viewType === "card" ? "cp_selected_icon" : ""
-        }`}
-      />
-    </label>
-  </div>
-</div>
-
-
+        
+          <div className="cp_view_toggler">
+            <label
+              className="cp_icon_label"
+              onClick={() => {
+                console.log("Switching to table view");
+                setViewType("table");
+              }}
+            >
+              <FaTableList
+                style={{ fontSize: "23px" }}
+                className={`cp_icon cp_card_icon ${
+                  viewType === "table" ? "cp_selected_icon" : ""
+                }`}
+              />
+            </label>
+            <label
+              className="cp_icon_label"
+              onClick={() => setViewType("card")}
+            >
+              <BsGrid
+                className={`cp_icon cp_grid_icon ${
+                  viewType === "card" ? "cp_selected_icon" : ""
+                }`}
+              />
+            </label>
+          </div>
+       
 
         <div className="cp_view_toggler">
-          {/* <label className="cp_icon_label" onClick={() => setViewType("table")}>
-            <FaTableList
-              style={{ fontSize: "23px" }}
-              className={`cp_icon cp_card_icon ${
-                viewType === "table" ? "cp_selected_icon" : ""
-              }`}
-            />
-          </label>
-          <label className="cp_icon_label" onClick={() => setViewType("card")}>
-            <BsGrid
-              className={`cp_icon cp_grid_icon ${
-                viewType === "card" ? "cp_selected_icon" : ""
-              }`}
-            />
-          </label> */}
           <div>
             {isAnyRowSelected && (
               <Button
@@ -946,6 +889,7 @@ function TableTop() {
                 Update
               </Button>
             )}
+            {!isConsultantRole && (
             <Button
               variant="contained"
               color="primary"
@@ -954,28 +898,245 @@ function TableTop() {
                 marginRight: "20px",
                 color: "white",
               }}
-              // onClick={handleAddProjectClick}
+              onClick={handleAddProjectClick}
             >
               Create Project
             </Button>
+            )}
           </div>
-          {/* <label className="cp_icon_label" onClick={() => setViewType("table")}>
-            <FaTableList
-              style={{ fontSize: "23px" }}
-              className={`cp_icon cp_card_icon ${
-                viewType === "table" ? "cp_selected_icon" : ""
-              }`}
-            />
-          </label>
-          <label className="cp_icon_label" onClick={() => setViewType("card")}>
-            <BsGrid
-              className={`cp_icon cp_grid_icon ${
-                viewType === "card" ? "cp_selected_icon" : ""
-              }`}
-            />
-          </label> */}
+         
         </div>
       </div>
+
+      {isAddProjectOpen && (
+        <div className="company-profile-rating-popup-overlay">
+          <div className="consultant_profile_edit_popup">
+            <h2 className="project_table_pop_heading">Add Project</h2>
+            <button
+              className="project-close-button"
+              onClick={handleCancelClick}
+            >
+              <RxCross2 />
+            </button>
+            <div style={{ height: "600px" }}>
+              <div className="form_under_input">
+                <label className="form_under_input_label">
+                  Project Name
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                  />
+                </label>
+                <label className="form_under_input_label">
+                  Project Type
+                  <input
+                    type="text"
+                    name="project_type"
+                    value={formData.project_type}
+                    onChange={handleInputChange}
+                  />
+                </label>
+              </div>
+
+              <label className="form_under_input_label_1">
+                Description
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  style={{ height: "30px", marginTop: "0px" }}
+                />
+              </label>
+              <label className="form_under_input_label_1">
+                Assigned To
+                <div className="custom-dropdown">
+                  <div
+                    className="selected-consultants"
+                    onClick={() => setDropdownOpen(!isDropdownOpen)}
+                  >
+                    {formData.assigned_to.length > 0
+                      ? formData.assigned_to.map((consultantId) => {
+                          const consultant = consultants.find(
+                            (c) => c.id === consultantId
+                          );
+                          return consultant
+                            ? consultant.user.username + ", "
+                            : "";
+                        })
+                      : "Select Consultants"}
+                  </div>
+                  {isDropdownOpen && (
+                    <div className="dropdown-list">
+                      {consultants.map((consultant) => (
+                        <div
+                          key={consultant.id}
+                          onClick={() => handleConsultantSelect(consultant.id)}
+                        >
+                          {consultant.user.username}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </label>
+              <div className="form_under_input">
+                <label className="form_under_input_label">
+                  Contact
+                  <input
+                    type="text"
+                    name="contactinfo"
+                    value={formData.contactinfo}
+                    onChange={handleInputChange}
+                  />
+                </label>
+
+                {/* <label>
+                      Registered Date
+                      <input
+                        type="text"
+                        name="companyregyear"
+                        value={formData.companyregyear}
+                        onChange={handleInputChange}
+                      />
+                    </label> */}
+
+                <label className="form_under_input_label">
+                  Location
+                  <input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                  />
+                </label>
+              </div>
+
+              <div className="form_under_input">
+                <label className="form_under_input_label">
+                  Website
+                  <input
+                    type="text"
+                    name="website"
+                    value={formData.website}
+                    onChange={handleInputChange}
+                  />
+                </label>
+
+                <label className="form_under_input_label">
+                  Salary Range
+                  <input
+                    type="text"
+                    name="salaryrange"
+                    value={formData.salaryrange}
+                    onChange={handleInputChange}
+                  />
+                </label>
+
+                {/* <label className="form_under_input_label">
+                        Job Title
+                        <input
+                          type="text"
+                          name="jobtitle"
+                          value={formData.jobtitle}
+                          onChange={handleInputChange}
+                        />
+                      </label> */}
+              </div>
+
+              {/* <label>
+                      Banner
+                      <input
+                        type="text"
+                        name="banner"
+                        value={formData.banner}
+                        onChange={handleInputChange}
+                      />
+                    </label> */}
+
+              {/* <div className="form_under_input">
+                      <label className="form_under_input_label">
+                        Salary Range
+                        <input
+                          type="text"
+                          name="salaryrange"
+                          value={formData.salaryrange}
+                          onChange={handleInputChange}
+                        />
+                      </label>
+
+                      <label className="form_under_input_label">
+                        Experties Required
+                        <input
+                          type="text"
+                          name="expertiesreq"
+                          value={formData.expertiesreq}
+                          onChange={handleInputChange}
+                        />
+                      </label>
+                    </div> */}
+              <div className="form_under_input">
+                <label className="form_under_input_label">
+                  Banner
+                  <input
+                    type="text"
+                    name="banner"
+                    value={formData.banner}
+                    onChange={handleInputChange}
+                  />
+                </label>
+
+                <label className="form_under_input_label">
+                  Employee Type
+                  <input
+                    type="text"
+                    name="employee_type"
+                    value={formData.employee_type}
+                    onChange={handleInputChange}
+                  />
+                </label>
+              </div>
+
+              {/* <label>
+                      Employee Type
+                      <input
+                        type="text"
+                        name="employee_type"
+                        value={formData.employee_type}
+                        onChange={handleInputChange}
+                      />
+                    </label> */}
+
+              <div className="form_under_input">
+                <label className="form_under_input_label">
+                  Start Date
+                  <input
+                    type="date"
+                    name="start_date"
+                    value={formData.start_date}
+                    onChange={handleInputChange}
+                  />
+                </label>
+
+                <label className="form_under_input_label">
+                  End Date
+                  <input
+                    type="date"
+                    name="end_date"
+                    value={formData.end_date}
+                    onChange={handleInputChange}
+                  />
+                </label>
+              </div>
+
+              <div className="company-profile-rating-popup__buttons">
+                <button onClick={handleAddProject}>Submit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {isSaveReportPopup && saveReportPopup}
       {isRenamePopup && reportRenamePopup}

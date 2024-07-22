@@ -1,6 +1,8 @@
 /* Nav.css */
 .table-navbar {
-    position: sticky;
+    /* position: sticky; */
+    position: fixed;
+    width: 100%;
     top: 0;
     z-index: 1000;
       display: flex;
@@ -9,6 +11,7 @@
       background-color: rgb(0,0,0,0.87);
       padding: 0px 20px;
       box-shadow: 0 2px 4px rgba(13, 14, 21, 0.2);
+
     }
   
     .table-navbar-header {
@@ -66,7 +69,7 @@
     
     .table-navbar-nav-links a {
       text-decoration: none;
-      color: #0073e6;
+      background-color: black;
       color: white;
       transition: 0.3s ease-in-out;
       font-weight: 500;
@@ -93,7 +96,8 @@
     .table-navbar-user-photo{
       display: flex;
       padding: 0;
-      margin-right: 10px;
+      /* margin-right: 10px; */
+      margin-right: 30px;
     }
     
     .table-navbar-user-photo img:hover {

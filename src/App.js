@@ -31,6 +31,7 @@ import UserDataPersistence from "./components/UserDataPersistence";
 import PdfViewer from "./components/PdfViewer";
 import CompanyPdfViewer from "./components/CompanyPdfViewer";
 import SimpleTable from "./components/Table";
+import PolicyTable from "./components/PolicyTable";
 function App() {
   return (
     <>
@@ -54,7 +55,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/repository" element={<Repository />} />
             <Route path="/" element={<Login />} />
-            <Route path= "/datatable" element={<DataTable />} />
+            {/* <Route path= "/datatable" element={<DataTable />} /> */}
             <Route path= "/pdf" element={<PdfViewer />} />
             <Route path= "/policy-list" element={<PolicyList />} />
             <Route path= "/newcard" element={<NewCard />} />
@@ -62,7 +63,8 @@ function App() {
             <Route path="/company-projects/:projectId/policy-list/:policyId/pdf" element={<CompanyPdfViewer />} />
             <Route path="/consultant-projects/:projectId/policy-list/:policyId/pdf" element={<PdfViewer />} />
             <Route path= "/company-projects/:projectId/policy-list" element={<PolicyList />} />
-            <Route path="/table" element={<SimpleTable />} />
+            <Route path="/datatable" element={<SimpleTable />} />
+            <Route path= "/policy-list1" element={<PolicyTable/>} />
           </Routes>
         </Router>
       </Provider>

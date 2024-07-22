@@ -1,5 +1,5 @@
-import React, { useMemo, useState, useEffect } from "react";
-
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -11,20 +11,23 @@ import {
   Paper,
   Button,
 } from "@mui/material";
-import TablePagination from "@mui/material/TablePagination";
-import { useNavigate } from "react-router-dom";
-import "./DataTable.css";
+import "./styles.css";
+
 import TableNav from "./TableNav";
+import TableTop from "./TableTop";
+import TableComponent from "./TableComponent";
+import { IoMdSettings } from "react-icons/io";
 import { BsGrid } from "react-icons/bs";
-import { FaTableList } from "react-icons/fa6";
 import { CiBoxList } from "react-icons/ci";
 import { AiOutlineFilter } from "react-icons/ai";
 import { FaCaretUp, FaCaretDown } from "react-icons/fa";
 import { FaSave, FaEye } from "react-icons/fa";
 import { PiClipboardTextDuotone } from "react-icons/pi";
 import { MdDelete } from "react-icons/md";
+import { DataTable } from "../components/PolicyDataTable";
 import { Pagination } from "antd";
 import { HiTableCells } from "react-icons/hi2";
+import { FaTableList } from "react-icons/fa6";
 import { BsTable } from "react-icons/bs";
 import { DatePickerProps } from "antd";
 import { DatePicker, Space } from "antd";
@@ -44,31 +47,37 @@ import { IoChevronDownOutline, IoChevronUpOutline } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
 import Swal from "sweetalert2";
 import { Hidden } from "@mui/material";
-import { autoBatchEnhancer } from "@reduxjs/toolkit";
-export const DataTable = ({ data, setViewType, viewType }) => {
+import PolicyTableComponent from "./PolicyTableComponent";
+
+const PolicyTable = ({
+    data,
+    handleDelete,
+    handleEdit,
+    openEditForm,
+    projectId,
+    editFormData,
+    userRole,
+    editedPolicyId,
+    handleAddPolicyClick,
+    isConsultantRole,
+    viewType,
+    setViewType
+  }) => {
+    console.log("Data in policy: ", data);
+
+  
   const navigate = useNavigate();
-
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const startIndex = page * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
-
   const loggedInUserId = useSelector((state) => state.user.userData.user_id);
-
+ 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [selectedRows, setSelectedRows] = useState([]);
 
+  const TableContainerStyle = {
+    // marginLeft: isSidebarOpen ? "310px" : "60px",
+    marginLeft: "60px",
+    // marginTop: tags.length > 0 ? "-25px" : "-65px",
+  };
   const toggleRowSelection = (id) => {
     if (selectedRows.includes(id)) {
       setSelectedRows(selectedRows.filter((rowId) => rowId !== id));
@@ -76,16 +85,32 @@ export const DataTable = ({ data, setViewType, viewType }) => {
       setSelectedRows([...selectedRows, id]);
     }
   };
-
-  //   const tagContainerStyle = {
-  //     marginBottom: tags.length > 0 ? "-65px" : "-35px",
-  //     width: "150px",
-  //     marginLeft: isSidebarOpen ? "310px" : "60px",
-  //     overflow: "!hidden",
-  //   };
+//   const tagContainerStyle = {
+//     marginBottom: tags.length > 0 ? "-65px" : "-35px",
+//     width: "150px",
+//     marginLeft: isSidebarOpen ? "310px" : "60px",
+//     overflow: "!hidden",
+//   };
   const TableTagContainerStyle = {
     marginLeft: isSidebarOpen ? "600px" : "350px",
   };
+
+  const handleDeletePolicies = () => {
+    selectedRows.forEach((policyId) => {
+      handleDelete(policyId);
+    });
+    setSelectedRows([]);
+  };
+
+  const handleUpdatePolicy = () => {
+    if (selectedRows.length === 1) {
+      openEditForm(selectedRows[0]);
+      setSelectedRows([]);
+    }
+  };
+
+  const isAnyRowSelected = selectedRows.length > 0;
+
 
   const [searchTerm, setSearchTerm] = useState("");
   const [tags, setTags] = useState([]);
@@ -93,8 +118,6 @@ export const DataTable = ({ data, setViewType, viewType }) => {
   const [pageSize, setPageSize] = useState(2);
   const [personalReports, setpersonalReports] = useState([]);
   const [openMenu, setOpenMenu] = useState(null);
-
-  
 
   const handleOptionsMenuClick = (id) => {
     if (openMenu === id) {
@@ -106,13 +129,7 @@ export const DataTable = ({ data, setViewType, viewType }) => {
     }
   };
 
-  const TableContainerStyle = {
-    // marginLeft: "36px",
-    marginLeft: isSidebarOpen ? "310px" : "60px",
-    // marginTop: "150px",
-    marginTop: tags.length > 0 ? "105px" : "130px",
-    overflow: "auto",
-  };
+  
 
   const handleChangePageSize = (current, size) => {
     setPageSize(size);
@@ -123,6 +140,8 @@ export const DataTable = ({ data, setViewType, viewType }) => {
 
   const [isRenamePopup, setIsRenamePopup] = useState(false);
   const [renameFilterId, setRenameFilterId] = useState("");
+
+  
 
   const [idfrom, setIdFrom] = useState("");
   const [idto, setIdTo] = useState("");
@@ -145,7 +164,19 @@ export const DataTable = ({ data, setViewType, viewType }) => {
       setSearchTerm("");
     }
   };
+  
 
+  // const handleKeyPress = (e) => {
+  //   if (e.key === "Enter") {
+  //     let newTag;
+  //     if (idfrom !== "" && idto !== "") {
+  //       newTag = `ID RANGE: ${idfrom}-${idto}`;
+  //     }
+  //     setTags([...tags, newTag]);
+  //     setIdFrom("");
+  //     setIdTo("");
+  //   }
+  // };
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       let newTag;
@@ -170,13 +201,15 @@ export const DataTable = ({ data, setViewType, viewType }) => {
       }
     }
   };
-  
-  
 
   //const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedCompanyTypes, setSelectedCompanyTypes] = useState([]);
 
   const [selectedDepartments, setSelectedDepartments] = useState([]);
+
+  
+
+
 
   const toggleDropdown = () => {
     const newDropdownState = !isCompanyTypeDropdownOpen;
@@ -675,7 +708,7 @@ export const DataTable = ({ data, setViewType, viewType }) => {
     });
     return formattedDate;
   };
-
+  
   const tagContainerStyle = {
     marginBottom: tags.length > 0 ? "-65px" : "-35px",
     width: "150px",
@@ -683,6 +716,7 @@ export const DataTable = ({ data, setViewType, viewType }) => {
     overflow: "!hidden",
   };
 
+ 
   const groupByCategory = (tags) => {
     const groupedTags = {};
     tags.forEach((tag) => {
@@ -697,14 +731,11 @@ export const DataTable = ({ data, setViewType, viewType }) => {
     return groupedTags;
   };
 
+
   return (
     <>
-      {/* <h1 style={{ color: "#565656", marginTop: "30px", marginLeft: "14vh" }}>
-        Company-List
-      </h1> */}
-
-      <TableNav />
-      <div>
+       <TableNav /> 
+       <div>
         <div className="table_company_top_bar">
           <div className="cp_view_toggler">
             <label
@@ -732,69 +763,31 @@ export const DataTable = ({ data, setViewType, viewType }) => {
               />
             </label>
           </div>
+
+          <div style={{ left: "10%" }}>
+            <Breadcrumbs />
+          </div>
+
+          <div className="cp_view_toggler">
+            <div>
+            {!isConsultantRole && (
+              <Button
+                variant="contained"
+                color="primary"
+                style={{
+                  backgroundColor: "rgba(0, 0, 0, 0.87)",
+                  marginRight: "20px",
+                  color: "white",
+                }}
+                onClick={handleAddPolicyClick}
+              >
+                Create Policy
+              </Button>
+            )}
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* <div>
-        <div className="table_cp_search_container" style={tagContainerStyle}>
-          <input
-            type="text"
-            placeholder="Search by tags..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && handleSearch(e)}
-          />
-          
-        </div>
-        
-       
-        <div>
-          {Object.entries(groupByCategory(tags)).map(([category, values]) => (
-            <div key={category}>
-              <div
-                style={{
-                  ...TableTagContainerStyle,
-                  marginTop: "25px",
-                  marginBottom: "-65px",
-                }}
-              >
-                <h4
-                  style={{
-                    color: "black",
-                    fontSize: "12px",
-                    fontWeight: "700",
-                    textTransform: "uppercase",
-                    marginLeft: "18px",
-                    marginBottom: "7px",
-                    cursor: "pointer",
-                    transition: "color 0.3s",
-                    ":hover": { color: "#4da92b" },
-                  }}
-                >
-                  {category}
-                </h4>
-                <div className="table_cp_tag_container">
-                  {values.map((value) => (
-                    <div key={value} className="table_cp_tag">
-                      <div className="tag-item">
-                        <p>{value}</p>
-                        <button
-                          onClick={() =>
-                            handleTagRemove(`${category}: ${value}`)
-                          }
-                        >
-                          &times;
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                
-              </div>
-            </div>
-          ))}
-        </div>
-      </div> */}
       <div>
         <div className="table_cp_search_container" style={tagContainerStyle}>
           <input
@@ -852,15 +845,43 @@ export const DataTable = ({ data, setViewType, viewType }) => {
           ))}
         </div>
       </div>
+      <>
+        <PolicyTableComponent 
+        data={data}
+        handleAddPolicyClick={handleAddPolicyClick}
+        
+        userRole={userRole}
+        handleDelete={handleDelete}
+        openEditForm={openEditForm}
+        isSidebarOpen={isSidebarOpen}
+        tags={tags}
+        
+        />
+        <div
+        className={`cp_filter_icon ${isSidebarOpen ? "active" : ""}`}
+        onClick={toggleSidebar}
+        style={{
+          backgroundColor: isSidebarOpen ? "" : "#ccc",
+          display: "flex",
+          flexDirection: "column",
+          width: "25px",
+          height: "100vh",
+          borderRadius: "0px",
+          top: "0px",
+          position: "fixed",
+          marginTop: "120px",
+        }}
+      >
+        <AiOutlineFilter className="cp_icon" />
+      </div>
       {isSaveReportPopup && saveReportPopup}
       {isRenamePopup && reportRenamePopup}
       <div className="company-content-container">
         {isSidebarOpen && (
-          <div className="ttable_cp_sidebar_filter">
-            <h2 className="compp-filter-title-section">
-              <MdFilterAlt
-                className="policyy_filter_cp_icon"
-                onClick={toggleSidebar}
+          <div className="table_cp_sidebar_filter">
+            <h2 className="policy-filter-title-section">
+              <MdFilterAlt className="policy_filter_cp_icon" onClick={toggleSidebar}
+             
               />
               FILTERS
             </h2>
@@ -874,12 +895,6 @@ export const DataTable = ({ data, setViewType, viewType }) => {
               >
                 <FaEye className="save-view-section-icon" /> View
               </button>
-              {/* <button
-                onClick={toggleReportsPanel}
-                className={isReportsPanelOpen ? "view-section-active" : ""}
-              >
-                <FaEye className="save-view-section-icon" /> View
-              </button> */}
               <button onClick={clearFilters}>
                 <MdDelete className="save-view-section-icon" /> Clear
               </button>
@@ -956,7 +971,6 @@ export const DataTable = ({ data, setViewType, viewType }) => {
                   onKeyDown={handleKeyPress}
                 />
               </div>
-              
             </div>
 
             <div className="table_cp_filter_section">
@@ -1145,103 +1159,10 @@ export const DataTable = ({ data, setViewType, viewType }) => {
         </div>
       </div>
 
-      <TableContainer
-        className="table-container"
-        component={Paper}
-        style={TableContainerStyle}
-      >
-        <Table className="table" aria-label="simple table">
-          <TableHead>
-            <TableRow className="table-header">
-              <TableCell className="table-header" align="center">
-                ID
-              </TableCell>
-              <TableCell className="table-header" align="center">
-                Name
-              </TableCell>
-              <TableCell className="table-header" align="center">
-                No. of Employees
-              </TableCell>
-              <TableCell className="table-header" align="center">
-                Founded
-              </TableCell>
-              <TableCell className="table-header" align="center">
-                Ratings
-              </TableCell>
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {data.map((row) => {
-              console.log("Rendering row:", row);
-
-              if (!row || !row.id) {
-                console.error("Row or row.id is undefined", row);
-                return null;
-              }
-
-              return (
-                // <TableRow key={row.id}>
-                <TableRow
-                  key={row.id}
-                  onClick={() =>
-                    navigate(`/company-projects/${row.id}/policy-list`)
-                  }
-                  style={{ cursor: "pointer" }}
-                >
-                  <TableCell
-                    className="table-cell"
-                    component="th"
-                    scope="row"
-                    align="center"
-                  >
-                    {row.id}
-                  </TableCell>
-                  <TableCell className="table-cell" align="center">
-                    {row.username}
-                  </TableCell>
-                  <TableCell className="table-cell" align="center">
-                    {row.numofemploy}
-                  </TableCell>
-                  <TableCell className="table-cell" align="center">
-                    {row.companyregyear}
-                  </TableCell>
-                  <TableCell className="table-cell" align="center">
-                    {row.average_rating}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <div
-        className={`cp_filter_icon ${isSidebarOpen ? "active" : ""}`}
-        onClick={toggleSidebar}
-        style={{
-          backgroundColor: isSidebarOpen ? "" : "#ccc",
-          display: "flex",
-          flexDirection: "column",
-          width: "25px",
-          height: "100vh",
-          borderRadius: "0px",
-          top: "0px",
-          position: "fixed",
-          marginTop: "90px",
-        }}
-      >
-        <AiOutlineFilter className="cp_icon" />
-      </div>
-
-      {/* <TablePagination
-        rowsPerPageOptions={[3, 5, 7]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      /> */}
+       
+      </>
     </>
   );
 };
+
+export default PolicyTable;

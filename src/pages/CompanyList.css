@@ -288,11 +288,13 @@
   padding: 16px;
   padding-top: 0px;
   border-bottom: 1px solid #e0e0e0;
+  margin-top: 30px;
 }
 
 .cp_filter_title {
   font-size: 16px;
-  margin-bottom: 12px;
+  margin-top: 10px;
+ 
 }
 
 .cp_filter_input {
@@ -673,7 +675,7 @@
   left: 0;
   width: 100%;
   max-height: 150px;
-  /* Set the maximum height for the dropdown list */
+  
   overflow-y: auto;
   /* Add a scrollbar if the content exceeds the max height */
   background-color: #fff;

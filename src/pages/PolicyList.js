@@ -29,6 +29,7 @@ import { RxCross2 } from "react-icons/rx";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import Breadcrumbs from "../components/Breadcrumbs";
+import PolicyTable from "../components/PolicyTable";
 
 function PolicyList() {
   const loggedInUserId = useSelector((state) => state.user.userData.user_id);
@@ -37,6 +38,7 @@ function PolicyList() {
   const userData = useSelector((state) => state.user.userData);
   const userRole = userData?.role;
   console.log(userRole);
+  const isConsultantRole = userRole === "Consultant";
   const companyId = userData?.company?.id;
 
   useEffect(() => {
@@ -839,10 +841,14 @@ function PolicyList() {
   };
 
   // const urlParams = new URLSearchParams(window.location.search);
+  console.log("Data in pl page: ", policies);
+  
 
   return (
     <>
       <div className="company-list-page">
+      {viewType === "card" && (
+        <>
         <Nav />
         <div className="cp_company_top_bar">
           <div className={`cp_filter_icon ${isSidebarOpen ? "active" : ""}`}>
@@ -896,6 +902,9 @@ function PolicyList() {
             </label>
           </div>
         </div>
+        </>
+        )}
+
         {isSaveReportPopup && saveReportPopup}
         {isRenamePopup && reportRenamePopup}
         <div className="company-content-container">
@@ -1441,19 +1450,27 @@ function PolicyList() {
             )}
             <div className="company-list-container">
               {viewType === "table" && (
-                <div className="table-container">
+                <div className="policy-table-container">
                   {policies && policies.length > 0 ? (
-                    <DataTable
-                      data={policies}
-                      handleDelete={handleDelete}
-                      handleEdit={handleEdit}
-                      openEditForm={openEditForm}
-                      projectId={projectId}
-                      // policyId={policyIds}
-                      editFormData={editformData}
-                      userRole={userRole}
-                      editedPolicyId={editedPolicyId}
-                    />
+                    <PolicyTable
+                    data={policies}
+                    handleDelete={handleDelete}
+                    handleEdit={handleEdit}
+                    openEditForm={openEditForm}
+                    projectId={projectId}
+                    // policyId={policyIds}
+                    editFormData={editformData}
+                    userRole={userRole}
+                    editedPolicyId={editedPolicyId}
+                    handleAddPolicyClick={handleAddPolicyClick}
+                    isConsultantRole={isConsultantRole}
+                    setViewType={setViewType}
+                    viewType={viewType}
+
+                  />
+                 
+                   
+                   
                   ) : (
                     <div style={{ marginTop: "20px", textAlign: "center" }}>
                       No policies found
@@ -1467,7 +1484,8 @@ function PolicyList() {
                   {policies &&
                     policies.map((policy, index) => (
                       <div key={index} style={{ textDecoration: "none" }}>
-                        <PolicyPdfCard
+                        
+                         <PolicyPdfCard
                           policy={policy}
                           projectId={projectId}
                           // policyId={policyIds}
@@ -1478,6 +1496,10 @@ function PolicyList() {
                           fetchPolicies={fetchPolicies}
                           documentUrl={policy.document}
                         />
+                         
+
+
+                         
                       </div>
                     ))}
                 </div>

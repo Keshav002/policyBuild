@@ -35,7 +35,7 @@ function ConsultantList() {
   const [reportRenameError, setReportRenameError] = useState("");
   const handleOptionsMenuClick = (id) => {
     if (openMenu === id) {
-      // Close the menu if it's already open
+      
       setOpenMenu(null);
     } else {
       // Open the menu for the clicked item
@@ -468,6 +468,8 @@ function ConsultantList() {
   return (
     <>
       <div className="company-list-page">
+      {viewType === "card" && (
+        <>
         <Nav />
         <div className="cp_company_top_bar">
           <div
@@ -520,6 +522,9 @@ function ConsultantList() {
             </label>
           </div>
         </div>
+        </>
+        )}
+
         {isSaveReportPopup && saveReportPopup}
         {isRenamePopup && reportRenamePopup}
         <div className="company-content-container">
@@ -852,9 +857,12 @@ function ConsultantList() {
 
             <div className="company-list-container">
               {viewType === "table" && (
-                <div className="table-container">
+                <div className="policy-table-container">
                   {companies && companies.paginated_results?.length > 0 ? (
-                    <ConsultantDataTable data={companies.paginated_results} />
+                    <ConsultantDataTable data={companies.paginated_results} 
+                    setViewType={setViewType}
+                    viewType={viewType}
+                    />
                   ) : (
                     <div style={{ marginTop: "20px", textAlign:"center" }}>No data found</div>
                   )}

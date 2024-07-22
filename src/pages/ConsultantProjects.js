@@ -28,6 +28,10 @@ import { useParams } from "react-router-dom";
 
 function ConsultantProjects() {
   const loggedInUserId = useSelector((state) => state.user.userData.user_id);
+  const userData = useSelector((state) => state.user.userData);
+  const userRole = userData?.role;
+  console.log(userRole);
+  const isConsultantRole = userRole === "Consultant";
 
   const [searchTerm, setSearchTerm] = useState("");
   const [tags, setTags] = useState([]);
@@ -595,6 +599,8 @@ function ConsultantProjects() {
   return (
     <>
       <div className="company-list-page">
+      {viewType === "card" && (
+         <>
         <Nav />
         <div className="cp_company_top_bar">
           <div
@@ -649,6 +655,8 @@ function ConsultantProjects() {
             </label>
           </div>
         </div>
+        </>
+      )}
         {isSaveReportPopup && saveReportPopup}
         {isRenamePopup && reportRenamePopup}
         <div className="company-content-container">
@@ -981,8 +989,14 @@ function ConsultantProjects() {
 
             <div className="company-list-container">
               {viewType === "table" && (
-                <div className="table-container">
-                  <DataTable data={projects} />
+                <div className="policy-table-container">
+                  <DataTable data={projects} 
+                  setViewType={setViewType}
+                  viewType={viewType}
+                  isConsultantRole={isConsultantRole}
+                  
+                  />
+
                 </div>
               )}
 

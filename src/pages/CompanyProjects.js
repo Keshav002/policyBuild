@@ -27,7 +27,7 @@ import { GrAdd } from "react-icons/gr";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
-
+import SimpleTable from "../components/Table";
 import { RxCross2 } from "react-icons/rx";
 import Swal from "sweetalert2";
 
@@ -35,6 +35,9 @@ function CompanyProjects() {
   const loggedInUserId = useSelector((state) => state.user.userData.user_id);
   const userData = useSelector((state) => state.user.userData);
   const companyId = userData?.company?.id;
+  const userRole = userData?.role;
+  console.log(userRole);
+  const isConsultantRole = userRole === "Consultant";
 
   const navigate = useNavigate();
 
@@ -62,6 +65,7 @@ function CompanyProjects() {
   const handleChangePageSize = (current, size) => {
     setPageSize(size);
   };
+ 
 
   const [reportName, setReportName] = useState("");
   const [newReportName, setNewReportName] = useState("");
@@ -519,6 +523,7 @@ function CompanyProjects() {
   const handleAddProjectClick = async () => {
     setisAddProjectOpen(true);
   };
+  console.log("Ha: ", handleAddProjectClick);
 
   const handleAddProject = async () => {
     try {
@@ -579,6 +584,8 @@ function CompanyProjects() {
       console.error("Error during handleAddProject:", error);
     }
   };
+
+  
 
   const fetchConsultants = async () => {
     try {
@@ -844,6 +851,9 @@ function CompanyProjects() {
   return (
     <>
       <div className="company-list-page">
+       
+      {viewType === "card" && (
+         <>
         <Nav />
         <div className="cp_company_top_bar">
         {/* <AiOutlineFilter className="cp_icon" onClick={toggleSidebar}/> */}
@@ -898,7 +908,12 @@ function CompanyProjects() {
               />
             </label>
           </div>
+
         </div>
+        </>
+
+      )}
+      
         {isSaveReportPopup && saveReportPopup}
         {isRenamePopup && reportRenamePopup}
           <div className="company-content-container">
@@ -1242,7 +1257,9 @@ function CompanyProjects() {
                 </div>
               )}
             </div>
-
+              
+            {viewType === "card" && (
+              <>
             {isAddProjectOpen && (
               <div className="company-profile-rating-popup-overlay">
                 <div className="consultant_profile_edit_popup">
@@ -1474,7 +1491,11 @@ function CompanyProjects() {
                 </div>
               </div>
             )}
-
+            </>
+          )}
+          
+          {viewType === "card" && (
+              <>
             {isEditProjectOpen && (
               <div className="company-profile-rating-popup-overlay">
                 <div className="consultant_profile_edit_popup">
@@ -1819,20 +1840,59 @@ function CompanyProjects() {
                 </div>
               </div>
             )}
-            <div className="company-list-container">
+            </>
+          )}
+
+            {/* <div className="company-list-container"> */}
               {viewType === "table" && (
-                <div className="table-container">
-                  {projects && projects.length > 0 ? (
-                    <DataTable
+                <div>
+                {projects && projects.length > 0 ? (
+                  <>
+                    {console.log("Data passed to SimpleTable:", projects)}
+                    <SimpleTable
                       data={projects}
                       handleDeleteProjectClick={handleDeleteProjectClick}
                       openEditForm={openEditForm}
                       isEditFormOpen={isEditFormOpen}
+                      handleAddProjectClick={handleAddProjectClick}
+                      handleAddProject={handleAddProject}
+                      isAddProjectOpen={isAddProjectOpen}
+                      setisAddProjectOpen={setisAddProjectOpen}
+                      handleCancelClick={handleCancelClick}
+                      setViewType={setViewType}
+                      viewType={viewType}
+                      isConsultantRole={isConsultantRole}
+                      userRole={userRole}
+
+                     
                     />
-                  ) : (
-                    <p>No projects available.</p>
-                  )}
-                </div>
+                  </>
+                ) : (
+                  <p>No projects available.</p>
+                )}
+              </div>
+              
+                // <div>
+                //   {projects && projects.length > 0 ? (
+                //     // <DataTable
+                //     //   data={projects}
+                //     //   handleDeleteProjectClick={handleDeleteProjectClick}
+                //     //   openEditForm={openEditForm}
+                //     //   isEditFormOpen={isEditFormOpen}
+                //     //   handleAddProjectClick={handleAddProjectClick}
+                //     // />
+                   
+                //     <SimpleTable
+                //       data={projects}
+                //       handleDeleteProjectClick={handleDeleteProjectClick}
+                //       openEditForm={openEditForm}
+                //       isEditFormOpen={isEditFormOpen}
+                //       handleAddProjectClick={handleAddProjectClick}
+                //     />
+                //   ) : (
+                //     <p>No projects available.</p>
+                //   )}
+                //   </div> 
               )}
 
               {viewType !== "table" && (
@@ -1876,7 +1936,7 @@ function CompanyProjects() {
                   /> */}
                 </>
               </div>
-            </div>
+            {/* </div> */}
           </div>
         </div>
       </div>

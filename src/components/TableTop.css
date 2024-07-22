@@ -1,5 +1,7 @@
 .table_company_top_bar {
-    position: sticky;
+    /* position: sticky; */
+    position: fixed;
+    width: 100%;
     top: 40px;
     z-index: 999;
     display: flex;

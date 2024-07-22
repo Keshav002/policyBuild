@@ -34,7 +34,23 @@ import { RxCross2 } from "react-icons/rx";
 import Swal from "sweetalert2";
 import { Hidden } from "@mui/material";
 
-export default function SimpleTable() {
+export default function SimpleTable({
+  data,
+  handleDeleteProjectClick,
+  openEditForm,
+  isEditFormOpen,
+  handleAddProjectClick,
+  handleAddProject,
+  isAddProjectOpen,
+  setisAddProjectOpen,
+  handleCancelClick,
+  setViewType,
+  viewType,
+  userRole,
+  isConsultantRole
+}) {
+  console.log("Data in Table: ", data);
+
   const loggedInUserId = useSelector((state) => state.user.userData.user_id);
   const userData = useSelector((state) => state.user.userData);
   const companyId = userData?.company?.id;
@@ -72,7 +88,7 @@ export default function SimpleTable() {
   const [isRenamePopup, setIsRenamePopup] = useState(false);
   const [renameFilterId, setRenameFilterId] = useState("");
 
-  const [viewType, setViewType] = useState("card");
+  
 
   const [idfrom, setIdFrom] = useState("");
   const [idto, setIdTo] = useState("");
@@ -95,8 +111,15 @@ export default function SimpleTable() {
       setSearchTerm("");
     }
   };
+  const [selectedRows, setSelectedRows] = useState([]);
 
-
+  const toggleRowSelection = (id) => {
+    if (selectedRows.includes(id)) {
+      setSelectedRows(selectedRows.filter((rowId) => rowId !== id));
+    } else {
+      setSelectedRows([...selectedRows, id]);
+    }
+  };
 
   // const handleKeyPress = (e) => {
   //   if (e.key === "Enter") {
@@ -112,17 +135,17 @@ export default function SimpleTable() {
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       let newTag;
-      
+
       // Handle ID range
       if (idfrom !== "" && idto !== "") {
         newTag = `ID RANGE: ${idfrom}-${idto}`;
       }
-      
+
       // Handle Date range
       if (foundedDateFrom !== "" && foundedDateTo !== "") {
         newTag = `DATE RANGE: ${foundedDateFrom} to ${foundedDateTo}`;
       }
-      
+
       // Add the tag if either ID range or Date range is provided
       if (newTag) {
         setTags([...tags, newTag]);
@@ -133,7 +156,7 @@ export default function SimpleTable() {
       }
     }
   };
-  
+
   //const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedCompanyTypes, setSelectedCompanyTypes] = useState([]);
 
@@ -252,7 +275,6 @@ export default function SimpleTable() {
     }
   };
 
-
   const handleCompanyTypeChange = (value) => {
     const updatedSelectedCompanyTypes = selectedCompanyTypes.includes(value)
       ? selectedCompanyTypes.filter((type) => type !== value)
@@ -299,8 +321,6 @@ export default function SimpleTable() {
     setTags(allTags);
   };
 
-  
-
   const handleDepartmentCheckboxChange = (value) => {
     const updatedSelectedDepartments = selectedDepartments.includes(value)
       ? selectedDepartments.filter((dept) => dept !== value)
@@ -346,8 +366,6 @@ export default function SimpleTable() {
     setTags(allTags);
   };
 
- 
-  
   const [selectedLogic, setSelectedLogic] = useState("and");
 
   const handleLogicChange = (e) => {
@@ -661,7 +679,18 @@ export default function SimpleTable() {
   //   setTags(updatedTags);
   // };
 
-  const [selectedRows, setSelectedRows] = useState([]);
+  const handleDeleteProjects = () => {
+    selectedRows.forEach((projectId) => {
+      handleDeleteProjectClick(projectId);
+    });
+    setSelectedRows([]);
+  };
+  const handleUpdateProject = () => {
+    if (selectedRows.length === 1) {
+      openEditForm(selectedRows[0]);
+      setSelectedRows([]);
+    }
+  };
   const isAnyRowSelected = selectedRows.length > 0;
 
   const [page, setPage] = useState(0);
@@ -675,7 +704,7 @@ export default function SimpleTable() {
   // };
 
   const tagContainerStyle = {
-    marginBottom: tags.length > 0 ? "-35px" : "-35px",
+    marginBottom: tags.length > 0 ? "-65px" : "-35px",
     width: "150px",
     marginLeft: isSidebarOpen ? "310px" : "60px",
     overflow: "!hidden",
@@ -689,7 +718,7 @@ export default function SimpleTable() {
 
   const pTagStyle = {
     marginTop: tags.length > 0 ? "-25px" : "-25px",
-    position: "absolute",
+    // position: "absolute",
     marginLeft: isSidebarOpen ? "342px" : "102px",
   };
 
@@ -717,11 +746,28 @@ export default function SimpleTable() {
   };
 
   console.log("Grouped tags:", groupByCategory(tags));
-
+  console.log("handleadd in t: ", handleAddProjectClick);
   return (
     <>
       <TableNav />
-      <TableTop />
+      <TableTop
+        data={data}
+        handleDeleteProjectClick={handleDeleteProjectClick}
+        openEditForm={openEditForm}
+        isEditFormOpen={isEditFormOpen}
+        handleAddProjectClick={handleAddProjectClick}
+        handleAddProject={handleAddProject}
+        selectedRows={selectedRows}
+        handleDeleteProjects={handleDeleteProjects}
+        handleUpdateProject={handleUpdateProject}
+        isAddProjectOpen={isAddProjectOpen}
+        setisAddProjectOpen={setisAddProjectOpen}
+        handleCancelClick={handleCancelClick}
+        setViewType={setViewType}
+        viewType={viewType}
+        isConsultantRole={isConsultantRole}
+        userRole={userRole}
+      />
 
       <div>
         <div className="table_cp_search_container" style={tagContainerStyle}>
@@ -737,7 +783,13 @@ export default function SimpleTable() {
         <div>
           {Object.entries(groupByCategory(tags)).map(([category, values]) => (
             <div key={category}>
-              <div style={{ ...TableTagContainerStyle, marginTop: "5px", marginBottom: "-85px" }}>
+              <div
+                style={{
+                  ...TableTagContainerStyle,
+                  marginTop: "25px",
+                  marginBottom: "-65px",
+                }}
+              >
                 <h4
                   style={{
                     color: "black",
@@ -774,6 +826,8 @@ export default function SimpleTable() {
           ))}
         </div>
       </div>
+      {isSaveReportPopup && saveReportPopup}
+      {isRenamePopup && reportRenamePopup}
 
       <IoMdSettings
         style={tableSettingIconStyle}
@@ -782,7 +836,16 @@ export default function SimpleTable() {
 
       <p style={pTagStyle}>Projects: 1-5 of 20</p>
 
-      <TableComponent style={TableContainerStyle} />
+      <TableComponent
+        style={TableContainerStyle}
+        data={data}
+        handleDeleteProjectClick={handleDeleteProjectClick}
+        openEditForm={openEditForm}
+        isEditFormOpen={isEditFormOpen}
+        handleAddProjectClick={handleAddProjectClick}
+        selectedRows={selectedRows}
+        toggleRowSelection={toggleRowSelection}
+      />
 
       <div
         className={`cp_filter_icon ${isSidebarOpen ? "active" : ""}`}
@@ -801,8 +864,7 @@ export default function SimpleTable() {
       >
         <AiOutlineFilter className="cp_icon" />
       </div>
-      {isSaveReportPopup && saveReportPopup}
-      {isRenamePopup && reportRenamePopup}
+     
       <div className="company-content-container">
         {isSidebarOpen && (
           <div className="table_cp_sidebar_filter">
@@ -1086,56 +1148,3 @@ export default function SimpleTable() {
     </>
   );
 }
-
-// const handleCompanyTypeChange = (value) => {
-//   const updatedSelectedCompanyTypes = selectedCompanyTypes.includes(value)
-//     ? selectedCompanyTypes.filter((type) => type !== value)
-//     : [...selectedCompanyTypes, value];
-
-//   setSelectedCompanyTypes(updatedSelectedCompanyTypes);
-
-//   const updatedTags = updatedSelectedCompanyTypes.map(type => {
-//     switch (type) {
-//       case "1":
-//         return "Corporate";
-//       case "2":
-//         return "Startup";
-//       case "3":
-//         return "MNC";
-//       case "4":
-//         return "Other";
-//       default:
-//         return "";
-//     }
-//   });
-
-//   setTags(updatedTags);
-
-// };
-
-// const handleDepartmentCheckboxChange = (value) => {
-//   if (selectedDepartments.includes(value)) {
-//     setSelectedDepartments(
-//       selectedDepartments.filter((dept) => dept !== value)
-//     );
-//   } else {
-//     setSelectedDepartments([...selectedDepartments, value]);
-//   }
-
-//   const updatedTags = selectedDepartments.map(dept => {
-//     switch (dept) {
-//       case "1":
-//         return "Healthcare";
-//       case "2":
-//         return "Education";
-//       case "3":
-//         return "IT";
-//       case "4":
-//         return "Retail";
-//       default:
-//         return "";
-//     }
-//   });
-
-//   setTags(updatedTags);
-// };
